@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as LiveDemoRouteImport } from './routes/live-demo'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as StatusRouteImport } from './routes/status'
@@ -47,6 +48,11 @@ const AuthRoute = AuthRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LiveDemoRoute = LiveDemoRouteImport.update({
+  id: '/live-demo',
+  path: '/live-demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/live-demo': typeof LiveDemoRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/status': typeof StatusRoute
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/live-demo': typeof LiveDemoRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/status': typeof StatusRoute
@@ -213,6 +221,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/live-demo': typeof LiveDemoRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/status': typeof StatusRoute
@@ -241,6 +250,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/forgot-password'
+    | '/live-demo'
     | '/pricing'
     | '/reset-password'
     | '/status'
@@ -267,6 +277,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/forgot-password'
+    | '/live-demo'
     | '/pricing'
     | '/reset-password'
     | '/status'
@@ -293,6 +304,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/forgot-password'
+    | '/live-demo'
     | '/pricing'
     | '/reset-password'
     | '/status'
@@ -320,6 +332,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LiveDemoRoute: typeof LiveDemoRoute
   PricingRoute: typeof PricingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   StatusRoute: typeof StatusRoute
@@ -364,6 +377,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/live-demo': {
+      id: '/live-demo'
+      path: '/live-demo'
+      fullPath: '/live-demo'
+      preLoaderRoute: typeof LiveDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -520,6 +540,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  LiveDemoRoute: LiveDemoRoute,
   PricingRoute: PricingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   StatusRoute: StatusRoute,
