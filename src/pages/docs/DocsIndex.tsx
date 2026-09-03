@@ -1,14 +1,14 @@
 import { Link } from '@/lib/router-compat'
 import { DocsLayout } from '@/components/izenzo/DocsLayout'
 
-const cards = [
+const cards: [string, string, string][] = [
   ['Quickstart', 'Provision a workspace and mint your first record.', '/docs/quickstart'],
   ['Authentication', 'X-API-Key headers and key rotation.', '/docs/authentication'],
   ['Webhooks', 'Subscribe to match and settlement events.', '/docs/webhooks'],
   ['API Reference', 'Every endpoint, request and response.', '/docs/api'],
 ]
 
-const core = [
+const core: [string, string][] = [
   ['Trade Requests & Matches', '/docs/matches'],
   ['Counterparties', '/docs/counterparties'],
   ['Evidence Packs', '/docs/evidence'],
