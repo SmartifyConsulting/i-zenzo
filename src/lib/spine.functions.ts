@@ -5,7 +5,8 @@ type Ctx = { supabase: unknown; userId: string; claims: Record<string, unknown> 
 
 const json = (data: unknown) => data as Record<string, any>;
 
-function validate<T>(data: unknown): T {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function validate<T = any>(data: unknown): any {
   return (data ?? {}) as T;
 }
 

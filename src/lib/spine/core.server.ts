@@ -35,7 +35,8 @@ export function sha256(value: unknown): string {
   return createHash("sha256").update(payload).digest("hex");
 }
 
-export function must<T>(result: { data: T | null; error: { message: string } | null }, what: string): T {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function must<T = any>(result: { data: T | null; error: { message: string } | null }, what: string): any {
   if (result.error) throw new SpineError("DB_ERROR", `${what}: ${result.error.message}`);
   if (result.data == null) throw new SpineError("VALIDATION_FAILED", `${what}: not found`);
   return result.data;
