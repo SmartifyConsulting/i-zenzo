@@ -26,10 +26,16 @@ export function TextField({
   label,
   type = "text",
   placeholder,
+  value,
+  onChange,
+  required,
 }: {
   label: string;
   type?: string;
   placeholder?: string;
+  value?: string;
+  onChange?: (value: string) => void;
+  required?: boolean;
 }) {
   return (
     <div>
@@ -37,6 +43,8 @@ export function TextField({
       <input
         type={type}
         placeholder={placeholder}
+        required={required}
+        {...(onChange ? { value: value ?? "", onChange: (e) => onChange(e.target.value) } : {})}
         className="w-full h-11 rounded-md border border-border px-3 text-sm outline-none focus:border-emerald-brand"
       />
     </div>
@@ -47,10 +55,16 @@ export function PasswordField({
   label,
   placeholder,
   action,
+  value,
+  onChange,
+  required,
 }: {
   label: string;
   placeholder?: string;
   action?: ReactNode;
+  value?: string;
+  onChange?: (value: string) => void;
+  required?: boolean;
 }) {
   const [visible, setVisible] = useState(false);
   return (
@@ -63,6 +77,8 @@ export function PasswordField({
         <input
           type={visible ? "text" : "password"}
           placeholder={placeholder}
+          required={required}
+          {...(onChange ? { value: value ?? "", onChange: (e) => onChange(e.target.value) } : {})}
           className="w-full h-11 rounded-md border border-border pl-3 pr-11 text-sm outline-none focus:border-emerald-brand"
         />
         <button
@@ -78,11 +94,12 @@ export function PasswordField({
   );
 }
 
-export function SubmitButton({ children }: { children: ReactNode }) {
+export function SubmitButton({ children, disabled }: { children: ReactNode; disabled?: boolean }) {
   return (
     <button
       type="submit"
-      className="w-full h-11 rounded-md bg-emerald-brand text-primary-foreground text-sm font-semibold hover:bg-emerald-bright transition-colors"
+      disabled={disabled}
+      className="w-full h-11 rounded-md bg-emerald-brand text-primary-foreground text-sm font-semibold hover:bg-emerald-bright transition-colors disabled:opacity-60"
     >
       {children}
     </button>

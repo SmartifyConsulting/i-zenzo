@@ -12,11 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as LiveDemoRouteImport } from './routes/live-demo'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as TrustRouteImport } from './routes/trust'
 import { Route as WalkthroughRouteImport } from './routes/walkthrough'
+import { Route as CheckoutSessionIdRouteImport } from './routes/checkout.$sessionId'
 import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as DocsApiRouteImport } from './routes/docs.api'
 import { Route as DocsApiPricingRouteImport } from './routes/docs.api-pricing'
@@ -49,6 +51,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LiveDemoRoute = LiveDemoRouteImport.update({
+  id: '/live-demo',
+  path: '/live-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -72,6 +79,11 @@ const TrustRoute = TrustRouteImport.update({
 const WalkthroughRoute = WalkthroughRouteImport.update({
   id: '/walkthrough',
   path: '/walkthrough',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutSessionIdRoute = CheckoutSessionIdRouteImport.update({
+  id: '/checkout/$sessionId',
+  path: '/checkout/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocsIndexRoute = DocsIndexRouteImport.update({
@@ -160,11 +172,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/live-demo': typeof LiveDemoRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/status': typeof StatusRoute
   '/trust': typeof TrustRoute
   '/walkthrough': typeof WalkthroughRoute
+  '/checkout/$sessionId': typeof CheckoutSessionIdRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/api-pricing': typeof DocsApiPricingRoute
   '/docs/authentication': typeof DocsAuthenticationRoute
@@ -186,11 +200,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/live-demo': typeof LiveDemoRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/status': typeof StatusRoute
   '/trust': typeof TrustRoute
   '/walkthrough': typeof WalkthroughRoute
+  '/checkout/$sessionId': typeof CheckoutSessionIdRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/api-pricing': typeof DocsApiPricingRoute
   '/docs/authentication': typeof DocsAuthenticationRoute
@@ -213,11 +229,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/live-demo': typeof LiveDemoRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/status': typeof StatusRoute
   '/trust': typeof TrustRoute
   '/walkthrough': typeof WalkthroughRoute
+  '/checkout/$sessionId': typeof CheckoutSessionIdRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/api-pricing': typeof DocsApiPricingRoute
   '/docs/authentication': typeof DocsAuthenticationRoute
@@ -241,11 +259,13 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/forgot-password'
+    | '/live-demo'
     | '/pricing'
     | '/reset-password'
     | '/status'
     | '/trust'
     | '/walkthrough'
+    | '/checkout/$sessionId'
     | '/docs/api'
     | '/docs/api-pricing'
     | '/docs/authentication'
@@ -267,11 +287,13 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/forgot-password'
+    | '/live-demo'
     | '/pricing'
     | '/reset-password'
     | '/status'
     | '/trust'
     | '/walkthrough'
+    | '/checkout/$sessionId'
     | '/docs/api'
     | '/docs/api-pricing'
     | '/docs/authentication'
@@ -293,11 +315,13 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/forgot-password'
+    | '/live-demo'
     | '/pricing'
     | '/reset-password'
     | '/status'
     | '/trust'
     | '/walkthrough'
+    | '/checkout/$sessionId'
     | '/docs/api'
     | '/docs/api-pricing'
     | '/docs/authentication'
@@ -320,11 +344,13 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LiveDemoRoute: typeof LiveDemoRoute
   PricingRoute: typeof PricingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   StatusRoute: typeof StatusRoute
   TrustRoute: typeof TrustRoute
   WalkthroughRoute: typeof WalkthroughRoute
+  CheckoutSessionIdRoute: typeof CheckoutSessionIdRoute
   DocsApiRoute: typeof DocsApiRoute
   DocsApiPricingRoute: typeof DocsApiPricingRoute
   DocsAuthenticationRoute: typeof DocsAuthenticationRoute
@@ -366,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/live-demo': {
+      id: '/live-demo'
+      path: '/live-demo'
+      fullPath: '/live-demo'
+      preLoaderRoute: typeof LiveDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
@@ -399,6 +432,13 @@ declare module '@tanstack/react-router' {
       path: '/walkthrough'
       fullPath: '/walkthrough'
       preLoaderRoute: typeof WalkthroughRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/$sessionId': {
+      id: '/checkout/$sessionId'
+      path: '/checkout/$sessionId'
+      fullPath: '/checkout/$sessionId'
+      preLoaderRoute: typeof CheckoutSessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/docs/': {
@@ -520,11 +560,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  LiveDemoRoute: LiveDemoRoute,
   PricingRoute: PricingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   StatusRoute: StatusRoute,
   TrustRoute: TrustRoute,
   WalkthroughRoute: WalkthroughRoute,
+  CheckoutSessionIdRoute: CheckoutSessionIdRoute,
   DocsApiRoute: DocsApiRoute,
   DocsApiPricingRoute: DocsApiPricingRoute,
   DocsAuthenticationRoute: DocsAuthenticationRoute,

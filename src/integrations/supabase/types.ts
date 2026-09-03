@@ -14,6 +14,139 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_analyses: {
+        Row: {
+          created_at: string
+          id: string
+          output: Json
+          search_run_id: string
+          transaction_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          output?: Json
+          search_run_id: string
+          transaction_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          output?: Json
+          search_run_id?: string
+          transaction_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_analyses_search_run_id_fkey"
+            columns: ["search_run_id"]
+            isOneToOne: false
+            referencedRelation: "search_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_analyses_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          created_at: string
+          detail: Json
+          event: string
+          id: string
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          detail?: Json
+          event: string
+          id?: string
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          detail?: Json
+          event?: string
+          id?: string
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bid_offers: {
+        Row: {
+          actor_person: string | null
+          commercial: Json
+          contact: string | null
+          created_at: string
+          id: string
+          parent_id: string | null
+          represented_org: string | null
+          role: string | null
+          subject_description: string | null
+          subject_type: string | null
+          transaction_id: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          actor_person?: string | null
+          commercial?: Json
+          contact?: string | null
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          represented_org?: string | null
+          role?: string | null
+          subject_description?: string | null
+          subject_type?: string | null
+          transaction_id: string
+          user_id?: string
+          version?: number
+        }
+        Update: {
+          actor_person?: string | null
+          commercial?: Json
+          contact?: string | null
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          represented_org?: string | null
+          role?: string | null
+          subject_description?: string | null
+          subject_type?: string | null
+          transaction_id?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bid_offers_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       certificates: {
         Row: {
           certificate_number: string
@@ -48,6 +181,54 @@ export type Database = {
             columns: ["match_id"]
             isOneToOne: true
             referencedRelation: "trade_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      choices: {
+        Row: {
+          actor: string
+          counterparty_set_id: string
+          created_at: string
+          id: string
+          reason: string | null
+          selected_entity: Json
+          transaction_id: string
+          user_id: string
+        }
+        Insert: {
+          actor: string
+          counterparty_set_id: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+          selected_entity?: Json
+          transaction_id: string
+          user_id?: string
+        }
+        Update: {
+          actor?: string
+          counterparty_set_id?: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+          selected_entity?: Json
+          transaction_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "choices_counterparty_set_id_fkey"
+            columns: ["counterparty_set_id"]
+            isOneToOne: false
+            referencedRelation: "counterparty_sets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "choices_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
             referencedColumns: ["id"]
           },
         ]
@@ -91,6 +272,93 @@ export type Database = {
         }
         Relationships: []
       }
+      counterparty_sets: {
+        Row: {
+          created_at: string
+          decision_session_id: string
+          entities: Json
+          id: string
+          transaction_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          decision_session_id: string
+          entities?: Json
+          id?: string
+          transaction_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          decision_session_id?: string
+          entities?: Json
+          id?: string
+          transaction_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "counterparty_sets_decision_session_id_fkey"
+            columns: ["decision_session_id"]
+            isOneToOne: false
+            referencedRelation: "decision_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "counterparty_sets_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      decision_sessions: {
+        Row: {
+          ai_analysis_id: string
+          choice_set: Json | null
+          created_at: string
+          id: string
+          status: string
+          transaction_id: string
+          user_id: string
+        }
+        Insert: {
+          ai_analysis_id: string
+          choice_set?: Json | null
+          created_at?: string
+          id?: string
+          status?: string
+          transaction_id: string
+          user_id?: string
+        }
+        Update: {
+          ai_analysis_id?: string
+          choice_set?: Json | null
+          created_at?: string
+          id?: string
+          status?: string
+          transaction_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "decision_sessions_ai_analysis_id_fkey"
+            columns: ["ai_analysis_id"]
+            isOneToOne: false
+            referencedRelation: "ai_analyses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "decision_sessions_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evidence_packs: {
         Row: {
           document_type: string
@@ -131,6 +399,108 @@ export type Database = {
             columns: ["match_id"]
             isOneToOne: false
             referencedRelation: "trade_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      executions: {
+        Row: {
+          baseline: Json | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          status: string
+          transaction_id: string
+          user_id: string
+          wad_id: string
+        }
+        Insert: {
+          baseline?: Json | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          transaction_id: string
+          user_id?: string
+          wad_id: string
+        }
+        Update: {
+          baseline?: Json | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          transaction_id?: string
+          user_id?: string
+          wad_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "executions_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: true
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executions_wad_id_fkey"
+            columns: ["wad_id"]
+            isOneToOne: false
+            referencedRelation: "wads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      finality_records: {
+        Row: {
+          canonical_hash: string | null
+          certificate: Json | null
+          created_at: string
+          execution_id: string
+          finality_type: string
+          id: string
+          issued_at: string | null
+          status: string
+          transaction_id: string
+          user_id: string
+        }
+        Insert: {
+          canonical_hash?: string | null
+          certificate?: Json | null
+          created_at?: string
+          execution_id: string
+          finality_type?: string
+          id?: string
+          issued_at?: string | null
+          status?: string
+          transaction_id: string
+          user_id?: string
+        }
+        Update: {
+          canonical_hash?: string | null
+          certificate?: Json | null
+          created_at?: string
+          execution_id?: string
+          finality_type?: string
+          id?: string
+          issued_at?: string | null
+          status?: string
+          transaction_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "finality_records_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "executions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finality_records_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
             referencedColumns: ["id"]
           },
         ]
@@ -179,6 +549,279 @@ export type Database = {
           },
         ]
       }
+      intents: {
+        Row: {
+          choice_id: string
+          created_at: string
+          frozen_snapshot: Json
+          id: string
+          transaction_id: string
+          user_id: string
+        }
+        Insert: {
+          choice_id: string
+          created_at?: string
+          frozen_snapshot: Json
+          id?: string
+          transaction_id: string
+          user_id?: string
+        }
+        Update: {
+          choice_id?: string
+          created_at?: string
+          frozen_snapshot?: Json
+          id?: string
+          transaction_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intents_choice_id_fkey"
+            columns: ["choice_id"]
+            isOneToOne: false
+            referencedRelation: "choices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intents_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      memory_events: {
+        Row: {
+          event_hash: string
+          event_type: string
+          id: string
+          occurred_at: string
+          payload: Json
+          prev_hash: string | null
+          seq: number
+          transaction_id: string
+          user_id: string
+        }
+        Insert: {
+          event_hash: string
+          event_type: string
+          id?: string
+          occurred_at?: string
+          payload?: Json
+          prev_hash?: string | null
+          seq?: number
+          transaction_id: string
+          user_id?: string
+        }
+        Update: {
+          event_hash?: string
+          event_type?: string
+          id?: string
+          occurred_at?: string
+          payload?: Json
+          prev_hash?: string | null
+          seq?: number
+          transaction_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memory_events_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      milestones: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          evidence_hash: string | null
+          execution_id: string
+          id: string
+          status: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          evidence_hash?: string | null
+          execution_id: string
+          id?: string
+          status?: string
+          title: string
+          user_id?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          evidence_hash?: string | null
+          execution_id?: string
+          id?: string
+          status?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "milestones_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "executions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      other_documents: {
+        Row: {
+          content_hash: string
+          created_at: string
+          extracted_facts: Json
+          id: string
+          issuer: string | null
+          semantic_type: string
+          subject: string | null
+          transaction_id: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          content_hash: string
+          created_at?: string
+          extracted_facts?: Json
+          id?: string
+          issuer?: string | null
+          semantic_type: string
+          subject?: string | null
+          transaction_id: string
+          user_id?: string
+          version?: number
+        }
+        Update: {
+          content_hash?: string
+          created_at?: string
+          extracted_facts?: Json
+          id?: string
+          issuer?: string | null
+          semantic_type?: string
+          subject?: string | null
+          transaction_id?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "other_documents_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          settled_at: string | null
+          status: string
+          tokens: number
+          usd: number
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          settled_at?: string | null
+          status?: string
+          tokens: number
+          usd: number
+          user_id?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          settled_at?: string | null
+          status?: string
+          tokens?: number
+          usd?: number
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_sessions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pois: {
+        Row: {
+          canonical_hash: string | null
+          created_at: string
+          id: string
+          intent_id: string
+          sealed_at: string | null
+          status: string
+          token_entry_id: string | null
+          transaction_id: string
+          user_id: string
+        }
+        Insert: {
+          canonical_hash?: string | null
+          created_at?: string
+          id?: string
+          intent_id: string
+          sealed_at?: string | null
+          status?: string
+          token_entry_id?: string | null
+          transaction_id: string
+          user_id?: string
+        }
+        Update: {
+          canonical_hash?: string | null
+          created_at?: string
+          id?: string
+          intent_id?: string
+          sealed_at?: string | null
+          status?: string
+          token_entry_id?: string | null
+          transaction_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pois_intent_id_fkey"
+            columns: ["intent_id"]
+            isOneToOne: false
+            referencedRelation: "intents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pois_token_entry_id_fkey"
+            columns: ["token_entry_id"]
+            isOneToOne: false
+            referencedRelation: "token_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pois_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: true
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pricing_plans: {
         Row: {
           currency: string
@@ -214,6 +857,158 @@ export type Database = {
           tagline?: string
         }
         Relationships: []
+      }
+      search_runs: {
+        Row: {
+          candidates: Json
+          created_at: string
+          id: string
+          queries: Json
+          transaction_id: string
+          user_id: string
+        }
+        Insert: {
+          candidates?: Json
+          created_at?: string
+          id?: string
+          queries?: Json
+          transaction_id: string
+          user_id?: string
+        }
+        Update: {
+          candidates?: Json
+          created_at?: string
+          id?: string
+          queries?: Json
+          transaction_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "search_runs_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_news_items: {
+        Row: {
+          created_at: string
+          excerpt: string | null
+          id: string
+          observed_at: string | null
+          publisher: string | null
+          source_url: string | null
+          subject_match: string | null
+          transaction_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          observed_at?: string | null
+          publisher?: string | null
+          source_url?: string | null
+          subject_match?: string | null
+          transaction_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          observed_at?: string | null
+          publisher?: string | null
+          source_url?: string | null
+          subject_match?: string | null
+          transaction_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_news_items_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spine_api_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          label: string | null
+          revoked_at: string | null
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          label?: string | null
+          revoked_at?: string | null
+          user_id?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          label?: string | null
+          revoked_at?: string | null
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spine_api_keys_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spine_transactions: {
+        Row: {
+          created_at: string
+          id: string
+          lifecycle: string
+          trading_stage: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lifecycle?: string
+          trading_stage?: string
+          user_id?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lifecycle?: string
+          trading_stage?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spine_transactions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       status_incidents: {
         Row: {
@@ -285,6 +1080,57 @@ export type Database = {
           uptime_90d?: number
         }
         Relationships: []
+      }
+      token_entries: {
+        Row: {
+          created_at: string
+          gate_type: string
+          id: string
+          idempotency_key: string | null
+          tokens: number
+          transaction_id: string | null
+          usd: number
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          gate_type: string
+          id?: string
+          idempotency_key?: string | null
+          tokens: number
+          transaction_id?: string | null
+          usd: number
+          user_id?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          gate_type?: string
+          id?: string
+          idempotency_key?: string | null
+          tokens?: number
+          transaction_id?: string | null
+          usd?: number
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "token_entries_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "token_entries_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       trade_matches: {
         Row: {
@@ -379,6 +1225,67 @@ export type Database = {
         }
         Relationships: []
       }
+      wads: {
+        Row: {
+          created_at: string
+          decided_at: string | null
+          decision: string | null
+          id: string
+          poi_id: string
+          predicates: Json | null
+          status: string
+          token_entry_id: string | null
+          transaction_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          decided_at?: string | null
+          decision?: string | null
+          id?: string
+          poi_id: string
+          predicates?: Json | null
+          status?: string
+          token_entry_id?: string | null
+          transaction_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          decided_at?: string | null
+          decision?: string | null
+          id?: string
+          poi_id?: string
+          predicates?: Json | null
+          status?: string
+          token_entry_id?: string | null
+          transaction_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wads_poi_id_fkey"
+            columns: ["poi_id"]
+            isOneToOne: false
+            referencedRelation: "pois"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wads_token_entry_id_fkey"
+            columns: ["token_entry_id"]
+            isOneToOne: false
+            referencedRelation: "token_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wads_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: true
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       webhook_events: {
         Row: {
           attempts: number
@@ -419,6 +1326,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      workspaces: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {

@@ -21,6 +21,7 @@ const developers: Item[] = [
   { label: 'Documentation', href: '/docs', desc: 'Guides and core resources' },
   { label: 'API Reference', href: '/docs/api', desc: 'Full endpoint reference' },
   { label: 'Webhooks', href: '/docs/webhooks', desc: 'Event notifications' },
+  { label: 'Live Backend Demo', href: '/live-demo', desc: 'Run the real API end-to-end' },
   { label: 'System Status', href: '/status', desc: 'Platform status' },
 ]
 
