@@ -14,7 +14,391 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      certificates: {
+        Row: {
+          certificate_number: string
+          id: string
+          issued_at: string
+          match_id: string
+          root_hash: string
+          status: string
+          verifier_url: string
+        }
+        Insert: {
+          certificate_number: string
+          id?: string
+          issued_at?: string
+          match_id: string
+          root_hash: string
+          status?: string
+          verifier_url: string
+        }
+        Update: {
+          certificate_number?: string
+          id?: string
+          issued_at?: string
+          match_id?: string
+          root_hash?: string
+          status?: string
+          verifier_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificates_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: true
+            referencedRelation: "trade_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      counterparties: {
+        Row: {
+          created_at: string
+          entity_type: string
+          id: string
+          jurisdiction: string
+          kyc_status: string
+          legal_name: string
+          lei: string | null
+          onboarded_at: string
+          risk_tier: string
+          short_code: string
+        }
+        Insert: {
+          created_at?: string
+          entity_type: string
+          id?: string
+          jurisdiction: string
+          kyc_status?: string
+          legal_name: string
+          lei?: string | null
+          onboarded_at?: string
+          risk_tier?: string
+          short_code: string
+        }
+        Update: {
+          created_at?: string
+          entity_type?: string
+          id?: string
+          jurisdiction?: string
+          kyc_status?: string
+          legal_name?: string
+          lei?: string | null
+          onboarded_at?: string
+          risk_tier?: string
+          short_code?: string
+        }
+        Relationships: []
+      }
+      evidence_packs: {
+        Row: {
+          document_type: string
+          filename: string
+          gate_number: number | null
+          id: string
+          match_id: string
+          sha256: string
+          size_bytes: number
+          uploaded_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          document_type: string
+          filename: string
+          gate_number?: number | null
+          id?: string
+          match_id: string
+          sha256: string
+          size_bytes: number
+          uploaded_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          document_type?: string
+          filename?: string
+          gate_number?: number | null
+          id?: string
+          match_id?: string
+          sha256?: string
+          size_bytes?: number
+          uploaded_at?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_packs_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "trade_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gate_events: {
+        Row: {
+          actor: string
+          created_at: string
+          gate_name: string
+          gate_number: number
+          hash: string | null
+          id: string
+          match_id: string
+          sealed_at: string | null
+          status: string
+        }
+        Insert: {
+          actor: string
+          created_at?: string
+          gate_name: string
+          gate_number: number
+          hash?: string | null
+          id?: string
+          match_id: string
+          sealed_at?: string | null
+          status?: string
+        }
+        Update: {
+          actor?: string
+          created_at?: string
+          gate_name?: string
+          gate_number?: number
+          hash?: string | null
+          id?: string
+          match_id?: string
+          sealed_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gate_events_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "trade_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pricing_plans: {
+        Row: {
+          currency: string
+          features: Json
+          id: string
+          match_allowance: string
+          monthly_price: number | null
+          name: string
+          slug: string
+          sort_order: number
+          tagline: string
+        }
+        Insert: {
+          currency?: string
+          features?: Json
+          id?: string
+          match_allowance: string
+          monthly_price?: number | null
+          name: string
+          slug: string
+          sort_order?: number
+          tagline: string
+        }
+        Update: {
+          currency?: string
+          features?: Json
+          id?: string
+          match_allowance?: string
+          monthly_price?: number | null
+          name?: string
+          slug?: string
+          sort_order?: number
+          tagline?: string
+        }
+        Relationships: []
+      }
+      status_incidents: {
+        Row: {
+          body: string
+          id: string
+          impact: string
+          resolved_at: string | null
+          service_id: string
+          started_at: string
+          status: string
+          title: string
+        }
+        Insert: {
+          body: string
+          id?: string
+          impact: string
+          resolved_at?: string | null
+          service_id: string
+          started_at: string
+          status?: string
+          title: string
+        }
+        Update: {
+          body?: string
+          id?: string
+          impact?: string
+          resolved_at?: string | null
+          service_id?: string
+          started_at?: string
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "status_incidents_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "status_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      status_services: {
+        Row: {
+          description: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          status: string
+          uptime_90d: number
+        }
+        Insert: {
+          description: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          status?: string
+          uptime_90d?: number
+        }
+        Update: {
+          description?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          status?: string
+          uptime_90d?: number
+        }
+        Relationships: []
+      }
+      trade_matches: {
+        Row: {
+          buyer_id: string
+          commodity: string
+          created_at: string
+          currency: string
+          gates_cleared: number
+          id: string
+          incoterm: string
+          notional_value: number
+          opened_at: string
+          price_per_unit: number
+          quantity: number
+          reference: string
+          seller_id: string
+          settled_at: string | null
+          status: string
+          unit: string
+        }
+        Insert: {
+          buyer_id: string
+          commodity: string
+          created_at?: string
+          currency?: string
+          gates_cleared?: number
+          id?: string
+          incoterm: string
+          notional_value: number
+          opened_at?: string
+          price_per_unit: number
+          quantity: number
+          reference: string
+          seller_id: string
+          settled_at?: string | null
+          status?: string
+          unit: string
+        }
+        Update: {
+          buyer_id?: string
+          commodity?: string
+          created_at?: string
+          currency?: string
+          gates_cleared?: number
+          id?: string
+          incoterm?: string
+          notional_value?: number
+          opened_at?: string
+          price_per_unit?: number
+          quantity?: number
+          reference?: string
+          seller_id?: string
+          settled_at?: string | null
+          status?: string
+          unit?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_matches_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "counterparties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trade_matches_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "counterparties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webhook_events: {
+        Row: {
+          attempts: number
+          delivered: boolean
+          endpoint_url: string
+          event_type: string
+          id: string
+          match_id: string | null
+          occurred_at: string
+          response_code: number | null
+        }
+        Insert: {
+          attempts?: number
+          delivered?: boolean
+          endpoint_url: string
+          event_type: string
+          id?: string
+          match_id?: string | null
+          occurred_at?: string
+          response_code?: number | null
+        }
+        Update: {
+          attempts?: number
+          delivered?: boolean
+          endpoint_url?: string
+          event_type?: string
+          id?: string
+          match_id?: string | null
+          occurred_at?: string
+          response_code?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_events_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "trade_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
