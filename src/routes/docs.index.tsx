@@ -4,7 +4,7 @@ import DocsIndex from "@/pages/docs/DocsIndex";
 const title = "Developer Docs — Izenzo";
 const description = "Build directly on the Izenzo Governance Network: quickstart, authentication, webhooks and the full API reference.";
 
-export const Route = createFileRoute("/docs")({
+export const Route = createFileRoute("/docs/")({
   head: () => ({
     meta: [
       { title },

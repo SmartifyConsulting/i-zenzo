@@ -10,33 +10,298 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as StatusRouteImport } from './routes/status'
+import { Route as TrustRouteImport } from './routes/trust'
+import { Route as WalkthroughRouteImport } from './routes/walkthrough'
+import { Route as DocsIndexRouteImport } from './routes/docs.index'
+import { Route as DocsApiRouteImport } from './routes/docs.api'
+import { Route as DocsApiPricingRouteImport } from './routes/docs.api-pricing'
+import { Route as DocsAuthenticationRouteImport } from './routes/docs.authentication'
+import { Route as DocsCounterpartiesRouteImport } from './routes/docs.counterparties'
+import { Route as DocsErrorsRouteImport } from './routes/docs.errors'
+import { Route as DocsEvidenceRouteImport } from './routes/docs.evidence'
+import { Route as DocsMatchesRouteImport } from './routes/docs.matches'
+import { Route as DocsQuickstartRouteImport } from './routes/docs.quickstart'
+import { Route as DocsWebhooksRouteImport } from './routes/docs.webhooks'
+import { Route as ProductsAuditLedgerRouteImport } from './routes/products.audit-ledger'
+import { Route as ProductsComplianceEngineRouteImport } from './routes/products.compliance-engine'
+import { Route as ProductsTradeDeskRouteImport } from './routes/products.trade-desk'
+import { Route as SolutionsFinanceRouteImport } from './routes/solutions.finance'
+import { Route as SolutionsSovereignsRouteImport } from './routes/solutions.sovereigns'
+import { Route as SolutionsTradersRouteImport } from './routes/solutions.traders'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatusRoute = StatusRouteImport.update({
+  id: '/status',
+  path: '/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrustRoute = TrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalkthroughRoute = WalkthroughRouteImport.update({
+  id: '/walkthrough',
+  path: '/walkthrough',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsIndexRoute = DocsIndexRouteImport.update({
+  id: '/docs/',
+  path: '/docs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsApiRoute = DocsApiRouteImport.update({
+  id: '/docs/api',
+  path: '/docs/api',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsApiPricingRoute = DocsApiPricingRouteImport.update({
+  id: '/docs/api-pricing',
+  path: '/docs/api-pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsAuthenticationRoute = DocsAuthenticationRouteImport.update({
+  id: '/docs/authentication',
+  path: '/docs/authentication',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsCounterpartiesRoute = DocsCounterpartiesRouteImport.update({
+  id: '/docs/counterparties',
+  path: '/docs/counterparties',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsErrorsRoute = DocsErrorsRouteImport.update({
+  id: '/docs/errors',
+  path: '/docs/errors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsEvidenceRoute = DocsEvidenceRouteImport.update({
+  id: '/docs/evidence',
+  path: '/docs/evidence',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsMatchesRoute = DocsMatchesRouteImport.update({
+  id: '/docs/matches',
+  path: '/docs/matches',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsQuickstartRoute = DocsQuickstartRouteImport.update({
+  id: '/docs/quickstart',
+  path: '/docs/quickstart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsWebhooksRoute = DocsWebhooksRouteImport.update({
+  id: '/docs/webhooks',
+  path: '/docs/webhooks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsAuditLedgerRoute = ProductsAuditLedgerRouteImport.update({
+  id: '/products/audit-ledger',
+  path: '/products/audit-ledger',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsComplianceEngineRoute =
+  ProductsComplianceEngineRouteImport.update({
+    id: '/products/compliance-engine',
+    path: '/products/compliance-engine',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ProductsTradeDeskRoute = ProductsTradeDeskRouteImport.update({
+  id: '/products/trade-desk',
+  path: '/products/trade-desk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SolutionsFinanceRoute = SolutionsFinanceRouteImport.update({
+  id: '/solutions/finance',
+  path: '/solutions/finance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SolutionsSovereignsRoute = SolutionsSovereignsRouteImport.update({
+  id: '/solutions/sovereigns',
+  path: '/solutions/sovereigns',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SolutionsTradersRoute = SolutionsTradersRouteImport.update({
+  id: '/solutions/traders',
+  path: '/solutions/traders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/pricing': typeof PricingRoute
+  '/status': typeof StatusRoute
+  '/trust': typeof TrustRoute
+  '/walkthrough': typeof WalkthroughRoute
+  '/docs/api': typeof DocsApiRoute
+  '/docs/api-pricing': typeof DocsApiPricingRoute
+  '/docs/authentication': typeof DocsAuthenticationRoute
+  '/docs/counterparties': typeof DocsCounterpartiesRoute
+  '/docs/errors': typeof DocsErrorsRoute
+  '/docs/evidence': typeof DocsEvidenceRoute
+  '/docs/matches': typeof DocsMatchesRoute
+  '/docs/quickstart': typeof DocsQuickstartRoute
+  '/docs/webhooks': typeof DocsWebhooksRoute
+  '/products/audit-ledger': typeof ProductsAuditLedgerRoute
+  '/products/compliance-engine': typeof ProductsComplianceEngineRoute
+  '/products/trade-desk': typeof ProductsTradeDeskRoute
+  '/solutions/finance': typeof SolutionsFinanceRoute
+  '/solutions/sovereigns': typeof SolutionsSovereignsRoute
+  '/solutions/traders': typeof SolutionsTradersRoute
+  '/docs/': typeof DocsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pricing': typeof PricingRoute
+  '/status': typeof StatusRoute
+  '/trust': typeof TrustRoute
+  '/walkthrough': typeof WalkthroughRoute
+  '/docs/api': typeof DocsApiRoute
+  '/docs/api-pricing': typeof DocsApiPricingRoute
+  '/docs/authentication': typeof DocsAuthenticationRoute
+  '/docs/counterparties': typeof DocsCounterpartiesRoute
+  '/docs/errors': typeof DocsErrorsRoute
+  '/docs/evidence': typeof DocsEvidenceRoute
+  '/docs/matches': typeof DocsMatchesRoute
+  '/docs/quickstart': typeof DocsQuickstartRoute
+  '/docs/webhooks': typeof DocsWebhooksRoute
+  '/products/audit-ledger': typeof ProductsAuditLedgerRoute
+  '/products/compliance-engine': typeof ProductsComplianceEngineRoute
+  '/products/trade-desk': typeof ProductsTradeDeskRoute
+  '/solutions/finance': typeof SolutionsFinanceRoute
+  '/solutions/sovereigns': typeof SolutionsSovereignsRoute
+  '/solutions/traders': typeof SolutionsTradersRoute
+  '/docs': typeof DocsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/pricing': typeof PricingRoute
+  '/status': typeof StatusRoute
+  '/trust': typeof TrustRoute
+  '/walkthrough': typeof WalkthroughRoute
+  '/docs/api': typeof DocsApiRoute
+  '/docs/api-pricing': typeof DocsApiPricingRoute
+  '/docs/authentication': typeof DocsAuthenticationRoute
+  '/docs/counterparties': typeof DocsCounterpartiesRoute
+  '/docs/errors': typeof DocsErrorsRoute
+  '/docs/evidence': typeof DocsEvidenceRoute
+  '/docs/matches': typeof DocsMatchesRoute
+  '/docs/quickstart': typeof DocsQuickstartRoute
+  '/docs/webhooks': typeof DocsWebhooksRoute
+  '/products/audit-ledger': typeof ProductsAuditLedgerRoute
+  '/products/compliance-engine': typeof ProductsComplianceEngineRoute
+  '/products/trade-desk': typeof ProductsTradeDeskRoute
+  '/solutions/finance': typeof SolutionsFinanceRoute
+  '/solutions/sovereigns': typeof SolutionsSovereignsRoute
+  '/solutions/traders': typeof SolutionsTradersRoute
+  '/docs/': typeof DocsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/pricing'
+    | '/status'
+    | '/trust'
+    | '/walkthrough'
+    | '/docs/api'
+    | '/docs/api-pricing'
+    | '/docs/authentication'
+    | '/docs/counterparties'
+    | '/docs/errors'
+    | '/docs/evidence'
+    | '/docs/matches'
+    | '/docs/quickstart'
+    | '/docs/webhooks'
+    | '/products/audit-ledger'
+    | '/products/compliance-engine'
+    | '/products/trade-desk'
+    | '/solutions/finance'
+    | '/solutions/sovereigns'
+    | '/solutions/traders'
+    | '/docs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/pricing'
+    | '/status'
+    | '/trust'
+    | '/walkthrough'
+    | '/docs/api'
+    | '/docs/api-pricing'
+    | '/docs/authentication'
+    | '/docs/counterparties'
+    | '/docs/errors'
+    | '/docs/evidence'
+    | '/docs/matches'
+    | '/docs/quickstart'
+    | '/docs/webhooks'
+    | '/products/audit-ledger'
+    | '/products/compliance-engine'
+    | '/products/trade-desk'
+    | '/solutions/finance'
+    | '/solutions/sovereigns'
+    | '/solutions/traders'
+    | '/docs'
+  id:
+    | '__root__'
+    | '/'
+    | '/pricing'
+    | '/status'
+    | '/trust'
+    | '/walkthrough'
+    | '/docs/api'
+    | '/docs/api-pricing'
+    | '/docs/authentication'
+    | '/docs/counterparties'
+    | '/docs/errors'
+    | '/docs/evidence'
+    | '/docs/matches'
+    | '/docs/quickstart'
+    | '/docs/webhooks'
+    | '/products/audit-ledger'
+    | '/products/compliance-engine'
+    | '/products/trade-desk'
+    | '/solutions/finance'
+    | '/solutions/sovereigns'
+    | '/solutions/traders'
+    | '/docs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PricingRoute: typeof PricingRoute
+  StatusRoute: typeof StatusRoute
+  TrustRoute: typeof TrustRoute
+  WalkthroughRoute: typeof WalkthroughRoute
+  DocsApiRoute: typeof DocsApiRoute
+  DocsApiPricingRoute: typeof DocsApiPricingRoute
+  DocsAuthenticationRoute: typeof DocsAuthenticationRoute
+  DocsCounterpartiesRoute: typeof DocsCounterpartiesRoute
+  DocsErrorsRoute: typeof DocsErrorsRoute
+  DocsEvidenceRoute: typeof DocsEvidenceRoute
+  DocsMatchesRoute: typeof DocsMatchesRoute
+  DocsQuickstartRoute: typeof DocsQuickstartRoute
+  DocsWebhooksRoute: typeof DocsWebhooksRoute
+  ProductsAuditLedgerRoute: typeof ProductsAuditLedgerRoute
+  ProductsComplianceEngineRoute: typeof ProductsComplianceEngineRoute
+  ProductsTradeDeskRoute: typeof ProductsTradeDeskRoute
+  SolutionsFinanceRoute: typeof SolutionsFinanceRoute
+  SolutionsSovereignsRoute: typeof SolutionsSovereignsRoute
+  SolutionsTradersRoute: typeof SolutionsTradersRoute
+  DocsIndexRoute: typeof DocsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +313,171 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/status': {
+      id: '/status'
+      path: '/status'
+      fullPath: '/status'
+      preLoaderRoute: typeof StatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trust': {
+      id: '/trust'
+      path: '/trust'
+      fullPath: '/trust'
+      preLoaderRoute: typeof TrustRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/walkthrough': {
+      id: '/walkthrough'
+      path: '/walkthrough'
+      fullPath: '/walkthrough'
+      preLoaderRoute: typeof WalkthroughRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/': {
+      id: '/docs/'
+      path: '/docs'
+      fullPath: '/docs/'
+      preLoaderRoute: typeof DocsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/api': {
+      id: '/docs/api'
+      path: '/docs/api'
+      fullPath: '/docs/api'
+      preLoaderRoute: typeof DocsApiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/api-pricing': {
+      id: '/docs/api-pricing'
+      path: '/docs/api-pricing'
+      fullPath: '/docs/api-pricing'
+      preLoaderRoute: typeof DocsApiPricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/authentication': {
+      id: '/docs/authentication'
+      path: '/docs/authentication'
+      fullPath: '/docs/authentication'
+      preLoaderRoute: typeof DocsAuthenticationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/counterparties': {
+      id: '/docs/counterparties'
+      path: '/docs/counterparties'
+      fullPath: '/docs/counterparties'
+      preLoaderRoute: typeof DocsCounterpartiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/errors': {
+      id: '/docs/errors'
+      path: '/docs/errors'
+      fullPath: '/docs/errors'
+      preLoaderRoute: typeof DocsErrorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/evidence': {
+      id: '/docs/evidence'
+      path: '/docs/evidence'
+      fullPath: '/docs/evidence'
+      preLoaderRoute: typeof DocsEvidenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/matches': {
+      id: '/docs/matches'
+      path: '/docs/matches'
+      fullPath: '/docs/matches'
+      preLoaderRoute: typeof DocsMatchesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/quickstart': {
+      id: '/docs/quickstart'
+      path: '/docs/quickstart'
+      fullPath: '/docs/quickstart'
+      preLoaderRoute: typeof DocsQuickstartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/webhooks': {
+      id: '/docs/webhooks'
+      path: '/docs/webhooks'
+      fullPath: '/docs/webhooks'
+      preLoaderRoute: typeof DocsWebhooksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products/audit-ledger': {
+      id: '/products/audit-ledger'
+      path: '/products/audit-ledger'
+      fullPath: '/products/audit-ledger'
+      preLoaderRoute: typeof ProductsAuditLedgerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products/compliance-engine': {
+      id: '/products/compliance-engine'
+      path: '/products/compliance-engine'
+      fullPath: '/products/compliance-engine'
+      preLoaderRoute: typeof ProductsComplianceEngineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products/trade-desk': {
+      id: '/products/trade-desk'
+      path: '/products/trade-desk'
+      fullPath: '/products/trade-desk'
+      preLoaderRoute: typeof ProductsTradeDeskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solutions/finance': {
+      id: '/solutions/finance'
+      path: '/solutions/finance'
+      fullPath: '/solutions/finance'
+      preLoaderRoute: typeof SolutionsFinanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solutions/sovereigns': {
+      id: '/solutions/sovereigns'
+      path: '/solutions/sovereigns'
+      fullPath: '/solutions/sovereigns'
+      preLoaderRoute: typeof SolutionsSovereignsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solutions/traders': {
+      id: '/solutions/traders'
+      path: '/solutions/traders'
+      fullPath: '/solutions/traders'
+      preLoaderRoute: typeof SolutionsTradersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PricingRoute: PricingRoute,
+  StatusRoute: StatusRoute,
+  TrustRoute: TrustRoute,
+  WalkthroughRoute: WalkthroughRoute,
+  DocsApiRoute: DocsApiRoute,
+  DocsApiPricingRoute: DocsApiPricingRoute,
+  DocsAuthenticationRoute: DocsAuthenticationRoute,
+  DocsCounterpartiesRoute: DocsCounterpartiesRoute,
+  DocsErrorsRoute: DocsErrorsRoute,
+  DocsEvidenceRoute: DocsEvidenceRoute,
+  DocsMatchesRoute: DocsMatchesRoute,
+  DocsQuickstartRoute: DocsQuickstartRoute,
+  DocsWebhooksRoute: DocsWebhooksRoute,
+  ProductsAuditLedgerRoute: ProductsAuditLedgerRoute,
+  ProductsComplianceEngineRoute: ProductsComplianceEngineRoute,
+  ProductsTradeDeskRoute: ProductsTradeDeskRoute,
+  SolutionsFinanceRoute: SolutionsFinanceRoute,
+  SolutionsSovereignsRoute: SolutionsSovereignsRoute,
+  SolutionsTradersRoute: SolutionsTradersRoute,
+  DocsIndexRoute: DocsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
