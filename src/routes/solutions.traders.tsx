@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Home from "@/pages/Home";
+import Traders from "@/pages/solutions/Traders";
 
-const title = "Izenzo — Governance Infrastructure for Institutional Trade";
-const description =
-  "One cryptographic network for institutional commodity trade: turnkey Trade Desk, Compliance Profile risk management, and a hash-sealed, independently verifiable API.";
+const title = "For Traders — Izenzo";
+const description = "Close cross-border commodity deals faster with governed counterparty discovery and cryptographic Proof of Intent.";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/solutions/traders")({
   head: () => ({
     meta: [
       { title },
@@ -16,5 +15,5 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Home,
+  component: Traders,
 });

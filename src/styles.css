@@ -142,3 +142,54 @@
     color: var(--color-foreground);
   }
 }
+
+/* ── Izenzo look & feel ─────────────────────────────────────────────── */
+
+@theme {
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --color-emerald-brand: oklch(0.53 0.12 163);
+  --color-emerald-bright: oklch(0.46 0.105 163);
+  --color-emerald-muted: oklch(0.952 0.029 163);
+  --color-emerald-950: oklch(0.22 0.05 163);
+}
+
+:root {
+  --radius: 0.5rem;
+  --foreground: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.208 0.042 265.755);
+  --primary: oklch(0.53 0.12 163);
+  --primary-foreground: oklch(1 0 0);
+  --muted: oklch(0.984 0.003 247.858);
+  --ring: oklch(0.53 0.12 163);
+}
+
+.gradient-text {
+  background-image: linear-gradient(135deg, oklch(0.53 0.12 163) 0%, oklch(0.68 0.115 180) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.mesh-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.mesh-bg span {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 22s linear infinite;
+}
