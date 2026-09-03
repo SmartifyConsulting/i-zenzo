@@ -1,4 +1,4 @@
-import type { AnchorHTMLAttributes, ReactNode } from "react";
+import type { AnchorHTMLAttributes, ComponentType, ReactNode } from "react";
 import { Link as RouterLink, useRouterState } from "@tanstack/react-router";
 
 type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & {
@@ -10,7 +10,7 @@ type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & {
  * Thin compatibility wrapper so ported page components can use a plain
  * string `to` prop while still routing through TanStack Router.
  */
-const AnyRouterLink = RouterLink as unknown as React.ComponentType<Record<string, unknown>>;
+const AnyRouterLink = RouterLink as unknown as ComponentType<Record<string, unknown>>;
 
 export function Link({ to, children, ...rest }: LinkProps) {
   if (/^(https?:|mailto:|tel:|#)/.test(to)) {
