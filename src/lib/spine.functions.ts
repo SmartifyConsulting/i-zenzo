@@ -3,7 +3,8 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 type Ctx = { supabase: unknown; userId: string; claims: Record<string, unknown> };
 
-const json = (data: unknown) => data as Record<string, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const json = (data: unknown): any => data;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function validate<T = any>(data: unknown): any {
