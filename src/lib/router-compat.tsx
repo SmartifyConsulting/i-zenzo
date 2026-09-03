@@ -10,6 +10,8 @@ type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & {
  * Thin compatibility wrapper so ported page components can use a plain
  * string `to` prop while still routing through TanStack Router.
  */
+const AnyRouterLink = RouterLink as unknown as (props: Record<string, unknown>) => ReactNode;
+
 export function Link({ to, children, ...rest }: LinkProps) {
   if (/^(https?:|mailto:|tel:|#)/.test(to)) {
     return (
@@ -18,11 +20,7 @@ export function Link({ to, children, ...rest }: LinkProps) {
       </a>
     );
   }
-  return (
-    <RouterLink to={to as never} {...rest}>
-      {children}
-    </RouterLink>
-  );
+  return AnyRouterLink({ to, ...rest, children });
 }
 
 export function useLocation() {
