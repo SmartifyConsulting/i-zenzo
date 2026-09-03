@@ -1,35 +1,29 @@
-# Izenzo Look-and-Feel UI
+# Pull the updated izenzo-inspired code into this app
 
-Build the full marketing + docs interface from the `look-and-feel-clone` branch of `SmartifyConsulting/izenzo-inspired`, matching izenzo.co.za exactly: white background with soft emerald/indigo mesh glow, deep-emerald ink (`#0a2a1f`-family) primary, emerald accent on key words, Inter typography, mono uppercase technical labels, 6px radii, 1280px container, fixed 80px translucent header.
+The `look-and-feel-clone` branch has moved on since the first port. Latest commit: "Update RUN.md for the payment gateway and real auth flow". I can't switch which GitHub repo this project syncs to (your project is linked to `i-zenzo`, which only has `main`) — but I can re-fetch that branch and re-apply everything it contains here.
 
-## Pages
+## What changed upstream
 
-Every path from the repo's router gets its own route file.
+**UI updates** to Home, Auth, Pricing, Status, Trust, Walkthrough, Navbar, Footer, Logo, DocsLayout and shared UI primitives.
 
-- `/` — home: badge pill, split-color hero headline, dual CTA, mono standards ticker, product/solution sections, certificate mock, footer
-- Products: `/products/trade-desk`, `/products/compliance-engine`, `/products/audit-ledger`
-- Solutions: `/solutions/traders`, `/solutions/finance`, `/solutions/sovereigns`
-- `/pricing`, `/walkthrough`, `/trust`, `/status`, `/auth`
-- Docs (sidebar layout): `/docs`, `/docs/api`, plus stub pages for quickstart, authentication, matches, counterparties, evidence, webhooks, api-pricing, errors
+**Two new pages**
+- `/live-demo` — runs the full Trading → POI → WaD → Execution → Finality spine live and shows each stage light up, plus a Memory hash-chain view
+- `/checkout/:sessionId` — token-purchase checkout that settles via a signed callback
 
-Copy is taken verbatim from izenzo.co.za / the repo's page components.
+**A real backend** (previously the repo was static). Express + SQLite with ~23 tables and endpoints for signup/login, token purchases and payment sessions, bid offers, documents, news items, search runs, AI analyses, decision sessions, counterparties, intents, POIs, WaDs, executions, milestones, finality records, CDAs, transaction timeline and lineage, wallets, API keys, and audit logs. It also does live sanctions screening against the checked-in OFAC SDN list, non-waivable token gates, SHA-256 sealing, and an append-only hash-chained memory substrate.
 
-## Shared chrome
+## What I'll do
 
-- Header with hover dropdowns for Products, Solutions, Developers, Resources; Log In + Create Account buttons; mobile menu
-- Footer with link columns
-- Docs sidebar layout wrapping all `/docs/*` pages
-- Reusable UI primitives ported from the repo: buttons, cards, badges, section headers, marquee ticker, certificate mock, logo
+1. **Port all UI changes** — updated pages/components brought across, adapted to TanStack routing (this app has no `react-router-dom`), keeping the existing per-page SEO metadata.
+2. **Add the two new routes** — `/live-demo` and `/checkout/$sessionId`.
+3. **Rebuild the backend on this stack.** The Express server and SQLite file can't run here — this app is TanStack Start on an edge runtime with Lovable Cloud (Postgres) behind it. Each endpoint becomes a server function, and the SQLite schema becomes a Postgres migration with row-level security so a workspace only sees its own records. Stage-order enforcement, token gates, hash sealing and the memory chain are ported logic-for-logic.
+4. **Auth** — the upstream server rolls its own bcrypt signup/login. Here it maps onto the app's existing Cloud auth (which already has your admin account), so accounts persist properly and sessions work across the app.
+5. **Sanctions screening** — the OFAC SDN list (~19k entries) is loaded into a database table rather than read from a CSV on disk, and screened against at the WaD gate, so the "Vladimir Putin blocks the gate" proof point still works live.
+6. **Payments** — the sandbox session → signed callback → idempotent credit flow is kept as-is, with the callback as a public API route that verifies its signature. No real money moves.
 
-## Auth page
+## Notes
 
-`/auth` is UI only (no backend in this pass): sign in / create account tabs, password show/hide toggle, "Forgot password?" link skipped in tab order, plus `/forgot-password` and `/reset-password` screens in the same style.
-
-## Technical notes
-
-- Framework here is TanStack Start, not React Router — routes become files under `src/routes/` (e.g. `products.trade-desk.tsx`, `docs.route.tsx` + `docs.index.tsx`). No `react-router-dom`.
-- The repo's `@theme` tokens (emerald brand/bright/muted/950, foreground, muted, border, radius) are ported into `src/styles.css` as semantic tokens in oklch; `gradient-text`, `mesh-bg`, and the marquee keyframes come across as utilities. No hardcoded color classes in components.
-- Inter loaded via `<link>` in `__root.tsx` head.
-- `lucide-react` for icons; the repo's `hero.png` and `icons.svg` are re-created as generated/inline assets.
-- Each route defines its own `head()` with unique title, description, og:title, og:description.
-- Static UI only — no database, auth backend, or API calls.
+- The existing demo tables in this app (counterparties, trade matches, gate events, evidence packs, certificates, etc.) stay; the new spine tables are added alongside.
+- The upstream `RUN.md` two-terminal setup doesn't apply here — everything runs as one app, no separate backend to start.
+- Anything upstream calls out as not built (AI document extraction, live payment processor, OAuth sign-in, password reset in that flow) stays not built, unless you ask for it.
+- This is a large port. If you'd rather start with just the UI refresh and the two new pages, and leave the backend spine for a second pass, say so and I'll split it.
