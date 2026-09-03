@@ -1,6 +1,6 @@
-import { Layout, PageHero } from '../../components/Layout'
-import { CTABand } from '../../components/Sections'
-import { NineGateTrail } from '../../components/CertificateMock'
+import { Layout, PageHero } from '@/components/izenzo/Layout'
+import { CTABand } from '@/components/izenzo/Sections'
+import { NineGateTrail } from '@/components/izenzo/CertificateMock'
 
 export default function AuditLedger() {
   return (

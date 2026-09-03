@@ -1,5 +1,5 @@
-import { useLocation } from 'react-router-dom'
-import { DocsLayout, DocStub } from '../../components/DocsLayout'
+import { useLocation } from '@/lib/router-compat'
+import { DocsLayout, DocStub } from '@/components/izenzo/DocsLayout'
 
 const titles: Record<string, string> = {
   '/docs/quickstart': 'Quickstart',

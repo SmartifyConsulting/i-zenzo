@@ -1,7 +1,7 @@
 import { ArrowRight, ChevronRight } from 'lucide-react'
-import { Layout } from '../components/Layout'
-import { Badge, Button, MeshBackground } from '../components/ui'
-import { Ticker } from '../components/Ticker'
+import { Layout } from '@/components/izenzo/Layout'
+import { Badge, Button, MeshBackground } from '@/components/izenzo/ui'
+import { Ticker } from '@/components/izenzo/Ticker'
 
 export default function Home() {
   return (

@@ -1,5 +1,5 @@
-import { Layout, PageHero } from '../../components/Layout'
-import { ThreeBoxes, CTABand, BulletList } from '../../components/Sections'
+import { Layout, PageHero } from '@/components/izenzo/Layout'
+import { ThreeBoxes, CTABand, BulletList } from '@/components/izenzo/Sections'
 
 export default function Finance() {
   return (

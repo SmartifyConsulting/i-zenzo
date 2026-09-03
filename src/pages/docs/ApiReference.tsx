@@ -1,4 +1,4 @@
-import { DocsLayout } from '../../components/DocsLayout'
+import { DocsLayout } from '@/components/izenzo/DocsLayout'
 
 const groups: { name: string; endpoints: [string, string, string][] }[] = [
   {

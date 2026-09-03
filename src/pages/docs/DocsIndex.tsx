@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { DocsLayout } from '../../components/DocsLayout'
+import { Link } from '@/lib/router-compat'
+import { DocsLayout } from '@/components/izenzo/DocsLayout'
 
 const cards = [
   ['Quickstart', 'Provision a workspace and mint your first record.', '/docs/quickstart'],

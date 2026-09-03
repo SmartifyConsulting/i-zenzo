@@ -1,6 +1,6 @@
-import { Layout, PageHero } from '../../components/Layout'
-import { ThreeBoxes, CTABand, BulletList } from '../../components/Sections'
-import { CertificateOfIntent } from '../../components/CertificateMock'
+import { Layout, PageHero } from '@/components/izenzo/Layout'
+import { ThreeBoxes, CTABand, BulletList } from '@/components/izenzo/Sections'
+import { CertificateOfIntent } from '@/components/izenzo/CertificateMock'
 
 export default function Traders() {
   return (

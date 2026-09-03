@@ -1,4 +1,4 @@
-import { Layout } from '../components/Layout'
+import { Layout } from '@/components/izenzo/Layout'
 
 export default function Status() {
   return (

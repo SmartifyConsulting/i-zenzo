@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '@/lib/router-compat'
 
 export function Footer({ short = false }: { short?: boolean }) {
   return (

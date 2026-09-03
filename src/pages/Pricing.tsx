@@ -1,7 +1,7 @@
 import { Check } from 'lucide-react'
-import { Layout } from '../components/Layout'
-import { Badge, Button, Card } from '../components/ui'
-import { CTABand } from '../components/Sections'
+import { Layout } from '@/components/izenzo/Layout'
+import { Badge, Button, Card } from '@/components/izenzo/ui'
+import { CTABand } from '@/components/izenzo/Sections'
 
 const opFeatures = [
   'Live Match Compiler',

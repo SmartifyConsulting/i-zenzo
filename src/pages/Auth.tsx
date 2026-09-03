@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Logo } from '../components/Logo'
-import { MeshBackground } from '../components/ui'
+import { Link } from '@/lib/router-compat'
+import { Logo } from '@/components/izenzo/Logo'
+import { MeshBackground } from '@/components/izenzo/ui'
 
 export default function Auth() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
