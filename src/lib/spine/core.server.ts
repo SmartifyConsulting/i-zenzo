@@ -71,7 +71,7 @@ export async function requireRow(db: DB, table: string, transactionId: string, l
   if (!res.data || res.data.length === 0) {
     throw new SpineError("GATE_FAILED", `${label} must be completed before this stage`);
   }
-  return res.data[0].id as string;
+  return res.data[0]!.id as string;
 }
 
 // ---- Memory: append-only hash chain ----
@@ -123,7 +123,7 @@ export async function verifyChain(db: DB, transactionId: string) {
   const events = await getTimeline(db, transactionId);
   let prevHash: string | null = null;
   for (let i = 0; i < events.length; i += 1) {
-    const e = events[i];
+    const e = events[i]!;
     const expected = sha256({
       transaction_id: transactionId,
       event_type: e.event_type,
