@@ -11,7 +11,7 @@ export async function signUp(name: string, email: string, password: string) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { full_name: name }, emailRedirectTo: `${window.location.origin}/live-demo` },
+    options: { data: { full_name: name }, emailRedirectTo: `${window.location.origin}/dashboard` },
   });
   if (error) throw new Error(error.message);
   if (!data.session) throw new Error("Check your inbox to confirm your email, then sign in.");
@@ -35,6 +35,7 @@ export async function isLoggedIn() {
 
 export const startSession = () => fns.startSession();
 export const getWallet = () => fns.getWallet();
+export const listTransactions = () => fns.listTransactions();
 
 export const createTokenPurchase = (tokens: number) => fns.createTokenPurchase({ data: { tokens } });
 export const getTokenPurchase = (sessionId: string) => fns.getTokenPurchase({ data: { sessionId } });
