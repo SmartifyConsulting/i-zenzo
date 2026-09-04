@@ -9,10 +9,10 @@ export function AuthShell({ children }: { children: ReactNode }) {
     <div className="relative min-h-screen flex flex-col overflow-hidden bg-card">
       <MeshBackground />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-card" />
-      <header className="relative z-10 max-w-[1280px] mx-auto w-full px-4 sm:px-6 h-20 flex items-center">
-        <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-          <Logo />
-          <span className="ml-2">Back to Izenzo home</span>
+      <header className="relative z-10 max-w-[1280px] mx-auto w-full px-4 sm:px-6 h-20 flex items-center gap-2 text-sm text-muted-foreground">
+        <Logo />
+        <Link to="/" className="hover:text-foreground">
+          Back to Izenzo home
         </Link>
       </header>
       <div className="relative z-10 flex-1 flex items-center justify-center px-4 py-12">

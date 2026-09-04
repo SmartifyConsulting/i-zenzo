@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from '@/lib/router-compat'
 import { ChevronDown } from 'lucide-react'
 import { Logo } from './Logo'
+import * as api from '@/lib/api'
 
 type Item = { label: string; href: string; desc: string }
 
@@ -59,6 +60,17 @@ function Dropdown({ label, items }: { label: string; items: Item[] }) {
 }
 
 export function Navbar() {
+  const [loggedIn, setLoggedIn] = useState(false)
+  useEffect(() => {
+    let cancelled = false
+    api.isLoggedIn().then((v) => {
+      if (!cancelled) setLoggedIn(v)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   return (
     <header className="fixed top-0 inset-x-0 z-40 h-20 bg-card/80 backdrop-blur-md border-b border-border">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
@@ -72,15 +84,26 @@ export function Navbar() {
           </nav>
         </div>
         <div className="flex items-center gap-3">
-          <Link to="/auth" className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 h-10 flex items-center">
-            Log In
-          </Link>
-          <Link
-            to="/auth"
-            className="inline-flex items-center h-10 px-5 rounded-md bg-emerald-950 text-white text-sm font-semibold hover:-translate-y-0.5 transition-transform"
-          >
-            Create Account
-          </Link>
+          {loggedIn ? (
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center h-10 px-5 rounded-md bg-emerald-950 text-white text-sm font-semibold hover:-translate-y-0.5 transition-transform"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link to="/auth" className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 h-10 flex items-center">
+                Log In
+              </Link>
+              <Link
+                to="/auth"
+                className="inline-flex items-center h-10 px-5 rounded-md bg-emerald-950 text-white text-sm font-semibold hover:-translate-y-0.5 transition-transform"
+              >
+                Create Account
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

@@ -804,3 +804,47 @@ export const getTransactionView = createServerFn({ method: "GET" })
       wad: wad ?? null,
     };
   });
+
+/* ------------------------------------------------------------------ */
+/* Dashboard — list this workspace's transactions with a stage summary  */
+/* ------------------------------------------------------------------ */
+
+export const listTransactions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const workspaceId = await ws(context as unknown as Ctx);
+    const db = (context as unknown as Ctx).supabase as any;
+    // RLS (user_id = auth.uid()) already scopes every row to this caller;
+    // the explicit workspace_id filter here is belt-and-braces, not the
+    // only control.
+    const { data: rows } = await db
+      .from("spine_transactions")
+      .select("*")
+      .eq("workspace_id", workspaceId)
+      .order("created_at", { ascending: false });
+
+    const transactions = await Promise.all(
+      (rows ?? []).map(async (t: any) => {
+        const bidOffer = (
+          await db.from("bid_offers").select("subject_description").eq("transaction_id", t.id).limit(1)
+        ).data?.[0];
+        const poi = (await db.from("pois").select("status").eq("transaction_id", t.id).maybeSingle()).data;
+        const wad = (await db.from("wads").select("decision").eq("transaction_id", t.id).maybeSingle()).data;
+        const finality = (
+          await db.from("finality_records").select("status").eq("transaction_id", t.id).maybeSingle()
+        ).data;
+        return {
+          transaction_id: t.id,
+          lifecycle: t.lifecycle,
+          trading_stage: t.trading_stage,
+          subject: bidOffer?.subject_description ?? null,
+          poi_status: poi?.status ?? null,
+          wad_decision: wad?.decision ?? null,
+          finality_status: finality?.status ?? null,
+          created_at: t.created_at,
+        };
+      }),
+    );
+
+    return { transactions };
+  });
