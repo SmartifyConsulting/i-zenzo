@@ -828,11 +828,15 @@ export const listTransactions = createServerFn({ method: "GET" })
         const bidOffer = (
           await db.from("bid_offers").select("subject_description").eq("transaction_id", t.id).limit(1)
         ).data?.[0];
-        const poi = (await db.from("pois").select("status").eq("transaction_id", t.id).maybeSingle()).data;
-        const wad = (await db.from("wads").select("decision").eq("transaction_id", t.id).maybeSingle()).data;
+        const poi = (
+          await db.from("pois").select("status").eq("transaction_id", t.id).limit(1)
+        ).data?.[0];
+        const wad = (
+          await db.from("wads").select("decision").eq("transaction_id", t.id).limit(1)
+        ).data?.[0];
         const finality = (
-          await db.from("finality_records").select("status").eq("transaction_id", t.id).maybeSingle()
-        ).data;
+          await db.from("finality_records").select("status").eq("transaction_id", t.id).limit(1)
+        ).data?.[0];
         return {
           transaction_id: t.id,
           lifecycle: t.lifecycle,
