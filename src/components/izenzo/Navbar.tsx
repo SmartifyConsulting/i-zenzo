@@ -60,7 +60,7 @@ function Dropdown({ label, items }: { label: string; items: Item[] }) {
 }
 
 export function Navbar() {
-  const [loggedIn, setLoggedIn] = useState(false)
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null)
   useEffect(() => {
     let cancelled = false
     api.isLoggedIn().then((v) => {
