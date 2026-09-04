@@ -83,8 +83,8 @@ export function Navbar() {
             <Dropdown label="Resources" items={resources} />
           </nav>
         </div>
-        <div className="flex items-center gap-3">
-          {loggedIn ? (
+        <div className="flex items-center gap-3 min-h-10">
+          {loggedIn === null ? null : loggedIn ? (
             <Link
               to="/dashboard"
               className="inline-flex items-center h-10 px-5 rounded-md bg-emerald-950 text-white text-sm font-semibold hover:-translate-y-0.5 transition-transform"
