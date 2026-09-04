@@ -8,3 +8,4 @@
       strict stage order, hash-chained memory, token gates (POI 1/$10, WaD 3/$30), sandbox payment
       sessions with idempotent crediting, OFAC SDN whole-word sanctions screening, Finality certificates
 - [x] Real auth wired to Cloud auth (sign in / create account → /live-demo)
+- [x] Pull `add-dashboard` branch: /dashboard (wallet + transaction list), session-aware navbar, auth redirects to /dashboard

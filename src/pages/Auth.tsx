@@ -34,7 +34,7 @@ export default function Auth() {
       } else {
         await api.signIn(email, password);
       }
-      navigate({ to: "/live-demo" });
+      navigate({ to: "/dashboard" });
     } catch (err: any) {
       const message = err?.message ?? "Something went wrong";
       if (message.toLowerCase().includes("inbox")) setNotice(message);
