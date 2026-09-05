@@ -559,25 +559,33 @@ export const createWad = createServerFn({ method: "POST" })
         predicates: existing.data.predicates ?? [],
       };
     }
+    // WaD certification is included in the Trade Request credit (0 charge).
     const tokenEntryId = await c.chargeGate(db, workspaceId, txnId, "WAD");
 
     const intent = (await db.from("intents").select("*").eq("id", poi.intent_id).single()).data;
     const counterpartyName =
       (intent?.frozen_snapshot?.counterparty?.name as string) ?? "unknown counterparty";
     const screening = screenName(counterpartyName);
+    const profile = await c.getComplianceProfile(db, counterpartyName);
+    const probability = Number(
+      intent?.completion_probability ?? intent?.frozen_snapshot?.completion_probability ?? 0,
+    );
 
-    const predicates = [
-      { id: "POI_SEALED", result: "PASS", detail: `poi ${poi.canonical_hash?.slice(0, 16)}…` },
-      {
-        id: "SANCTIONS",
-        result: screening.hit ? "FAIL" : "PASS",
-        detail: screening.hit
-          ? `OFAC SDN match: ${screening.matches.map((m) => m.name).join("; ")}`
-          : `No OFAC SDN match for "${counterpartyName}"`,
-        matches: screening.matches,
-      },
-      { id: "AUTHORITY", result: "PASS", detail: "Authority document recorded at Other Docs stage" },
-    ];
+    const gates = await c.runHardGates(db, txnId, {
+      profile,
+      poi,
+      sanctionsHit: screening.hit,
+      sanctionsDetail: screening.hit
+        ? `OFAC SDN match: ${screening.matches.map((m) => m.name).join("; ")}`
+        : `No OFAC SDN match for "${counterpartyName}"`,
+      probability,
+    });
+    const predicates = gates.map((g, i) => ({
+      ...g,
+      gate: i + 1,
+      name: c.GATES[i] ?? g.id,
+      ...(g.id === "sanctions_screening" ? { matches: screening.matches } : {}),
+    }));
     const decision = predicates.every((p) => p.result === "PASS") ? "PASSED" : "FAILED";
     const wad = c.must(
       await db
@@ -599,6 +607,7 @@ export const createWad = createServerFn({ method: "POST" })
     await c.writeMemoryEvent(db, txnId, "wad.decided", {
       wad_id: wad.id,
       decision,
+      gates_passed: predicates.filter((p) => p.result === "PASS").length,
       tokens_charged: c.WAD_TOKENS,
     });
     return { wad_id: wad.id, decision, predicates, tokens_charged: c.WAD_TOKENS };
