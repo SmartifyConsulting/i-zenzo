@@ -491,6 +491,30 @@ export const sealPoi = createServerFn({ method: "POST" })
     const poi = res.data;
     if (poi.status === "SEALED") return { poi_id: poi.id, status: poi.status, canonical_hash: poi.canonical_hash };
     const intent = (await db.from("intents").select("*").eq("id", poi.intent_id).single()).data;
+
+    // Hard rule: collapse requires an intent completion probability >= 50.1%.
+    const probability = Number(
+      intent?.completion_probability ?? intent?.frozen_snapshot?.completion_probability ?? 0,
+    );
+    if (probability < c.MIN_COMPLETION_PROBABILITY) {
+      const factors = (intent?.frozen_snapshot?.probability_factors ?? []) as {
+        id: string;
+        earned: number;
+        weight: number;
+        detail: string;
+      }[];
+      const weakest = factors
+        .filter((f) => f.earned < f.weight)
+        .map((f) => f.detail)
+        .slice(0, 3)
+        .join("; ");
+      throw new Error(
+        `Collapse blocked: intent completion probability is ${(probability * 100).toFixed(1)}%, ` +
+          `below the required ${(c.MIN_COMPLETION_PROBABILITY * 100).toFixed(1)}%.` +
+          (weakest ? ` Outstanding: ${weakest}.` : ""),
+      );
+    }
+
     const canonicalHash = c.sha256({
       poi_id: poi.id,
       transaction_id: poi.transaction_id,
@@ -505,8 +529,15 @@ export const sealPoi = createServerFn({ method: "POST" })
     await c.writeMemoryEvent(db, poi.transaction_id, "poi.sealed", {
       poi_id: poi.id,
       canonical_hash: canonicalHash,
+      completion_probability: probability,
     });
-    return { poi_id: poi.id, status: "SEALED", canonical_hash: canonicalHash, sealed_at: sealedAt };
+    return {
+      poi_id: poi.id,
+      status: "SEALED",
+      canonical_hash: canonicalHash,
+      sealed_at: sealedAt,
+      completion_probability: probability,
+    };
   });
 
 export const createWad = createServerFn({ method: "POST" })
