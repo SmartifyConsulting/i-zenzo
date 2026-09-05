@@ -1,11 +1,22 @@
 import { createHash } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+/**
+ * Credit rules published on izenzo.co.za: 1 credit = 1 Trade Request at
+ * $10.00 USD, billed per successful Proof of Intent. WaD certification is
+ * included — no second charge.
+ */
 export const POI_TOKENS = 1;
 export const POI_USD = 10;
-export const WAD_TOKENS = 3;
-export const WAD_USD = 30;
+export const WAD_TOKENS = 0;
+export const WAD_USD = 0;
 export const TOKEN_UNIT_USD = 10;
+export const CREDIT_BUNDLES = [1, 10, 50, 200] as const;
+
+/** Hard-gate thresholds (non-waivable). */
+export const SCREENING_MAX_AGE_DAYS = 30;
+export const MIN_COMPLETION_PROBABILITY = 0.501;
+export const BLOCKED_RISK_BANDS = ["high", "critical"] as const;
 
 export const GATES = [
   "entity_verification",
