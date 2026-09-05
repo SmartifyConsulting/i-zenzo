@@ -4,10 +4,12 @@ import { Button } from './ui'
 export function ThreeBoxes({
   eyebrow,
   title,
+  subtitle,
   boxes,
 }: {
   eyebrow: string
   title: string
+  subtitle?: string
   boxes: { label: string; heading: string; content: ReactNode }[]
 }) {
   return (
@@ -16,7 +18,9 @@ export function ThreeBoxes({
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-xs font-mono uppercase tracking-widest text-emerald-brand">{eyebrow}</span>
           <h2 className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">{title}</h2>
+          {subtitle && <p className="mt-4 text-base text-muted-foreground leading-relaxed">{subtitle}</p>}
         </div>
+
         <div className="grid md:grid-cols-3 gap-6">
           {boxes.map((box, i) => (
             <div key={i} className="rounded-md border border-border bg-card p-6">
