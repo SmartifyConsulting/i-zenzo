@@ -55,7 +55,14 @@ export const createTokenPurchase = createServerFn({ method: "POST" })
     const c = await core();
     const db = (context as unknown as Ctx).supabase as never;
     const workspaceId = await ws(context as unknown as Ctx);
-    const tokens = Math.max(1, Math.floor(Number(data.tokens) || 1));
+    // Published pricing: credits sell in 1 / 10 / 50 / 200 bundles at $10 each.
+    const requested = Math.max(1, Math.floor(Number(data.tokens) || 1));
+    if (!(c.CREDIT_BUNDLES as readonly number[]).includes(requested)) {
+      throw new Error(
+        `Credits are sold in bundles of ${c.CREDIT_BUNDLES.join(", ")}. Requested: ${requested}.`,
+      );
+    }
+    const tokens = requested;
     const usd = tokens * c.TOKEN_UNIT_USD;
     const created = await (db as any)
       .from("payment_sessions")
@@ -407,24 +414,44 @@ export const createIntent = createServerFn({ method: "POST" })
     const choiceId = await c.requireRow(db, "choices", txnId, "Human Choice");
     const choice = (await db.from("choices").select("*").eq("id", choiceId).single()).data;
     const bid = (await db.from("bid_offers").select("*").eq("transaction_id", txnId).limit(1)).data?.[0];
+
+    // Hard rule: both parties must be Approved to Trade, screened within 30
+    // days, and outside the high/critical risk bands.
+    const counterpartyName = (choice?.selected_entity?.name as string) ?? "";
+    const profile = await c.getComplianceProfile(db, counterpartyName);
+    c.assertTradeEligible(profile);
+
+    const { probability, factors } = await c.computeCompletionProbability(db, txnId, profile);
+
     const snapshot = {
       counterparty: choice?.selected_entity ?? {},
       commercial: bid?.commercial ?? {},
       subject: bid?.subject_description ?? null,
       actor: choice?.actor ?? null,
+      compliance: profile,
+      completion_probability: probability,
+      probability_factors: factors,
       frozen_at: new Date().toISOString(),
     };
     const intent = c.must(
       await db
         .from("intents")
-        .insert({ transaction_id: txnId, choice_id: choiceId, frozen_snapshot: snapshot })
+        .insert({
+          transaction_id: txnId,
+          choice_id: choiceId,
+          frozen_snapshot: snapshot,
+          completion_probability: probability,
+        })
         .select("*")
         .single(),
       "freeze intent",
     );
     await c.setStage(db, txnId, "INTENT");
-    await c.writeMemoryEvent(db, txnId, "intent.frozen", { intent_id: intent.id });
-    return { intent_id: intent.id, frozen_snapshot: snapshot };
+    await c.writeMemoryEvent(db, txnId, "intent.frozen", {
+      intent_id: intent.id,
+      completion_probability: probability,
+    });
+    return { intent_id: intent.id, frozen_snapshot: snapshot, completion_probability: probability };
   });
 
 /* ------------------------------------------------------------------ */
@@ -471,6 +498,30 @@ export const sealPoi = createServerFn({ method: "POST" })
     const poi = res.data;
     if (poi.status === "SEALED") return { poi_id: poi.id, status: poi.status, canonical_hash: poi.canonical_hash };
     const intent = (await db.from("intents").select("*").eq("id", poi.intent_id).single()).data;
+
+    // Hard rule: collapse requires an intent completion probability >= 50.1%.
+    const probability = Number(
+      intent?.completion_probability ?? intent?.frozen_snapshot?.completion_probability ?? 0,
+    );
+    if (probability < c.MIN_COMPLETION_PROBABILITY) {
+      const factors = (intent?.frozen_snapshot?.probability_factors ?? []) as {
+        id: string;
+        earned: number;
+        weight: number;
+        detail: string;
+      }[];
+      const weakest = factors
+        .filter((f) => f.earned < f.weight)
+        .map((f) => f.detail)
+        .slice(0, 3)
+        .join("; ");
+      throw new Error(
+        `Collapse blocked: intent completion probability is ${(probability * 100).toFixed(1)}%, ` +
+          `below the required ${(c.MIN_COMPLETION_PROBABILITY * 100).toFixed(1)}%.` +
+          (weakest ? ` Outstanding: ${weakest}.` : ""),
+      );
+    }
+
     const canonicalHash = c.sha256({
       poi_id: poi.id,
       transaction_id: poi.transaction_id,
@@ -485,8 +536,15 @@ export const sealPoi = createServerFn({ method: "POST" })
     await c.writeMemoryEvent(db, poi.transaction_id, "poi.sealed", {
       poi_id: poi.id,
       canonical_hash: canonicalHash,
+      completion_probability: probability,
     });
-    return { poi_id: poi.id, status: "SEALED", canonical_hash: canonicalHash, sealed_at: sealedAt };
+    return {
+      poi_id: poi.id,
+      status: "SEALED",
+      canonical_hash: canonicalHash,
+      sealed_at: sealedAt,
+      completion_probability: probability,
+    };
   });
 
 export const createWad = createServerFn({ method: "POST" })
@@ -508,25 +566,33 @@ export const createWad = createServerFn({ method: "POST" })
         predicates: existing.data.predicates ?? [],
       };
     }
+    // WaD certification is included in the Trade Request credit (0 charge).
     const tokenEntryId = await c.chargeGate(db, workspaceId, txnId, "WAD");
 
     const intent = (await db.from("intents").select("*").eq("id", poi.intent_id).single()).data;
     const counterpartyName =
       (intent?.frozen_snapshot?.counterparty?.name as string) ?? "unknown counterparty";
     const screening = screenName(counterpartyName);
+    const profile = await c.getComplianceProfile(db, counterpartyName);
+    const probability = Number(
+      intent?.completion_probability ?? intent?.frozen_snapshot?.completion_probability ?? 0,
+    );
 
-    const predicates = [
-      { id: "POI_SEALED", result: "PASS", detail: `poi ${poi.canonical_hash?.slice(0, 16)}…` },
-      {
-        id: "SANCTIONS",
-        result: screening.hit ? "FAIL" : "PASS",
-        detail: screening.hit
-          ? `OFAC SDN match: ${screening.matches.map((m) => m.name).join("; ")}`
-          : `No OFAC SDN match for "${counterpartyName}"`,
-        matches: screening.matches,
-      },
-      { id: "AUTHORITY", result: "PASS", detail: "Authority document recorded at Other Docs stage" },
-    ];
+    const gates = await c.runHardGates(db, txnId, {
+      profile,
+      poi,
+      sanctionsHit: screening.hit,
+      sanctionsDetail: screening.hit
+        ? `OFAC SDN match: ${screening.matches.map((m) => m.name).join("; ")}`
+        : `No OFAC SDN match for "${counterpartyName}"`,
+      probability,
+    });
+    const predicates = gates.map((g, i) => ({
+      ...g,
+      gate: i + 1,
+      name: c.GATES[i] ?? g.id,
+      ...(g.id === "sanctions_screening" ? { matches: screening.matches } : {}),
+    }));
     const decision = predicates.every((p) => p.result === "PASS") ? "PASSED" : "FAILED";
     const wad = c.must(
       await db
@@ -548,6 +614,7 @@ export const createWad = createServerFn({ method: "POST" })
     await c.writeMemoryEvent(db, txnId, "wad.decided", {
       wad_id: wad.id,
       decision,
+      gates_passed: predicates.filter((p) => p.result === "PASS").length,
       tokens_charged: c.WAD_TOKENS,
     });
     return { wad_id: wad.id, decision, predicates, tokens_charged: c.WAD_TOKENS };
