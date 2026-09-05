@@ -147,12 +147,13 @@ export default function Auth() {
       </p>
 
       <p className="text-center text-[11px] text-muted-foreground/50 mt-6 leading-relaxed">
-        Data is processed within our single approved production region policy. By continuing you agree to our{" "}
+        Regional data residency is configured. Per-organisation residency commitments require separate approval. See our{" "}
         <Link to="/trust" className="underline">
           Trust, Security &amp; Privacy
         </Link>{" "}
         terms.
       </p>
+
     </AuthShell>
   );
 }
