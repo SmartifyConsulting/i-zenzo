@@ -407,24 +407,44 @@ export const createIntent = createServerFn({ method: "POST" })
     const choiceId = await c.requireRow(db, "choices", txnId, "Human Choice");
     const choice = (await db.from("choices").select("*").eq("id", choiceId).single()).data;
     const bid = (await db.from("bid_offers").select("*").eq("transaction_id", txnId).limit(1)).data?.[0];
+
+    // Hard rule: both parties must be Approved to Trade, screened within 30
+    // days, and outside the high/critical risk bands.
+    const counterpartyName = (choice?.selected_entity?.name as string) ?? "";
+    const profile = await c.getComplianceProfile(db, counterpartyName);
+    c.assertTradeEligible(profile);
+
+    const { probability, factors } = await c.computeCompletionProbability(db, txnId, profile);
+
     const snapshot = {
       counterparty: choice?.selected_entity ?? {},
       commercial: bid?.commercial ?? {},
       subject: bid?.subject_description ?? null,
       actor: choice?.actor ?? null,
+      compliance: profile,
+      completion_probability: probability,
+      probability_factors: factors,
       frozen_at: new Date().toISOString(),
     };
     const intent = c.must(
       await db
         .from("intents")
-        .insert({ transaction_id: txnId, choice_id: choiceId, frozen_snapshot: snapshot })
+        .insert({
+          transaction_id: txnId,
+          choice_id: choiceId,
+          frozen_snapshot: snapshot,
+          completion_probability: probability,
+        })
         .select("*")
         .single(),
       "freeze intent",
     );
     await c.setStage(db, txnId, "INTENT");
-    await c.writeMemoryEvent(db, txnId, "intent.frozen", { intent_id: intent.id });
-    return { intent_id: intent.id, frozen_snapshot: snapshot };
+    await c.writeMemoryEvent(db, txnId, "intent.frozen", {
+      intent_id: intent.id,
+      completion_probability: probability,
+    });
+    return { intent_id: intent.id, frozen_snapshot: snapshot, completion_probability: probability };
   });
 
 /* ------------------------------------------------------------------ */
