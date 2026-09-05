@@ -4,12 +4,13 @@ const groups: { name: string; endpoints: [string, string, string][] }[] = [
   {
     name: 'Matches',
     endpoints: [
-      ['POST', '/match', 'Create a new match'],
-      ['GET', '/match/:id', 'Retrieve a match'],
-      ['POST', '/match/:id/settle', 'Settle a match'],
-      ['GET', '/matches', 'List matches'],
+      ['POST', '/match', 'Record bilateral trade intent.'],
+      ['GET', '/match/:id', 'Retrieve a match by ID.'],
+      ['POST', '/match/:id/settle', 'Confirm intent and seal the collapse ledger.'],
+      ['GET', '/matches', 'List matches scoped to your organisation.'],
     ],
   },
+
   {
     name: 'Counterparties',
     endpoints: [
