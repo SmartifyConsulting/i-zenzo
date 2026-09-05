@@ -88,28 +88,36 @@ export default function LiveDemo() {
       });
       pushLog("CHOICE", "Human Choice recorded", true, "accountable actor: jane@buyerco.com");
 
-      await api.createIntent(transactionId);
-      pushLog("INTENT", "Intent frozen", true, "sole input to POI, terms locked");
+      const intent = await api.createIntent(transactionId);
+      pushLog(
+        "INTENT",
+        "Intent frozen",
+        true,
+        `eligibility cleared; completion probability ${(Number(intent.completion_probability ?? 0) * 100).toFixed(1)}% (min 50.1%)`,
+      );
 
-      // Real, settlement-gated purchase: POI/WaD literally cannot be charged
-      // without a settled wallet balance. Same session -> signed callback ->
-      // idempotent credit flow a live payment page uses.
-      const purchase = await api.createTokenPurchase(4);
-      pushLog("PAYMENT", "Token purchase session created", true, `sandbox session, $${purchase.usd} for ${purchase.tokens} tokens`);
+      // Real, settlement-gated purchase: the POI credit literally cannot be
+      // charged without a settled wallet balance. Same session -> signed
+      // callback -> idempotent credit flow a live payment page uses.
+      const purchase = await api.createTokenPurchase(10);
+      pushLog("PAYMENT", "Credit purchase session created", true, `sandbox session, $${purchase.usd} for ${purchase.tokens} credits`);
       const settled = await api.settlePayment(purchase.session_id);
-      pushLog("PAYMENT", "Payment settled via signed callback", true, `${settled.tokens_credited} tokens credited to wallet`);
+      pushLog("PAYMENT", "Payment settled via signed callback", true, `${settled.tokens_credited} credits credited to wallet`);
 
       const poi = await api.createPoi({ transaction_id: transactionId });
-      pushLog("POI", "POI created — HARD GATE charged", true, `1 token / $10 consumed, poi_id=${poi.poi_id}`);
+      pushLog("POI", "POI created — HARD GATE charged", true, `1 credit / $10 consumed, poi_id=${poi.poi_id}`);
       const sealed = await api.sealPoi(poi.poi_id);
       pushLog("POI", "POI sealed — Trading concluded", true, `canonical_hash=${sealed.canonical_hash.slice(0, 24)}…`);
 
       const wad = await api.createWad({ transaction_id: transactionId });
+      const passedGates = wad.predicates.filter((p: any) => p.result === "PASS").length;
       pushLog(
         "WAD",
-        `WaD — HARD GATE charged, decision: ${wad.decision}`,
+        `WaD — 9 hard gates evaluated, decision: ${wad.decision}`,
         wad.decision === "PASSED",
-        `3 tokens / $30 consumed. Sanctions predicate: ${wad.predicates.find((p: any) => p.id === "SANCTIONS")?.result}`,
+        `${passedGates}/9 gates passed, included in the Trade Request credit. Sanctions gate: ${
+          wad.predicates.find((p: any) => p.id === "sanctions_screening")?.result
+        }`,
       );
 
       if (wad.decision !== "PASSED") {
