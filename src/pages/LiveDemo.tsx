@@ -166,8 +166,9 @@ export default function LiveDemo() {
         <p className="text-muted-foreground mb-2 max-w-2xl">
           Every step below is a real authenticated call into this platform's own backend, enforcing the exact
           required order — Bid/Offer → Other Docs → Social/News Media → Search → AI → AI+ → Counterparties →
-          Choice → Intent → POI → WaD → Execution → Finality. Stage skips are rejected server-side. Token gates
-          (POI $10, WaD $30) are real and non-waivable.
+          Choice → Intent → POI → WaD → Execution → Finality. Stage skips are rejected server-side. Eligibility
+          (Approved to Trade, screening within 30 days, no high/critical risk), the 50.1% completion-probability
+          threshold and the 1 credit / $10 Trade Request gate are real and non-waivable.
         </p>
         <p className="text-xs text-muted-foreground/60 mb-8">
           Try "Vladimir Putin" as the counterparty name to see WaD correctly FAIL and Execution correctly LOCK —
