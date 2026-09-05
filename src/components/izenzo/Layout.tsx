@@ -17,13 +17,15 @@ export function PageHero({
   title,
   paragraph,
   tagline,
+  actions,
   children,
 }: {
-  eyebrow: string
-  title: ReactNode
-  paragraph: string
-  tagline?: string
-  children?: ReactNode
+  eyebrow: string;
+  title: ReactNode;
+  paragraph: string;
+  tagline?: string;
+  actions?: ReactNode;
+  children?: ReactNode;
 }) {
   return (
     <section className="relative overflow-hidden border-b border-border bg-card">
@@ -36,6 +38,7 @@ export function PageHero({
             {title}
           </h1>
           <p className="text-base sm:text-lg leading-relaxed text-muted-foreground mb-8 max-w-lg">{paragraph}</p>
+          {actions && <div className="mb-8 flex flex-col sm:flex-row gap-4">{actions}</div>}
           {tagline && (
             <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground/60">{tagline}</p>
           )}
@@ -43,5 +46,6 @@ export function PageHero({
         {children && <div>{children}</div>}
       </div>
     </section>
-  )
+  );
 }
+
