@@ -9,12 +9,13 @@ export default function Status() {
           Status information not currently published
         </h1>
         <p className="text-muted-foreground">
-          For platform status enquiries, contact{' '}
+          Status information is not currently published. Please contact{' '}
           <a href="mailto:support@izenzo.co.za" className="text-emerald-brand">
-            support@izenzo.co.za
-          </a>
-          .
+            Izenzo support
+          </a>{' '}
+          for platform availability queries.
         </p>
+
       </div>
     </Layout>
   )
