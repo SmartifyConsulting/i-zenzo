@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Link } from "@/lib/router-compat";
-import { AuthShell, PasswordField, SubmitButton, TextField } from "@/components/izenzo/AuthShell";
+import {
+  AuthShell,
+  PasswordField,
+  SocialSignIn,
+  SubmitButton,
+  TextField,
+} from "@/components/izenzo/AuthShell";
 import * as api from "@/lib/api";
+
 
 export default function Auth() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
