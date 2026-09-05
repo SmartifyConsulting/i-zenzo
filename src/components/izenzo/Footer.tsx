@@ -15,11 +15,21 @@ export function Footer({ short = false }: { short?: boolean }) {
             <Link to="/docs" className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground">
               Docs
             </Link>
-            {!short && (
+            {short ? (
+              <>
+                <Link to="/status" className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground">
+                  Status
+                </Link>
+                <Link to="/pricing" className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground">
+                  Pricing
+                </Link>
+              </>
+            ) : (
               <Link to="/trust" className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground">
                 Trust
               </Link>
             )}
+
 
             <a
               href="mailto:support@izenzo.co.za"
