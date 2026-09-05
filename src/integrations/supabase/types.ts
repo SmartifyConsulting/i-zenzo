@@ -235,6 +235,8 @@ export type Database = {
       }
       counterparties: {
         Row: {
+          approved_to_trade: boolean
+          authority_to_bind: boolean
           created_at: string
           entity_type: string
           id: string
@@ -243,10 +245,16 @@ export type Database = {
           legal_name: string
           lei: string | null
           onboarded_at: string
+          risk_band: string
           risk_tier: string
+          screened_at: string | null
+          screening_result: string
           short_code: string
+          ubo_disclosed: boolean
         }
         Insert: {
+          approved_to_trade?: boolean
+          authority_to_bind?: boolean
           created_at?: string
           entity_type: string
           id?: string
@@ -255,10 +263,16 @@ export type Database = {
           legal_name: string
           lei?: string | null
           onboarded_at?: string
+          risk_band?: string
           risk_tier?: string
+          screened_at?: string | null
+          screening_result?: string
           short_code: string
+          ubo_disclosed?: boolean
         }
         Update: {
+          approved_to_trade?: boolean
+          authority_to_bind?: boolean
           created_at?: string
           entity_type?: string
           id?: string
@@ -267,8 +281,12 @@ export type Database = {
           legal_name?: string
           lei?: string | null
           onboarded_at?: string
+          risk_band?: string
           risk_tier?: string
+          screened_at?: string | null
+          screening_result?: string
           short_code?: string
+          ubo_disclosed?: boolean
         }
         Relationships: []
       }
@@ -552,6 +570,7 @@ export type Database = {
       intents: {
         Row: {
           choice_id: string
+          completion_probability: number | null
           created_at: string
           frozen_snapshot: Json
           id: string
@@ -560,6 +579,7 @@ export type Database = {
         }
         Insert: {
           choice_id: string
+          completion_probability?: number | null
           created_at?: string
           frozen_snapshot: Json
           id?: string
@@ -568,6 +588,7 @@ export type Database = {
         }
         Update: {
           choice_id?: string
+          completion_probability?: number | null
           created_at?: string
           frozen_snapshot?: Json
           id?: string
