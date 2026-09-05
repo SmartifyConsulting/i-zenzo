@@ -1,71 +1,112 @@
-import { Layout, PageHero } from '@/components/izenzo/Layout'
-import { CTABand } from '@/components/izenzo/Sections'
-import { NineGateTrail } from '@/components/izenzo/CertificateMock'
+import { Layout, PageHero } from "@/components/izenzo/Layout";
+import { ThreeBoxes, CTABand } from "@/components/izenzo/Sections";
+import { WadCertificate } from "@/components/izenzo/CertificateMock";
+import { Button } from "@/components/izenzo/ui";
 
 export default function AuditLedger() {
   return (
     <Layout>
       <PageHero
         eyebrow="Audit Ledger"
-        title="Tamper-evident ledger for trade finance."
-        paragraph="Banks, DFIs and insurers get hash-sealed, independently re-verifiable trade records — no forensic reconciliation required."
+        title={
+          <>
+            Tamper-evident ledger
+            <br />
+            for trade finance.
+          </>
+        }
+        paragraph="Provide banks, DFIs, and insurers with hash-sealed, independently re-verifiable deal records. Reduce manual auditing effort, raise the cost of tampering, and accelerate capital deployment."
         tagline="Tamper-evident · Hash-sealed · Bank-ready exports"
+        actions={
+          <>
+            <Button href="/auth">Issue your first ledger</Button>
+            <Button href="/docs/evidence" variant="secondary">
+              Read the spec
+            </Button>
+          </>
+        }
       >
-        <NineGateTrail />
+        <WadCertificate />
       </PageHero>
-      <section className="py-24 border-t border-border bg-background">
-        <div className="max-w-[900px] mx-auto px-4 sm:px-6">
-          <div className="rounded-md border border-emerald-950 bg-emerald-950 text-white p-8 shadow-lg font-mono text-xs">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-sm font-sans font-semibold">Attestation of Commercial Intent</span>
-              <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px]">Certificate Class WaD/A</span>
-            </div>
-            <p className="text-white/50 text-[10px] mb-6">Match UUID: 8f3a1c9e-2b4d-7f60-a1e5-c8b2d9f4a7e3</p>
-            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-2">
-              Section I — Verified Commercial Terms
-            </p>
-            <div className="grid grid-cols-2 gap-y-1.5 text-white/70 mb-6">
-              <span>Commodity</span><span className="text-white text-right">Copper Cathode LME Grade A</span>
-              <span>Volume</span><span className="text-white text-right">500 MT</span>
-              <span>Price</span><span className="text-white text-right">USD 9,420</span>
-              <span>Incoterms</span><span className="text-white text-right">CIF Rotterdam</span>
-              <span>Status</span><span className="text-emerald-brand text-right">Settled</span>
-            </div>
-            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-2">
-              Section II — 9-Gate Compliance Trail
-            </p>
-            <div className="grid grid-cols-1 gap-1 text-white/60 mb-6">
-              {[
-                'Entity Verification', 'UBO Disclosure', 'Sanctions Screening', 'Jurisdiction Resolution',
-                'Authority Binding', 'Terms Lock', 'Evidence Attachment', 'Bilateral Collapse Sign',
-                'WaD Certificate Issuance',
-              ].map((g, i) => (
-                <div key={g} className="flex justify-between">
-                  <span>GATE_0{i + 1} · {g}</span>
-                  <span className="text-white/30">verified</span>
+
+      <ThreeBoxes
+        eyebrow="The record"
+        title="Every deal, mathematically provable."
+        subtitle="A Without-a-Doubt certificate binds commercial terms, compliance evidence, and issuance authority into one hash-sealed, independently re-verifiable record."
+        boxes={[
+          {
+            label: "Integrity",
+            heading: "SHA-256 hash sealing.",
+            content: (
+              <>
+                <p className="mb-4">
+                  Every gate transition writes a hash into an append-only trail. Any alteration to terms,
+                  evidence, or signatures changes the payload hash and invalidates the certificate.
+                </p>
+                <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60 mb-1">
+                  Payload hash (SHA-256)
+                </p>
+                <p className="font-mono text-[10px] text-muted-foreground/50 break-all">
+                  a3f5b8d2c4e7f1a9b6d8e2c5f7a4b1d9e6c3f8a2b5d7e1c4f9a6b3d8e2c5f7a4
+                </p>
+              </>
+            ),
+          },
+          {
+            label: "Provenance",
+            heading: "NTP-anchored timing.",
+            content: (
+              <>
+                <p className="mb-4">
+                  Issuance time is anchored to an external time source, so the moment of certification is not
+                  something either party can quietly restate after the fact.
+                </p>
+                <div className="font-mono text-[11px] space-y-1.5">
+                  <div>Source · NTP · time.cloudflare.com</div>
+                  <div>Drift · 4ms</div>
+                  <div>Issued · 2025-04-18T09:42:17Z</div>
+                  <div>Authority · izenzo-gov-key-2025-q2-01</div>
                 </div>
-              ))}
-            </div>
-            <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-              <span className="text-white/30 break-all text-[10px]">
-                Payload Hash 8f3a1c9e2b4d7f60a1e5c8b2d9f4a7e3
-              </span>
-              <button className="rounded-md bg-emerald-brand px-3 py-1.5 text-white text-[11px] font-sans font-semibold">
-                Verify Record Integrity
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+              </>
+            ),
+          },
+          {
+            label: "Distribution",
+            heading: "Bank-ready exports.",
+            content: (
+              <>
+                <p className="mb-4">
+                  Export the sealed record for credit committees, insurers, and auditors. Recipients re-verify
+                  the hash independently — no access to your desk required.
+                </p>
+                <ul className="space-y-2">
+                  {[
+                    "Signed PDF certificate",
+                    "Machine-readable JSON payload",
+                    "Gate-by-gate evidence manifest",
+                    "Public integrity verification endpoint",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <span className="mt-1.5 h-1 w-1 rounded-full bg-emerald-brand shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ),
+          },
+        ]}
+      />
+
       <CTABand
         line1="Stop auditing paperwork."
         line2="Start verifying mathematics."
-        paragraph="Audit Ledger is included with every Izenzo Trade Desk seat."
+        paragraph="The Audit Ledger is included with every Izenzo Trade Desk seat."
         buttonLabel="Open your desk"
         buttonHref="/auth"
         secondaryLabel="See pricing"
         secondaryHref="/pricing"
       />
     </Layout>
-  )
+  );
 }
