@@ -69,26 +69,50 @@ export default function ApiReference() {
       <span className="text-xs font-mono uppercase tracking-widest text-emerald-brand">Reference</span>
       <h1 className="mt-2 text-3xl font-semibold text-foreground mb-4">API Reference</h1>
       <p className="text-muted-foreground max-w-2xl mb-10">
-        The Izenzo API is REST over HTTPS. Authenticate every request with an <code className="text-xs bg-muted px-1.5 py-0.5 rounded">X-API-Key</code> header
-        issued from your workspace.
+        The Izenzo API is REST over HTTPS. All requests authenticate with an{' '}
+        <code className="text-xs bg-muted px-1.5 py-0.5 rounded">X-API-Key</code> header, all bodies are JSON, and
+        every state-changing response carries a deterministic SHA-256 hash for offline verification.
       </p>
 
-      <h2 className="text-lg font-semibold text-foreground mb-3">Worked example: create a match</h2>
-      <pre className="text-xs font-mono bg-emerald-950 text-white rounded-md p-4 overflow-x-auto mb-3">
-{`curl -X POST https://api.trade.izenzo.co.za/functions/v1/match \\
-  -H "X-API-Key: $IZENZO_API_KEY" \\
+      <h2 className="text-lg font-semibold text-foreground mb-2">Worked example: create a match</h2>
+      <p className="text-sm text-muted-foreground max-w-2xl mb-4">
+        Records bilateral intent between two registered counterparties. Returns the canonical match record with
+        its content hash. Pass an <code className="text-xs bg-muted px-1.5 py-0.5 rounded">Idempotency-Key</code>{' '}
+        on every write so retries are safe.
+      </p>
+      <p className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground/50 mb-2">Request · bash</p>
+      <pre className="text-xs font-mono bg-emerald-950 text-white rounded-md p-4 overflow-x-auto mb-4">
+{`curl https://api.trade.izenzo.co.za/functions/v1/match \\
+  -H "X-API-Key: sk_live_..." \\
   -H "Content-Type: application/json" \\
-  -d '{"counterparty_id":"cp_9f2a","commodity":"copper_cathode","volume_mt":500}'`}
+  -H "Idempotency-Key: 9f86d081-884c-7d65-9a2f-eaa0c55ad015" \\
+  -d '{
+    "buyer":  { "id": "B001", "name": "Aurubis AG" },
+    "seller": { "id": "S001", "name": "Glencore Singapore Pte Ltd" },
+    "commodity": "Copper Cathode · LME Grade A",
+    "quantity": { "amount": 500, "unit": "MT" },
+    "price":    { "amount": 9420, "currency": "USD" }
+  }'`}
       </pre>
+      <p className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground/50 mb-2">
+        Response · 200 · json
+      </p>
       <pre className="text-xs font-mono bg-muted rounded-md p-4 overflow-x-auto mb-14">
 {`{
-  "match_id": "mtc_7c2e9d1a",
-  "status": "pending_verification",
-  "created_at": "2026-09-03T10:14:02Z"
+  "id": "match_01HX7Z9K3M2P4Q6R8T0V2X4Y6A",
+  "status": "matched",
+  "state":  "discovery",
+  "hash":   "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+  "created_at": "2026-04-18T09:14:22.000Z"
 }`}
       </pre>
 
-      <h2 className="text-lg font-semibold text-foreground mb-4">All endpoints</h2>
+      <h2 className="text-lg font-semibold text-foreground mb-2">All endpoints</h2>
+      <p className="text-sm text-muted-foreground max-w-2xl mb-6">
+        Base URL: <code className="text-xs bg-muted px-1.5 py-0.5 rounded">https://api.trade.izenzo.co.za/functions/v1</code>.
+        Endpoints in the discovery, settlement, and webhook groups have dedicated guides linked above.
+      </p>
+
       <div className="space-y-8">
         {groups.map((g) => (
           <div key={g.name}>
