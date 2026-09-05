@@ -68,7 +68,15 @@ export default function Auth() {
         </div>
       )}
 
+      <SocialSignIn
+        onUnavailable={() => {
+          setError("");
+          setNotice("Social sign-in isn't switched on yet — please use email and password.");
+        }}
+      />
+
       <form className="space-y-4" onSubmit={handleSubmit}>
+
         {mode === "signup" && (
           <TextField label="Full name" placeholder="Jane Trader" value={name} onChange={setName} />
         )}
