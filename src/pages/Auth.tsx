@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Link } from "@/lib/router-compat";
-import { AuthShell, PasswordField, SubmitButton, TextField } from "@/components/izenzo/AuthShell";
+import {
+  AuthShell,
+  PasswordField,
+  SocialSignIn,
+  SubmitButton,
+  TextField,
+} from "@/components/izenzo/AuthShell";
 import * as api from "@/lib/api";
+
 
 export default function Auth() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -61,7 +68,15 @@ export default function Auth() {
         </div>
       )}
 
+      <SocialSignIn
+        onUnavailable={() => {
+          setError("");
+          setNotice("Social sign-in isn't switched on yet — please use email and password.");
+        }}
+      />
+
       <form className="space-y-4" onSubmit={handleSubmit}>
+
         {mode === "signup" && (
           <TextField label="Full name" placeholder="Jane Trader" value={name} onChange={setName} />
         )}
@@ -132,12 +147,13 @@ export default function Auth() {
       </p>
 
       <p className="text-center text-[11px] text-muted-foreground/50 mt-6 leading-relaxed">
-        Data is processed within our single approved production region policy. By continuing you agree to our{" "}
+        Regional data residency is configured. Per-organisation residency commitments require separate approval. See our{" "}
         <Link to="/trust" className="underline">
           Trust, Security &amp; Privacy
         </Link>{" "}
         terms.
       </p>
+
     </AuthShell>
   );
 }

@@ -29,6 +29,10 @@ export default function Home() {
         </div>
       </section>
       <Ticker />
+      <p className="pb-10 text-center text-xs text-muted-foreground/60 px-4">
+        Izenzo is the trading name of Starfair162 (Pty) Ltd Reg: 2018 / 331720 / 07.
+      </p>
     </Layout>
+
   )
 }

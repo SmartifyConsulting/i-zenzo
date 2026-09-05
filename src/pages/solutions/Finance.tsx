@@ -1,5 +1,15 @@
-import { Layout, PageHero } from '@/components/izenzo/Layout'
-import { ThreeBoxes, CTABand, BulletList } from '@/components/izenzo/Sections'
+import { Layout, PageHero } from "@/components/izenzo/Layout";
+import { ThreeBoxes, CTABand } from "@/components/izenzo/Sections";
+import { WadCertificate } from "@/components/izenzo/CertificateMock";
+import { Button } from "@/components/izenzo/ui";
+
+const RESOLUTION = [
+  "One-click hash verification",
+  "Bound evidence chain (KYB, sanctions, terms)",
+  "Bilateral signature provenance",
+  "Tamper-evident timestamping",
+  "PDF + JSON evidence exports",
+];
 
 export default function Finance() {
   return (
@@ -7,50 +17,105 @@ export default function Finance() {
       <PageHero
         eyebrow="For Trade Finance & Insurance"
         title="De-risk capital deployment."
-        paragraph="Underwriters, lenders and insurers get SHA-256 hashed proof of every deal term — reviewable in minutes, not weeks."
+        paragraph="Rely on hash-sealed, independently re-verifiable deal records to underwrite trade finance, issue letters of credit, and insure shipments with reduced ambiguity."
         tagline="SHA-256 hashed · Designed for underwriter review · Designed for audit review"
+        actions={
+          <>
+            <Button href="/auth">Request access</Button>
+            <Button href="/products/audit-ledger" variant="secondary">
+              See the ledger
+            </Button>
+          </>
+        }
       >
-        <div className="rounded-md border border-emerald-950 bg-emerald-950 text-white p-6 shadow-lg font-mono text-xs">
-          <p className="text-sm font-sans font-semibold mb-4">Attestation of Commercial Intent</p>
-          <div className="space-y-1.5 text-white/60">
-            <div className="flex justify-between"><span>Status</span><span className="text-emerald-brand">Settled</span></div>
-            <div className="flex justify-between"><span>Gates verified</span><span className="text-white">9/9</span></div>
-            <div className="flex justify-between"><span>Hash</span><span className="text-white/40">8f3a…9d3f7</span></div>
-          </div>
-        </div>
+        <WadCertificate />
       </PageHero>
+
       <ThreeBoxes
-        eyebrow="The end of forensic auditing"
-        title="Verify in minutes, not weeks."
+        eyebrow="For underwriters, lenders, and insurers"
+        title="The end of forensic auditing."
+        subtitle="Three primitives (cryptographically hashed proof, governed underwriting workflow, and instant audit resolution) designed for institutional capital deployment workflows."
         boxes={[
           {
-            label: 'Proof',
-            heading: 'Hash-sealed proof (SHA-256).',
+            label: "Proof",
+            heading: "Hash-sealed proof (SHA-256).",
             content: (
-              <p className="font-mono text-[10px] text-muted-foreground break-all bg-muted rounded p-3">
-                8f3a1c9e2b4d7f60a1e5c8b2d9f4a7e3c6b1d8f2a5e9c3b7d1f4a8e2c5b9d3f7
-              </p>
+              <>
+                <p className="mb-4">
+                  Every recorded deal carries a 256-bit cryptographic fingerprint that any third party can
+                  independently re-compute and verify. No more notarised PDFs. No more chasing wet-ink signatures
+                  across three time zones.
+                </p>
+                <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60 mb-1">
+                  Sample SHA-256 seal · 256-bit
+                </p>
+                <p className="font-mono text-[10px] text-muted-foreground/50 break-all">
+                  0x7c1a4f8e9b2d6c5f3a1e8d4b7c9f2e5a8d3b6c1f4e7a9d2c5b8e1f4a7d3c9e6b
+                </p>
+                <p className="mt-2 font-mono text-[10px] text-muted-foreground/40">
+                  Sample · Match A1B2C3D4 · evidence pack
+                </p>
+              </>
             ),
           },
           {
-            label: 'Underwriting',
-            heading: 'Automated underwriting.',
-            content: <BulletList items={['Risk scoring pulled at onboarding', 'Sanctions status re-checked periodically', 'Jurisdiction policy pre-applied', 'Exposure aggregated per programme']} />,
+            label: "Underwriting",
+            heading: "Automated underwriting.",
+            content: (
+              <>
+                <p className="mb-4">
+                  Ingest sealed deal records via API and route them straight into your credit decision engine.
+                  Reduce LC issuance from days to minutes.
+                </p>
+                <ul className="space-y-2">
+                  {[
+                    "REST + webhook ingest",
+                    "Counterparty risk pre-cleared",
+                    "Cargo & shipment evidence bound",
+                    "Programmatic policy issuance",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <span className="mt-1.5 h-1 w-1 rounded-full bg-emerald-brand shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ),
           },
           {
-            label: 'Resolution',
-            heading: 'Instant audit resolution.',
-            content: <BulletList items={['Full evidence pack export', 'Every gate independently re-verifiable', 'No reliance on counterparty attestation', 'Bank-ready PDF/JSON exports', 'NTP-anchored timestamps']} />,
+            label: "Resolution",
+            heading: "Instant audit resolution.",
+            content: (
+              <>
+                <p className="mb-4">
+                  When a regulator, internal auditor, or counterparty queries a deal, the answer is a single hash
+                  check away. No discovery requests. No document chase. No reconciliation spreadsheets. Just
+                  deterministic mathematics.
+                </p>
+                <ol className="space-y-2">
+                  {RESOLUTION.map((item, i) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span className="font-mono text-[10px] text-emerald-brand mt-1">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="text-sm">{item}</span>
+                    </li>
+                  ))}
+                </ol>
+              </>
+            ),
           },
         ]}
       />
+
       <CTABand
         line1="Stop underwriting paperwork."
         line2="Start underwriting truth."
-        paragraph="Request access to review a live Audit Ledger record."
+        paragraph="Connect your credit engine to the Audit Ledger and accelerate capital deployment with mathematical certainty."
         buttonLabel="Request access"
         buttonHref="/auth"
       />
     </Layout>
-  )
+  );
 }
