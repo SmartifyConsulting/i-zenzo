@@ -55,7 +55,14 @@ export const createTokenPurchase = createServerFn({ method: "POST" })
     const c = await core();
     const db = (context as unknown as Ctx).supabase as never;
     const workspaceId = await ws(context as unknown as Ctx);
-    const tokens = Math.max(1, Math.floor(Number(data.tokens) || 1));
+    // Published pricing: credits sell in 1 / 10 / 50 / 200 bundles at $10 each.
+    const requested = Math.max(1, Math.floor(Number(data.tokens) || 1));
+    if (!(c.CREDIT_BUNDLES as readonly number[]).includes(requested)) {
+      throw new Error(
+        `Credits are sold in bundles of ${c.CREDIT_BUNDLES.join(", ")}. Requested: ${requested}.`,
+      );
+    }
+    const tokens = requested;
     const usd = tokens * c.TOKEN_UNIT_USD;
     const created = await (db as any)
       .from("payment_sessions")
