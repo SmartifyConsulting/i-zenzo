@@ -12,3 +12,5 @@
 - [x] Visual-only Microsoft/Google sign-in buttons with "not switched on yet" notice
 - [x] Anonymous demo account (confirmed, no link to the owner)
 - [x] Page-by-page fidelity pass against izenzo.co.za (home, products, solutions, pricing, walkthrough, docs, trust, status, auth)
+
+- [x] Enforce Izenzo published rules: Approved-to-Trade + 30-day screening + risk band at intent, 50.1% completion probability at collapse, all nine hard gates on the WaD, $10 credits in 1/10/50/200 bundles, WaD included in the Trade Request credit.
