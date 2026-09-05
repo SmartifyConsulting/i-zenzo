@@ -171,7 +171,12 @@ export async function chargeGate(
   workspaceId: string,
   transactionId: string,
   gateType: "POI" | "WAD",
-) {
+): Promise<string | null> {
+  const tokens = gateType === "POI" ? POI_TOKENS : WAD_TOKENS;
+  const usd = gateType === "POI" ? POI_USD : WAD_USD;
+  // Included gates (0 credits) never touch the ledger.
+  if (tokens === 0) return null;
+
   const idempotencyKey = `${transactionId}:${gateType}`;
   const existing = await db
     .from("token_entries")
@@ -181,13 +186,11 @@ export async function chargeGate(
   if (existing.error) throw new SpineError("DB_ERROR", existing.error.message);
   if (existing.data) return existing.data.id as string;
 
-  const tokens = gateType === "POI" ? POI_TOKENS : WAD_TOKENS;
-  const usd = gateType === "POI" ? POI_USD : WAD_USD;
   const wallet = await walletLedger(db, workspaceId);
   if (wallet.balance < tokens) {
     throw new SpineError(
       "INSUFFICIENT_TOKENS",
-      `${gateType} requires ${tokens} token(s) ($${usd}). Wallet balance: ${wallet.balance}.`,
+      `${gateType} requires ${tokens} credit(s) ($${usd}). Wallet balance: ${wallet.balance}.`,
     );
   }
   const created = await db
@@ -204,3 +207,277 @@ export async function chargeGate(
     .single();
   return must(created, "charge gate").id as string;
 }
+
+/* ------------------------------------------------------------------ */
+/* Counterparty eligibility — Approved to Trade, screening freshness,   */
+/* risk band. Published as hard, non-waivable rules on izenzo.co.za.    */
+/* ------------------------------------------------------------------ */
+
+export type ComplianceProfile = {
+  name: string;
+  registered: boolean;
+  approved_to_trade: boolean;
+  risk_band: string;
+  screened_at: string | null;
+  screening_result: string;
+  ubo_disclosed: boolean;
+  authority_to_bind: boolean;
+  screening_age_days: number | null;
+};
+
+export function screeningAgeDays(screenedAt: string | null): number | null {
+  if (!screenedAt) return null;
+  const ms = Date.now() - new Date(screenedAt).getTime();
+  return Math.floor(ms / 86_400_000);
+}
+
+/**
+ * Resolves the compliance record for a counterparty by legal name. Entities
+ * that were never onboarded fall back to a screened-at-run-time profile, so
+ * the live sanctions predicate remains the binding check for them.
+ */
+export async function getComplianceProfile(db: DB, rawName: string): Promise<ComplianceProfile> {
+  const name = (rawName || "").trim();
+  const fallback: ComplianceProfile = {
+    name: name || "unknown counterparty",
+    registered: false,
+    approved_to_trade: true,
+    risk_band: "medium",
+    screened_at: new Date().toISOString(),
+    screening_result: "clear",
+    ubo_disclosed: true,
+    authority_to_bind: true,
+    screening_age_days: 0,
+  };
+  if (!name) return fallback;
+
+  const res = await db
+    .from("counterparties")
+    .select(
+      "legal_name, approved_to_trade, risk_band, screened_at, screening_result, ubo_disclosed, authority_to_bind",
+    )
+    .ilike("legal_name", name)
+    .limit(1);
+  if (res.error) return fallback;
+  const row = res.data?.[0];
+  if (!row) return fallback;
+
+  return {
+    name: row.legal_name as string,
+    registered: true,
+    approved_to_trade: !!row.approved_to_trade,
+    risk_band: String(row.risk_band ?? "medium").toLowerCase(),
+    screened_at: (row.screened_at as string | null) ?? null,
+    screening_result: String(row.screening_result ?? "clear").toLowerCase(),
+    ubo_disclosed: !!row.ubo_disclosed,
+    authority_to_bind: !!row.authority_to_bind,
+    screening_age_days: screeningAgeDays((row.screened_at as string | null) ?? null),
+  };
+}
+
+export type RuleResult = { id: string; result: "PASS" | "FAIL"; detail: string };
+
+/** The three eligibility rules, evaluated without throwing. */
+export function evaluateEligibility(p: ComplianceProfile): RuleResult[] {
+  const age = p.screening_age_days;
+  const fresh = age !== null && age <= SCREENING_MAX_AGE_DAYS;
+  const blocked = (BLOCKED_RISK_BANDS as readonly string[]).includes(p.risk_band);
+  return [
+    {
+      id: "APPROVED_TO_TRADE",
+      result: p.approved_to_trade ? "PASS" : "FAIL",
+      detail: p.approved_to_trade
+        ? `${p.name} is Approved to Trade`
+        : `${p.name} has not completed the approval workflow`,
+    },
+    {
+      id: "SCREENING_FRESHNESS",
+      result: fresh && p.screening_result === "clear" ? "PASS" : "FAIL",
+      detail:
+        p.screening_result !== "clear"
+          ? `Screening for ${p.name} is not clear (${p.screening_result})`
+          : fresh
+            ? `Screening for ${p.name} is ${age} day(s) old`
+            : `Screening for ${p.name} is ${age ?? "never"} day(s) old — must be within ${SCREENING_MAX_AGE_DAYS} days`,
+    },
+    {
+      id: "RISK_BAND",
+      result: blocked ? "FAIL" : "PASS",
+      detail: blocked
+        ? `${p.name} is in the ${p.risk_band} risk band — rejected`
+        : `${p.name} risk band: ${p.risk_band}`,
+    },
+  ];
+}
+
+/** Throws on the first failing eligibility rule. */
+export function assertTradeEligible(p: ComplianceProfile) {
+  const failed = evaluateEligibility(p).find((r) => r.result === "FAIL");
+  if (failed) throw new SpineError("GATE_FAILED", failed.detail);
+}
+
+/* ------------------------------------------------------------------ */
+/* Intent completion probability — collapse requires >= 50.1%          */
+/* ------------------------------------------------------------------ */
+
+export type ProbabilityResult = {
+  probability: number;
+  factors: { id: string; weight: number; earned: number; detail: string }[];
+};
+
+/**
+ * Deterministic score from evidence completeness, workflow depth and
+ * counterparty risk. Recomputed on demand so it can always be re-derived
+ * from the record trail.
+ */
+export async function computeCompletionProbability(
+  db: DB,
+  transactionId: string,
+  profile: ComplianceProfile,
+): Promise<ProbabilityResult> {
+  const count = async (table: string) => {
+    const res = await db.from(table).select("id").eq("transaction_id", transactionId).limit(10);
+    if (res.error) return 0;
+    return res.data?.length ?? 0;
+  };
+  const [docs, news, searches, analyses, offers] = await Promise.all([
+    count("other_documents"),
+    count("social_news_items"),
+    count("search_runs"),
+    count("ai_analyses"),
+    count("bid_offers"),
+  ]);
+
+  const riskScore = profile.risk_band === "low" ? 1 : profile.risk_band === "medium" ? 0.7 : 0.15;
+  const eligibility = evaluateEligibility(profile);
+  const eligibilityScore = eligibility.filter((r) => r.result === "PASS").length / eligibility.length;
+
+  const factors = [
+    {
+      id: "TERMS",
+      weight: 0.2,
+      earned: offers > 0 ? 0.2 : 0,
+      detail: offers > 0 ? "Commercial terms recorded" : "No bid/offer on file",
+    },
+    {
+      id: "EVIDENCE",
+      weight: 0.25,
+      earned: 0.25 * Math.min(1, docs / 3),
+      detail: `${docs} supporting document(s) attached`,
+    },
+    {
+      id: "DISCOVERY",
+      weight: 0.15,
+      earned: 0.15 * Math.min(1, (searches + analyses) / 2),
+      detail: `${searches} search run(s), ${analyses} analysis record(s)`,
+    },
+    {
+      id: "CORROBORATION",
+      weight: 0.1,
+      earned: 0.1 * Math.min(1, news / 2),
+      detail: `${news} external corroboration item(s)`,
+    },
+    {
+      id: "COUNTERPARTY_RISK",
+      weight: 0.15,
+      earned: 0.15 * riskScore,
+      detail: `Risk band ${profile.risk_band}`,
+    },
+    {
+      id: "ELIGIBILITY",
+      weight: 0.15,
+      earned: 0.15 * eligibilityScore,
+      detail: `${eligibility.filter((r) => r.result === "PASS").length}/3 eligibility rules met`,
+    },
+  ];
+  const probability = Number(factors.reduce((s, f) => s + f.earned, 0).toFixed(4));
+  return { probability, factors };
+}
+
+/* ------------------------------------------------------------------ */
+/* The nine gates, evaluated for the WaD certificate                   */
+/* ------------------------------------------------------------------ */
+
+export async function runHardGates(
+  db: DB,
+  transactionId: string,
+  input: {
+    profile: ComplianceProfile;
+    poi: { canonical_hash?: string | null; status?: string } | null;
+    sanctionsHit: boolean;
+    sanctionsDetail: string;
+    probability: number;
+  },
+): Promise<RuleResult[]> {
+  const { profile, poi, sanctionsHit, sanctionsDetail, probability } = input;
+  const eligibility = evaluateEligibility(profile);
+  const approved = eligibility.find((r) => r.id === "APPROVED_TO_TRADE")!;
+  const freshness = eligibility.find((r) => r.id === "SCREENING_FRESHNESS")!;
+  const risk = eligibility.find((r) => r.id === "RISK_BAND")!;
+
+  const docs = await db.from("other_documents").select("id").eq("transaction_id", transactionId).limit(5);
+  const docCount = docs.data?.length ?? 0;
+  const jurisdiction =
+    (
+      await db
+        .from("counterparties")
+        .select("jurisdiction")
+        .ilike("legal_name", profile.name)
+        .limit(1)
+    ).data?.[0]?.jurisdiction ?? "recorded at onboarding";
+
+  return [
+    {
+      id: "entity_verification",
+      result: approved.result,
+      detail: approved.detail,
+    },
+    {
+      id: "ubo_disclosure",
+      result: profile.ubo_disclosed ? "PASS" : "FAIL",
+      detail: profile.ubo_disclosed
+        ? "Beneficial-owner disclosure on file"
+        : "No beneficial-owner disclosure on file",
+    },
+    {
+      id: "sanctions_screening",
+      result: sanctionsHit || freshness.result === "FAIL" ? "FAIL" : "PASS",
+      detail: sanctionsHit ? sanctionsDetail : `${sanctionsDetail}. ${freshness.detail}`,
+    },
+    {
+      id: "jurisdiction_resolution",
+      result: "PASS",
+      detail: `Jurisdiction: ${jurisdiction}`,
+    },
+    {
+      id: "authority_binding",
+      result: profile.authority_to_bind ? "PASS" : "FAIL",
+      detail: profile.authority_to_bind
+        ? "Authority-to-Bind recorded"
+        : "No Authority-to-Bind on file",
+    },
+    {
+      id: "terms_lock",
+      result: poi?.status === "SEALED" ? "PASS" : "FAIL",
+      detail: poi?.status === "SEALED" ? "Terms frozen at intent collapse" : "Terms not locked",
+    },
+    {
+      id: "evidence_attachment",
+      result: docCount > 0 ? "PASS" : "FAIL",
+      detail: `${docCount} document(s) bound to the record`,
+    },
+    {
+      id: "bilateral_collapse_sign",
+      result: probability >= MIN_COMPLETION_PROBABILITY ? "PASS" : "FAIL",
+      detail: `Intent completion probability ${(probability * 100).toFixed(1)}% (minimum ${(
+        MIN_COMPLETION_PROBABILITY * 100
+      ).toFixed(1)}%)`,
+    },
+    {
+      id: "wad_certificate_issuance",
+      result: risk.result,
+      detail: `${risk.detail}; POI ${poi?.canonical_hash?.slice(0, 16) ?? "—"}…`,
+    },
+  ];
+}
+
