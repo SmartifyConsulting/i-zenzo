@@ -56,6 +56,45 @@ export const revokeDealRelease = (releaseId: string) => fns.adminRevokeDealRelea
 export const listFunderAuditLog = () => fns.adminListFunderAuditLog();
 export const listExecutionCases = () => fns.adminListExecutionCases();
 
+export const getRegistrySummary = () => fns.adminGetRegistrySummary();
+export const listRegistryCompanies = () => fns.adminListRegistryCompanies();
+export const listRegistryClaims = () => fns.adminListRegistryClaims();
+export const decideRegistryClaim = (claimId: string, approve: boolean) =>
+  fns.adminDecideRegistryClaim({ data: { claimId, approve } });
+export const listBankVerifications = () => fns.adminListBankVerifications();
+export const decideBankVerification = (verificationId: string, approve: boolean) =>
+  fns.adminDecideBankVerification({ data: { verificationId, approve } });
+export const listRegistryApiClients = () => fns.adminListRegistryApiClients();
+export const setApiClientStatus = (clientId: string, status: string) =>
+  fns.adminSetApiClientStatus({ data: { clientId, status } });
+export const listRegistryApiUsage = () => fns.adminListRegistryApiUsage();
+
+export const listEnterpriseIdentity = () => fns.adminListEnterpriseIdentity();
+
+export const listAiTradeRequests = () => fns.adminListAiTradeRequests();
+export const listAiSuggestions = () => fns.adminListAiSuggestions();
+export const decideAiSuggestion = (suggestionId: string, status: "approved" | "rejected" | "archived") =>
+  fns.adminDecideAiSuggestion({ data: { suggestionId, status } });
+export const listAiDncRules = () => fns.adminListAiDncRules();
+export const addAiDncRule = (ruleType: string, value: string, reason?: string) =>
+  fns.adminAddAiDncRule({ data: { ruleType, value, reason } });
+
+export const getRevenueOverview = () => fns.adminGetRevenueOverview();
+
+export const listLegacyRepairFlags = () => fns.adminListLegacyRepairFlags();
+export const resolveLegacyFlag = (flagId: string, action: "archive" | "repair") =>
+  fns.adminResolveLegacyFlag({ data: { flagId, action } });
+
+export const listGovernanceRecords = () => fns.adminListGovernanceRecords();
+
+export const listAuditLogs = () => fns.adminListAuditLogs();
+
+export const getSystemHealth = () => fns.adminGetSystemHealth();
+
+export const getPlatformSettings = () => fns.adminGetPlatformSettings();
+export const updatePlatformSettings = (workspaceName: string, systemStatusMessage: string) =>
+  fns.adminUpdatePlatformSettings({ data: { workspaceName, systemStatusMessage } });
+
 export const listFacilitationCases = () => fns.adminListFacilitationCases();
 export const assignFacilitationCase = (caseId: string, status?: string) =>
   fns.adminAssignFacilitationCase({ data: { caseId, status } });

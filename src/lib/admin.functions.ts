@@ -818,6 +818,447 @@ export const adminListExecutionCases = createServerFn({ method: "GET" })
     };
   });
 
+/* ------------------------------------------------------------------ */
+/* Registry                                                              */
+/* ------------------------------------------------------------------ */
+
+export const adminGetRegistrySummary = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const [companies, claims, bankQueue, apiClients] = await Promise.all([
+      db.from("registry_companies").select("id", { count: "exact", head: true }),
+      db.from("registry_claims").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      db.from("bank_verifications").select("id", { count: "exact", head: true }).eq("status", "manual_review_required"),
+      db.from("registry_api_clients").select("id", { count: "exact", head: true }),
+    ]);
+    return {
+      total_companies: companies.count ?? 0,
+      pending_claims: claims.count ?? 0,
+      pending_bank_reviews: bankQueue.count ?? 0,
+      api_clients: apiClients.count ?? 0,
+    };
+  });
+
+export const adminListRegistryCompanies = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("registry_companies").select("*").order("company_name", { ascending: true });
+    if (error) throw new Error(error.message);
+    return { companies: data ?? [] };
+  });
+
+export const adminListRegistryClaims = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data: claims, error } = await db.from("registry_claims").select("*").order("submitted_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    const companyIds = Array.from(new Set((claims ?? []).map((c: any) => c.company_id)));
+    const { data: companies } = companyIds.length
+      ? await db.from("registry_companies").select("id, company_name").in("id", companyIds)
+      : { data: [] };
+    const nameById = new Map((companies ?? []).map((c: any) => [c.id, c.company_name]));
+    return { claims: (claims ?? []).map((c: any) => ({ ...c, company_name: nameById.get(c.company_id) ?? "—" })) };
+  });
+
+export const adminDecideRegistryClaim = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { claimId: string; approve: boolean })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("registry_claims")
+      .update({
+        status: data.approve ? "approved" : "rejected",
+        decided_at: new Date().toISOString(),
+        decided_by: ctx.userId,
+      })
+      .eq("id", data.claimId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListBankVerifications = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data: rows, error } = await db.from("bank_verifications").select("*").order("requested_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    const companyIds = Array.from(new Set((rows ?? []).map((r: any) => r.company_id).filter(Boolean)));
+    const { data: companies } = companyIds.length
+      ? await db.from("registry_companies").select("id, company_name").in("id", companyIds)
+      : { data: [] };
+    const nameById = new Map((companies ?? []).map((c: any) => [c.id, c.company_name]));
+    return { verifications: (rows ?? []).map((r: any) => ({ ...r, company_name: nameById.get(r.company_id) ?? "—" })) };
+  });
+
+export const adminDecideBankVerification = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { verificationId: string; approve: boolean })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("bank_verifications")
+      .update({
+        status: data.approve ? "manual_verified" : "failed",
+        decided_at: new Date().toISOString(),
+        decided_by: ctx.userId,
+      })
+      .eq("id", data.verificationId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListRegistryApiClients = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("registry_api_clients").select("*").order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { clients: data ?? [] };
+  });
+
+export const adminSetApiClientStatus = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { clientId: string; status: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("registry_api_clients")
+      .update({ lifecycle_status: data.status })
+      .eq("id", data.clientId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListRegistryApiUsage = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data: events, error } = await db
+      .from("registry_api_usage_events")
+      .select("*")
+      .order("occurred_at", { ascending: false })
+      .limit(100);
+    if (error) throw new Error(error.message);
+    const clientIds = Array.from(new Set((events ?? []).map((e: any) => e.client_id).filter(Boolean)));
+    const { data: clients } = clientIds.length
+      ? await db.from("registry_api_clients").select("id, client_name").in("id", clientIds)
+      : { data: [] };
+    const nameById = new Map((clients ?? []).map((c: any) => [c.id, c.client_name]));
+    return { events: (events ?? []).map((e: any) => ({ ...e, client_name: nameById.get(e.client_id) ?? "—" })) };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Enterprise Identity — org-level SSO/SCIM shell (reuses organisations) */
+/* ------------------------------------------------------------------ */
+
+export const adminListEnterpriseIdentity = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("organisations").select("id, name, created_at").order("name", { ascending: true });
+    if (error) throw new Error(error.message);
+    return { organisations: data ?? [] };
+  });
+
+/* ------------------------------------------------------------------ */
+/* AI Suggestions — advisory review queue                               */
+/* ------------------------------------------------------------------ */
+
+export const adminListAiTradeRequests = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("spine_transactions")
+      .select("id, trading_stage, created_at")
+      .order("created_at", { ascending: false })
+      .limit(20);
+    if (error) throw new Error(error.message);
+    return { requests: data ?? [] };
+  });
+
+export const adminListAiSuggestions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("ai_suggested_matches")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { suggestions: data ?? [] };
+  });
+
+export const adminDecideAiSuggestion = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { suggestionId: string; status: "approved" | "rejected" | "archived" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("ai_suggested_matches")
+      .update({ status: data.status, decided_at: new Date().toISOString(), decided_by: ctx.userId })
+      .eq("id", data.suggestionId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListAiDncRules = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("ai_dnc_rules").select("*").order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { rules: data ?? [] };
+  });
+
+export const adminAddAiDncRule = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { ruleType: string; value: string; reason?: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db.from("ai_dnc_rules").insert({
+      rule_type: data.ruleType,
+      value: data.value,
+      reason: data.reason ?? null,
+      created_by: ctx.userId,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Revenue & Sales — reuses token_entries + workspaces                  */
+/* ------------------------------------------------------------------ */
+
+export const adminGetRevenueOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data: entries, error } = await db
+      .from("token_entries")
+      .select("id, workspace_id, tokens, usd, created_at")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+
+    const workspaceIds = Array.from(new Set((entries ?? []).map((e: any) => e.workspace_id)));
+    const { data: workspaces } = workspaceIds.length
+      ? await db.from("workspaces").select("id, name").in("id", workspaceIds)
+      : { data: [] };
+    const nameById = new Map<string, string>((workspaces ?? []).map((w: any) => [w.id, w.name]));
+
+    const totalRevenue = (entries ?? []).reduce((sum: number, e: any) => sum + Number(e.usd ?? 0), 0);
+    const totalCredits = (entries ?? []).reduce((sum: number, e: any) => sum + Number(e.tokens ?? 0), 0);
+    const uniqueBuyers = new Set((entries ?? []).map((e: any) => e.workspace_id)).size;
+
+    const byOrg = new Map<string, { revenue: number; purchases: number; last: string }>();
+    for (const e of entries ?? []) {
+      const name: string = nameById.get(e.workspace_id) ?? "—";
+      const row = byOrg.get(name) ?? { revenue: 0, purchases: 0, last: e.created_at };
+      row.revenue += Number(e.usd ?? 0);
+      row.purchases += 1;
+      if (new Date(e.created_at) > new Date(row.last)) row.last = e.created_at;
+      byOrg.set(name, row);
+    }
+    const topBuyers = Array.from(byOrg.entries())
+      .map(([organisation, v]) => ({ organisation, ...v }))
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 10);
+
+    return {
+      total_revenue: totalRevenue,
+      total_credits: totalCredits,
+      total_purchases: (entries ?? []).length,
+      unique_buyers: uniqueBuyers,
+      top_buyers: topBuyers,
+      timeline: (entries ?? []).slice(0, 30).map((e: any) => ({
+        ...e,
+        organisation: nameById.get(e.workspace_id) ?? "—",
+      })),
+    };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Legacy Repair                                                        */
+/* ------------------------------------------------------------------ */
+
+export const adminListLegacyRepairFlags = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data: flags, error } = await db
+      .from("legacy_repair_flags")
+      .select("*")
+      .eq("status", "flagged")
+      .order("flagged_at", { ascending: false });
+    if (error) throw new Error(error.message);
+
+    const txnIds = (flags ?? []).map((f: any) => f.transaction_id);
+    const { data: txns } = txnIds.length
+      ? await db.from("spine_transactions").select("id, trading_stage").in("id", txnIds)
+      : { data: [] };
+    const txnById = new Map((txns ?? []).map((t: any) => [t.id, t.trading_stage]));
+
+    return {
+      flags: (flags ?? []).map((f: any) => ({ ...f, trading_stage: txnById.get(f.transaction_id) ?? "—" })),
+    };
+  });
+
+export const adminResolveLegacyFlag = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { flagId: string; action: "archive" | "repair" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("legacy_repair_flags")
+      .update({
+        status: data.action === "archive" ? "archived" : "repaired",
+        resolved_at: new Date().toISOString(),
+        resolved_by: ctx.userId,
+      })
+      .eq("id", data.flagId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Governance Records — merged spine_transactions + audit_logs          */
+/* ------------------------------------------------------------------ */
+
+export const adminListGovernanceRecords = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("spine_transactions")
+      .select("id, lifecycle, trading_stage, created_at")
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw new Error(error.message);
+    return { records: data ?? [] };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Audit & Health — reuses audit_logs                                   */
+/* ------------------------------------------------------------------ */
+
+export const adminListAuditLogs = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("audit_logs")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw new Error(error.message);
+    return { logs: data ?? [] };
+  });
+
+/* ------------------------------------------------------------------ */
+/* System Health — live DB reachability + basic counters                */
+/* ------------------------------------------------------------------ */
+
+export const adminGetSystemHealth = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const start = Date.now();
+    const [workspaces, transactions, executions] = await Promise.all([
+      db.from("workspaces").select("id", { count: "exact", head: true }),
+      db.from("spine_transactions").select("id", { count: "exact", head: true }),
+      db.from("executions").select("id", { count: "exact", head: true }).neq("status", "COMPLETE"),
+    ]);
+    const latencyMs = Date.now() - start;
+    return {
+      database_reachable: !workspaces.error,
+      latency_ms: latencyMs,
+      total_workspaces: workspaces.count ?? 0,
+      total_transactions: transactions.count ?? 0,
+      executions_in_progress: executions.count ?? 0,
+    };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Platform Settings                                                    */
+/* ------------------------------------------------------------------ */
+
+export const adminGetPlatformSettings = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("platform_settings").select("*").eq("id", true).maybeSingle();
+    if (error) throw new Error(error.message);
+    return { settings: data };
+  });
+
+export const adminUpdatePlatformSettings = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { workspaceName: string; systemStatusMessage: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("platform_settings")
+      .update({
+        workspace_name: data.workspaceName,
+        system_status_message: data.systemStatusMessage,
+        updated_at: new Date().toISOString(),
+        updated_by: ctx.userId,
+      })
+      .eq("id", true);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const adminGetHqSummary = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
