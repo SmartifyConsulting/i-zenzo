@@ -19,3 +19,7 @@ export const updateOrganisation = (
   organisationId: string,
   patch: { status?: "active" | "suspended"; sandboxEnabled?: boolean },
 ) => fns.adminUpdateOrganisation({ data: { organisationId, ...patch } });
+
+export const listEngagements = () => fns.adminListEngagements();
+export const addEngagementNote = (poiId: string, note: string) =>
+  fns.adminAddEngagementNote({ data: { poiId, note } });

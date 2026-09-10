@@ -31,6 +31,7 @@ import { Route as DocsMatchesRouteImport } from './routes/docs.matches'
 import { Route as DocsQuickstartRouteImport } from './routes/docs.quickstart'
 import { Route as DocsWebhooksRouteImport } from './routes/docs.webhooks'
 import { Route as HqIndexRouteImport } from './routes/hq.index'
+import { Route as HqEngagementsRouteImport } from './routes/hq.engagements'
 import { Route as HqOrganisationsRouteImport } from './routes/hq.organisations'
 import { Route as HqUsersRouteImport } from './routes/hq.users'
 import { Route as ProductsAuditLedgerRouteImport } from './routes/products.audit-ledger'
@@ -150,6 +151,11 @@ const HqIndexRoute = HqIndexRouteImport.update({
   path: '/hq/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HqEngagementsRoute = HqEngagementsRouteImport.update({
+  id: '/hq/engagements',
+  path: '/hq/engagements',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HqOrganisationsRoute = HqOrganisationsRouteImport.update({
   id: '/hq/organisations',
   path: '/hq/organisations',
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/docs/matches': typeof DocsMatchesRoute
   '/docs/quickstart': typeof DocsQuickstartRoute
   '/docs/webhooks': typeof DocsWebhooksRoute
+  '/hq/engagements': typeof HqEngagementsRoute
   '/hq/organisations': typeof HqOrganisationsRoute
   '/hq/users': typeof HqUsersRoute
   '/products/audit-ledger': typeof ProductsAuditLedgerRoute
@@ -245,6 +252,7 @@ export interface FileRoutesByTo {
   '/docs/matches': typeof DocsMatchesRoute
   '/docs/quickstart': typeof DocsQuickstartRoute
   '/docs/webhooks': typeof DocsWebhooksRoute
+  '/hq/engagements': typeof HqEngagementsRoute
   '/hq/organisations': typeof HqOrganisationsRoute
   '/hq/users': typeof HqUsersRoute
   '/products/audit-ledger': typeof ProductsAuditLedgerRoute
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   '/docs/matches': typeof DocsMatchesRoute
   '/docs/quickstart': typeof DocsQuickstartRoute
   '/docs/webhooks': typeof DocsWebhooksRoute
+  '/hq/engagements': typeof HqEngagementsRoute
   '/hq/organisations': typeof HqOrganisationsRoute
   '/hq/users': typeof HqUsersRoute
   '/products/audit-ledger': typeof ProductsAuditLedgerRoute
@@ -312,6 +321,7 @@ export interface FileRouteTypes {
     | '/docs/matches'
     | '/docs/quickstart'
     | '/docs/webhooks'
+    | '/hq/engagements'
     | '/hq/organisations'
     | '/hq/users'
     | '/products/audit-ledger'
@@ -344,6 +354,7 @@ export interface FileRouteTypes {
     | '/docs/matches'
     | '/docs/quickstart'
     | '/docs/webhooks'
+    | '/hq/engagements'
     | '/hq/organisations'
     | '/hq/users'
     | '/products/audit-ledger'
@@ -376,6 +387,7 @@ export interface FileRouteTypes {
     | '/docs/matches'
     | '/docs/quickstart'
     | '/docs/webhooks'
+    | '/hq/engagements'
     | '/hq/organisations'
     | '/hq/users'
     | '/products/audit-ledger'
@@ -409,6 +421,7 @@ export interface RootRouteChildren {
   DocsMatchesRoute: typeof DocsMatchesRoute
   DocsQuickstartRoute: typeof DocsQuickstartRoute
   DocsWebhooksRoute: typeof DocsWebhooksRoute
+  HqEngagementsRoute: typeof HqEngagementsRoute
   HqOrganisationsRoute: typeof HqOrganisationsRoute
   HqUsersRoute: typeof HqUsersRoute
   ProductsAuditLedgerRoute: typeof ProductsAuditLedgerRoute
@@ -577,6 +590,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HqIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hq/engagements': {
+      id: '/hq/engagements'
+      path: '/hq/engagements'
+      fullPath: '/hq/engagements'
+      preLoaderRoute: typeof HqEngagementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hq/organisations': {
       id: '/hq/organisations'
       path: '/hq/organisations'
@@ -657,6 +677,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocsMatchesRoute: DocsMatchesRoute,
   DocsQuickstartRoute: DocsQuickstartRoute,
   DocsWebhooksRoute: DocsWebhooksRoute,
+  HqEngagementsRoute: HqEngagementsRoute,
   HqOrganisationsRoute: HqOrganisationsRoute,
   HqUsersRoute: HqUsersRoute,
   ProductsAuditLedgerRoute: ProductsAuditLedgerRoute,

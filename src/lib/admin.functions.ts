@@ -237,6 +237,94 @@ export const adminUpdateOrganisation = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/* ------------------------------------------------------------------ */
+/* Engagements — POI hold-point queue across every workspace            */
+/* ------------------------------------------------------------------ */
+
+export const adminListEngagements = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+
+    const { data: pois, error } = await db
+      .from("pois")
+      .select("id, transaction_id, status, sealed_at, created_at")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) throw new Error(error.message);
+
+    const txnIds = (pois ?? []).map((p: any) => p.transaction_id);
+    const [{ data: txns }, { data: notes }] = await Promise.all([
+      txnIds.length
+        ? db.from("spine_transactions").select("id, workspace_id, trading_stage").in("id", txnIds)
+        : { data: [] },
+      db
+        .from("engagement_notes")
+        .select("id, poi_id, note, created_at")
+        .in("poi_id", (pois ?? []).map((p: any) => p.id))
+        .order("created_at", { ascending: false }),
+    ]);
+
+    const txnById = new Map((txns ?? []).map((t: any) => [t.id, t]));
+    const workspaceIds = Array.from(new Set((txns ?? []).map((t: any) => t.workspace_id)));
+    const { data: workspaces } = workspaceIds.length
+      ? await db.from("workspaces").select("id, name, email").in("id", workspaceIds)
+      : { data: [] };
+    const workspaceById = new Map((workspaces ?? []).map((w: any) => [w.id, w]));
+
+    const bidOffers = await Promise.all(
+      (pois ?? []).map((p: any) =>
+        db
+          .from("bid_offers")
+          .select("subject_description, represented_org")
+          .eq("transaction_id", p.transaction_id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ),
+    );
+
+    const notesByPoi = new Map<string, typeof notes>();
+    for (const n of notes ?? []) {
+      const list = notesByPoi.get(n.poi_id) ?? [];
+      list.push(n);
+      notesByPoi.set(n.poi_id, list as any);
+    }
+
+    const engagements = (pois ?? []).map((p: any, i: number) => {
+      const txn = txnById.get(p.transaction_id) as { workspace_id?: string; trading_stage?: string } | undefined;
+      const workspace = txn ? (workspaceById.get(txn.workspace_id) as { name?: string; email?: string } | undefined) : undefined;
+      return {
+        poi_id: p.id,
+        transaction_id: p.transaction_id,
+        status: p.status,
+        sealed_at: p.sealed_at,
+        created_at: p.created_at,
+        subject: bidOffers[i].data?.subject_description ?? null,
+        requester_org: bidOffers[i].data?.represented_org ?? workspace?.name ?? workspace?.email ?? "—",
+        notes: notesByPoi.get(p.id) ?? [],
+      };
+    });
+
+    return { engagements };
+  });
+
+export const adminAddEngagementNote = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { poiId: string; note: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("engagement_notes")
+      .insert({ poi_id: data.poiId, note: data.note, author_id: ctx.userId });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const adminGetHqSummary = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
