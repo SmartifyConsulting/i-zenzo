@@ -30,6 +30,7 @@ import { Route as DocsEvidenceRouteImport } from './routes/docs.evidence'
 import { Route as DocsMatchesRouteImport } from './routes/docs.matches'
 import { Route as DocsQuickstartRouteImport } from './routes/docs.quickstart'
 import { Route as DocsWebhooksRouteImport } from './routes/docs.webhooks'
+import { Route as HqIndexRouteImport } from './routes/hq.index'
 import { Route as ProductsAuditLedgerRouteImport } from './routes/products.audit-ledger'
 import { Route as ProductsComplianceEngineRouteImport } from './routes/products.compliance-engine'
 import { Route as ProductsTradeDeskRouteImport } from './routes/products.trade-desk'
@@ -142,6 +143,11 @@ const DocsWebhooksRoute = DocsWebhooksRouteImport.update({
   path: '/docs/webhooks',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HqIndexRoute = HqIndexRouteImport.update({
+  id: '/hq/',
+  path: '/hq/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductsAuditLedgerRoute = ProductsAuditLedgerRouteImport.update({
   id: '/products/audit-ledger',
   path: '/products/audit-ledger',
@@ -202,6 +208,7 @@ export interface FileRoutesByFullPath {
   '/solutions/sovereigns': typeof SolutionsSovereignsRoute
   '/solutions/traders': typeof SolutionsTradersRoute
   '/docs/': typeof DocsIndexRoute
+  '/hq/': typeof HqIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -231,6 +238,7 @@ export interface FileRoutesByTo {
   '/solutions/sovereigns': typeof SolutionsSovereignsRoute
   '/solutions/traders': typeof SolutionsTradersRoute
   '/docs': typeof DocsIndexRoute
+  '/hq': typeof HqIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/solutions/sovereigns': typeof SolutionsSovereignsRoute
   '/solutions/traders': typeof SolutionsTradersRoute
   '/docs/': typeof DocsIndexRoute
+  '/hq/': typeof HqIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -292,6 +301,7 @@ export interface FileRouteTypes {
     | '/solutions/sovereigns'
     | '/solutions/traders'
     | '/docs/'
+    | '/hq/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -321,6 +331,7 @@ export interface FileRouteTypes {
     | '/solutions/sovereigns'
     | '/solutions/traders'
     | '/docs'
+    | '/hq'
   id:
     | '__root__'
     | '/'
@@ -350,6 +361,7 @@ export interface FileRouteTypes {
     | '/solutions/sovereigns'
     | '/solutions/traders'
     | '/docs/'
+    | '/hq/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -380,6 +392,7 @@ export interface RootRouteChildren {
   SolutionsSovereignsRoute: typeof SolutionsSovereignsRoute
   SolutionsTradersRoute: typeof SolutionsTradersRoute
   DocsIndexRoute: typeof DocsIndexRoute
+  HqIndexRoute: typeof HqIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -531,6 +544,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocsWebhooksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hq/': {
+      id: '/hq/'
+      path: '/hq'
+      fullPath: '/hq/'
+      preLoaderRoute: typeof HqIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/products/audit-ledger': {
       id: '/products/audit-ledger'
       path: '/products/audit-ledger'
@@ -604,6 +624,7 @@ const rootRouteChildren: RootRouteChildren = {
   SolutionsSovereignsRoute: SolutionsSovereignsRoute,
   SolutionsTradersRoute: SolutionsTradersRoute,
   DocsIndexRoute: DocsIndexRoute,
+  HqIndexRoute: HqIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
