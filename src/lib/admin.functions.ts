@@ -444,6 +444,178 @@ export const adminDeleteDncRule = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/* ------------------------------------------------------------------ */
+/* Compliance Workbench                                                 */
+/* ------------------------------------------------------------------ */
+
+export const adminListComplianceCases = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("compliance_cases").select("*").order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { cases: data ?? [] };
+  });
+
+export const adminUpdateComplianceCase = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { caseId: string; status: string; claim?: boolean })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const patch: Record<string, unknown> = { status: data.status };
+    if (data.claim) patch["assigned_to"] = ctx.userId;
+    if (data.status === "resolved") patch["resolved_at"] = new Date().toISOString();
+    const { error } = await db.from("compliance_cases").update(patch).eq("id", data.caseId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ------------------------------------------------------------------ */
+/* IDV Review                                                           */
+/* ------------------------------------------------------------------ */
+
+export const adminListIdvReviews = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("idv_reviews").select("*").order("updated_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { reviews: data ?? [] };
+  });
+
+export const adminDecideIdvReview = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { reviewId: string; approve: boolean })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("idv_reviews")
+      .update({
+        status: data.approve ? "approved" : "rejected",
+        reviewed_by: ctx.userId,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", data.reviewId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Governance Cases (P-5)                                               */
+/* ------------------------------------------------------------------ */
+
+export const adminListGovernanceCases = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("governance_cases").select("*").order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { cases: data ?? [] };
+  });
+
+export const adminClaimGovernanceCase = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { caseId: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("governance_cases")
+      .update({ assigned_to: ctx.userId, status: "in_progress" })
+      .eq("id", data.caseId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Dispute Resolution                                                    */
+/* ------------------------------------------------------------------ */
+
+export const adminListDisputes = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("disputes").select("*").order("raised_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { disputes: data ?? [] };
+  });
+
+export const adminResolveDispute = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { disputeId: string; notes: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("disputes")
+      .update({ status: "resolved", resolution_notes: data.notes, resolved_at: new Date().toISOString() })
+      .eq("id", data.disputeId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Legal Holds                                                          */
+/* ------------------------------------------------------------------ */
+
+export const adminListLegalHolds = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("legal_holds").select("*").order("applied_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { holds: data ?? [] };
+  });
+
+export const adminApplyLegalHold = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { scopeType: string; scopeId: string; reason: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    if (data.reason.trim().length < 10) throw new Error("Reason must be at least 10 characters");
+    const db = ctx.supabase as any;
+    const { error } = await db.from("legal_holds").insert({
+      scope_type: data.scopeType,
+      scope_id: data.scopeId,
+      reason: data.reason,
+      applied_by: ctx.userId,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminReleaseLegalHold = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { holdId: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("legal_holds")
+      .update({ status: "released", released_at: new Date().toISOString(), released_by: ctx.userId })
+      .eq("id", data.holdId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const adminGetHqSummary = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

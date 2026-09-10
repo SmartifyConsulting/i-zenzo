@@ -31,8 +31,13 @@ import { Route as DocsMatchesRouteImport } from './routes/docs.matches'
 import { Route as DocsQuickstartRouteImport } from './routes/docs.quickstart'
 import { Route as DocsWebhooksRouteImport } from './routes/docs.webhooks'
 import { Route as HqIndexRouteImport } from './routes/hq.index'
+import { Route as HqComplianceRouteImport } from './routes/hq.compliance'
+import { Route as HqDisputesRouteImport } from './routes/hq.disputes'
 import { Route as HqEngagementsRouteImport } from './routes/hq.engagements'
 import { Route as HqFacilitationRouteImport } from './routes/hq.facilitation'
+import { Route as HqGovernanceRouteImport } from './routes/hq.governance'
+import { Route as HqIdvRouteImport } from './routes/hq.idv'
+import { Route as HqLegalHoldsRouteImport } from './routes/hq.legal-holds'
 import { Route as HqOrganisationsRouteImport } from './routes/hq.organisations'
 import { Route as HqUsersRouteImport } from './routes/hq.users'
 import { Route as ProductsAuditLedgerRouteImport } from './routes/products.audit-ledger'
@@ -152,6 +157,16 @@ const HqIndexRoute = HqIndexRouteImport.update({
   path: '/hq/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HqComplianceRoute = HqComplianceRouteImport.update({
+  id: '/hq/compliance',
+  path: '/hq/compliance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HqDisputesRoute = HqDisputesRouteImport.update({
+  id: '/hq/disputes',
+  path: '/hq/disputes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HqEngagementsRoute = HqEngagementsRouteImport.update({
   id: '/hq/engagements',
   path: '/hq/engagements',
@@ -160,6 +175,21 @@ const HqEngagementsRoute = HqEngagementsRouteImport.update({
 const HqFacilitationRoute = HqFacilitationRouteImport.update({
   id: '/hq/facilitation',
   path: '/hq/facilitation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HqGovernanceRoute = HqGovernanceRouteImport.update({
+  id: '/hq/governance',
+  path: '/hq/governance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HqIdvRoute = HqIdvRouteImport.update({
+  id: '/hq/idv',
+  path: '/hq/idv',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HqLegalHoldsRoute = HqLegalHoldsRouteImport.update({
+  id: '/hq/legal-holds',
+  path: '/hq/legal-holds',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HqOrganisationsRoute = HqOrganisationsRouteImport.update({
@@ -225,8 +255,13 @@ export interface FileRoutesByFullPath {
   '/docs/matches': typeof DocsMatchesRoute
   '/docs/quickstart': typeof DocsQuickstartRoute
   '/docs/webhooks': typeof DocsWebhooksRoute
+  '/hq/compliance': typeof HqComplianceRoute
+  '/hq/disputes': typeof HqDisputesRoute
   '/hq/engagements': typeof HqEngagementsRoute
   '/hq/facilitation': typeof HqFacilitationRoute
+  '/hq/governance': typeof HqGovernanceRoute
+  '/hq/idv': typeof HqIdvRoute
+  '/hq/legal-holds': typeof HqLegalHoldsRoute
   '/hq/organisations': typeof HqOrganisationsRoute
   '/hq/users': typeof HqUsersRoute
   '/products/audit-ledger': typeof ProductsAuditLedgerRoute
@@ -259,8 +294,13 @@ export interface FileRoutesByTo {
   '/docs/matches': typeof DocsMatchesRoute
   '/docs/quickstart': typeof DocsQuickstartRoute
   '/docs/webhooks': typeof DocsWebhooksRoute
+  '/hq/compliance': typeof HqComplianceRoute
+  '/hq/disputes': typeof HqDisputesRoute
   '/hq/engagements': typeof HqEngagementsRoute
   '/hq/facilitation': typeof HqFacilitationRoute
+  '/hq/governance': typeof HqGovernanceRoute
+  '/hq/idv': typeof HqIdvRoute
+  '/hq/legal-holds': typeof HqLegalHoldsRoute
   '/hq/organisations': typeof HqOrganisationsRoute
   '/hq/users': typeof HqUsersRoute
   '/products/audit-ledger': typeof ProductsAuditLedgerRoute
@@ -294,8 +334,13 @@ export interface FileRoutesById {
   '/docs/matches': typeof DocsMatchesRoute
   '/docs/quickstart': typeof DocsQuickstartRoute
   '/docs/webhooks': typeof DocsWebhooksRoute
+  '/hq/compliance': typeof HqComplianceRoute
+  '/hq/disputes': typeof HqDisputesRoute
   '/hq/engagements': typeof HqEngagementsRoute
   '/hq/facilitation': typeof HqFacilitationRoute
+  '/hq/governance': typeof HqGovernanceRoute
+  '/hq/idv': typeof HqIdvRoute
+  '/hq/legal-holds': typeof HqLegalHoldsRoute
   '/hq/organisations': typeof HqOrganisationsRoute
   '/hq/users': typeof HqUsersRoute
   '/products/audit-ledger': typeof ProductsAuditLedgerRoute
@@ -330,8 +375,13 @@ export interface FileRouteTypes {
     | '/docs/matches'
     | '/docs/quickstart'
     | '/docs/webhooks'
+    | '/hq/compliance'
+    | '/hq/disputes'
     | '/hq/engagements'
     | '/hq/facilitation'
+    | '/hq/governance'
+    | '/hq/idv'
+    | '/hq/legal-holds'
     | '/hq/organisations'
     | '/hq/users'
     | '/products/audit-ledger'
@@ -364,8 +414,13 @@ export interface FileRouteTypes {
     | '/docs/matches'
     | '/docs/quickstart'
     | '/docs/webhooks'
+    | '/hq/compliance'
+    | '/hq/disputes'
     | '/hq/engagements'
     | '/hq/facilitation'
+    | '/hq/governance'
+    | '/hq/idv'
+    | '/hq/legal-holds'
     | '/hq/organisations'
     | '/hq/users'
     | '/products/audit-ledger'
@@ -398,8 +453,13 @@ export interface FileRouteTypes {
     | '/docs/matches'
     | '/docs/quickstart'
     | '/docs/webhooks'
+    | '/hq/compliance'
+    | '/hq/disputes'
     | '/hq/engagements'
     | '/hq/facilitation'
+    | '/hq/governance'
+    | '/hq/idv'
+    | '/hq/legal-holds'
     | '/hq/organisations'
     | '/hq/users'
     | '/products/audit-ledger'
@@ -433,8 +493,13 @@ export interface RootRouteChildren {
   DocsMatchesRoute: typeof DocsMatchesRoute
   DocsQuickstartRoute: typeof DocsQuickstartRoute
   DocsWebhooksRoute: typeof DocsWebhooksRoute
+  HqComplianceRoute: typeof HqComplianceRoute
+  HqDisputesRoute: typeof HqDisputesRoute
   HqEngagementsRoute: typeof HqEngagementsRoute
   HqFacilitationRoute: typeof HqFacilitationRoute
+  HqGovernanceRoute: typeof HqGovernanceRoute
+  HqIdvRoute: typeof HqIdvRoute
+  HqLegalHoldsRoute: typeof HqLegalHoldsRoute
   HqOrganisationsRoute: typeof HqOrganisationsRoute
   HqUsersRoute: typeof HqUsersRoute
   ProductsAuditLedgerRoute: typeof ProductsAuditLedgerRoute
@@ -603,6 +668,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HqIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hq/compliance': {
+      id: '/hq/compliance'
+      path: '/hq/compliance'
+      fullPath: '/hq/compliance'
+      preLoaderRoute: typeof HqComplianceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hq/disputes': {
+      id: '/hq/disputes'
+      path: '/hq/disputes'
+      fullPath: '/hq/disputes'
+      preLoaderRoute: typeof HqDisputesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hq/engagements': {
       id: '/hq/engagements'
       path: '/hq/engagements'
@@ -615,6 +694,27 @@ declare module '@tanstack/react-router' {
       path: '/hq/facilitation'
       fullPath: '/hq/facilitation'
       preLoaderRoute: typeof HqFacilitationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hq/governance': {
+      id: '/hq/governance'
+      path: '/hq/governance'
+      fullPath: '/hq/governance'
+      preLoaderRoute: typeof HqGovernanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hq/idv': {
+      id: '/hq/idv'
+      path: '/hq/idv'
+      fullPath: '/hq/idv'
+      preLoaderRoute: typeof HqIdvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hq/legal-holds': {
+      id: '/hq/legal-holds'
+      path: '/hq/legal-holds'
+      fullPath: '/hq/legal-holds'
+      preLoaderRoute: typeof HqLegalHoldsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hq/organisations': {
@@ -697,8 +797,13 @@ const rootRouteChildren: RootRouteChildren = {
   DocsMatchesRoute: DocsMatchesRoute,
   DocsQuickstartRoute: DocsQuickstartRoute,
   DocsWebhooksRoute: DocsWebhooksRoute,
+  HqComplianceRoute: HqComplianceRoute,
+  HqDisputesRoute: HqDisputesRoute,
   HqEngagementsRoute: HqEngagementsRoute,
   HqFacilitationRoute: HqFacilitationRoute,
+  HqGovernanceRoute: HqGovernanceRoute,
+  HqIdvRoute: HqIdvRoute,
+  HqLegalHoldsRoute: HqLegalHoldsRoute,
   HqOrganisationsRoute: HqOrganisationsRoute,
   HqUsersRoute: HqUsersRoute,
   ProductsAuditLedgerRoute: ProductsAuditLedgerRoute,

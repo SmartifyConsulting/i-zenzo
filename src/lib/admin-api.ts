@@ -24,6 +24,26 @@ export const listEngagements = () => fns.adminListEngagements();
 export const addEngagementNote = (poiId: string, note: string) =>
   fns.adminAddEngagementNote({ data: { poiId, note } });
 
+export const listComplianceCases = () => fns.adminListComplianceCases();
+export const updateComplianceCase = (caseId: string, status: string, claim?: boolean) =>
+  fns.adminUpdateComplianceCase({ data: { caseId, status, claim } });
+
+export const listIdvReviews = () => fns.adminListIdvReviews();
+export const decideIdvReview = (reviewId: string, approve: boolean) =>
+  fns.adminDecideIdvReview({ data: { reviewId, approve } });
+
+export const listGovernanceCases = () => fns.adminListGovernanceCases();
+export const claimGovernanceCase = (caseId: string) => fns.adminClaimGovernanceCase({ data: { caseId } });
+
+export const listDisputes = () => fns.adminListDisputes();
+export const resolveDispute = (disputeId: string, notes: string) =>
+  fns.adminResolveDispute({ data: { disputeId, notes } });
+
+export const listLegalHolds = () => fns.adminListLegalHolds();
+export const applyLegalHold = (scopeType: string, scopeId: string, reason: string) =>
+  fns.adminApplyLegalHold({ data: { scopeType, scopeId, reason } });
+export const releaseLegalHold = (holdId: string) => fns.adminReleaseLegalHold({ data: { holdId } });
+
 export const listFacilitationCases = () => fns.adminListFacilitationCases();
 export const assignFacilitationCase = (caseId: string, status?: string) =>
   fns.adminAssignFacilitationCase({ data: { caseId, status } });
