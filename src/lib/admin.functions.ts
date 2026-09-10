@@ -95,6 +95,68 @@ export const adminListSpine = createServerFn({ method: "GET" })
 /* HQ Overview — summary counters for the header tiles                  */
 /* ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ */
+/* User Management — every registered workspace + its role assignments  */
+/* ------------------------------------------------------------------ */
+
+export const adminListUsers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+
+    const { data: workspaces, error } = await db
+      .from("workspaces")
+      .select("id, user_id, name, email, created_at")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+
+    const { data: roles } = await db.from("user_roles").select("user_id, role");
+    const rolesByUser = new Map<string, string[]>();
+    for (const r of roles ?? []) {
+      const list = rolesByUser.get(r.user_id) ?? [];
+      list.push(r.role);
+      rolesByUser.set(r.user_id, list);
+    }
+
+    const users = (workspaces ?? []).map((w: any) => ({
+      user_id: w.user_id,
+      name: w.name,
+      email: w.email,
+      registered_at: w.created_at,
+      roles: rolesByUser.get(w.user_id) ?? [],
+    }));
+
+    return { users };
+  });
+
+type AppRole = "admin" | "moderator" | "user";
+
+export const adminSetUserRole = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { userId: string; role: AppRole; grant: boolean })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+
+    if (data.grant) {
+      const { error } = await db
+        .from("user_roles")
+        .upsert({ user_id: data.userId, role: data.role }, { onConflict: "user_id,role" });
+      if (error) throw new Error(error.message);
+    } else {
+      const { error } = await db
+        .from("user_roles")
+        .delete()
+        .eq("user_id", data.userId)
+        .eq("role", data.role);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true };
+  });
+
 export const adminGetHqSummary = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

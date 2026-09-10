@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
-import { AdminShell } from "@/components/izenzo/AdminShell";
+import { AdminAccessGate } from "@/components/izenzo/AdminAccessGate";
 import * as adminApi from "@/lib/admin-api";
-import * as api from "@/lib/api";
 
 type SpineRow = Awaited<ReturnType<typeof adminApi.listSpine>>["matches"][number];
 
@@ -35,10 +32,7 @@ function StagePill({ value }: { value: string | null }) {
   );
 }
 
-export default function HqOverview() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [access, setAccess] = useState<"checking" | "denied" | "ok">("checking");
+function CanonicalSpine() {
   const [rows, setRows] = useState<SpineRow[]>([]);
   const [summary, setSummary] = useState<{
     total_matches: number;
@@ -49,44 +43,7 @@ export default function HqOverview() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const authed = await api.isLoggedIn();
-      if (!authed) {
-        navigate({ to: "/auth" });
-        return;
-      }
-      const { data } = await supabase.auth.getUser();
-      if (cancelled) return;
-      setEmail(data.user?.email ?? "");
-
-      const { isAdmin } = await adminApi.checkAdminAccess();
-      if (cancelled) return;
-      if (!isAdmin) {
-        setAccess("denied");
-        setLoading(false);
-        return;
-      }
-      setAccess("ok");
-
-      try {
-        const [spine, hqSummary] = await Promise.all([adminApi.listSpine(), adminApi.getHqSummary()]);
-        if (cancelled) return;
-        setRows(spine.matches);
-        setSummary(hqSummary);
-      } catch (e: any) {
-        if (!cancelled) setError(e?.message ?? "Failed to load Canonical Spine");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [navigate]);
-
-  async function refresh() {
+  async function load() {
     setLoading(true);
     setError("");
     try {
@@ -94,36 +51,18 @@ export default function HqOverview() {
       setRows(spine.matches);
       setSummary(hqSummary);
     } catch (e: any) {
-      setError(e?.message ?? "Failed to refresh");
+      setError(e?.message ?? "Failed to load Canonical Spine");
     } finally {
       setLoading(false);
     }
   }
 
-  if (access === "checking") {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0b0f19] text-sm text-slate-400">
-        Checking access…
-      </div>
-    );
-  }
-
-  if (access === "denied") {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0b0f19] px-4 text-center">
-        <div>
-          <h1 className="text-lg font-semibold text-slate-100">Access restricted</h1>
-          <p className="mt-2 max-w-sm text-sm text-slate-400">
-            {email} is signed in but doesn't have admin access to Platform HQ. Contact an existing admin to
-            request access.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    load();
+  }, []);
 
   return (
-    <AdminShell userEmail={email}>
+    <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · HQ Overview</div>
       <h1 className="text-2xl font-semibold text-slate-100">Canonical Spine</h1>
       <p className="mt-1 text-sm text-slate-400">
@@ -153,7 +92,7 @@ export default function HqOverview() {
             </div>
           </div>
           <button
-            onClick={refresh}
+            onClick={load}
             disabled={loading}
             className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50"
           >
@@ -215,6 +154,10 @@ export default function HqOverview() {
           Showing {rows.length} most-recent matches
         </div>
       </div>
-    </AdminShell>
+    </>
   );
+}
+
+export default function HqOverview() {
+  return <AdminAccessGate>{() => <CanonicalSpine />}</AdminAccessGate>;
 }

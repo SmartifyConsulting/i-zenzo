@@ -12,7 +12,7 @@ const NAV: NavGroup[] = [
     items: [
       { label: "HQ Overview", to: "/hq" },
       { label: "Platform Spine" },
-      { label: "Users" },
+      { label: "Users", to: "/hq/users" },
       { label: "Organisations" },
       { label: "Engagements" },
       { label: "Facilitation" },
@@ -54,22 +54,22 @@ const NAV: NavGroup[] = [
   },
 ];
 
-const TOP_TABS = [
-  "Canonical Spine",
-  "User Management",
-  "Organisation Management",
-  "Enterprise Identity",
-  "Engagements",
-  "Facilitation Queue",
-  "AI Suggestions",
-  "Dispute Resolution",
-  "Revenue & Sales",
-  "Legacy Repair",
-  "Retention & Holds",
-  "Governance Records",
-  "Audit & Health",
-  "System Health",
-  "Platform Settings",
+const TOP_TABS: NavItem[] = [
+  { label: "Canonical Spine", to: "/hq" },
+  { label: "User Management", to: "/hq/users" },
+  { label: "Organisation Management" },
+  { label: "Enterprise Identity" },
+  { label: "Engagements" },
+  { label: "Facilitation Queue" },
+  { label: "AI Suggestions" },
+  { label: "Dispute Resolution" },
+  { label: "Revenue & Sales" },
+  { label: "Legacy Repair" },
+  { label: "Retention & Holds" },
+  { label: "Governance Records" },
+  { label: "Audit & Health" },
+  { label: "System Health" },
+  { label: "Platform Settings" },
 ];
 
 export function AdminShell({ userEmail, children }: { userEmail: string; children: ReactNode }) {
@@ -113,18 +113,21 @@ export function AdminShell({ userEmail, children }: { userEmail: string; childre
       </header>
 
       <nav className="flex items-center gap-5 overflow-x-auto border-b border-white/10 bg-[#0d1220] px-4 text-xs">
-        {TOP_TABS.map((tab) => (
-          <span
-            key={tab}
-            className={`whitespace-nowrap border-b-2 py-2.5 ${
-              tab === "Canonical Spine"
-                ? "border-emerald-500 text-slate-100"
-                : "border-transparent text-slate-500"
-            }`}
-          >
-            {tab}
-          </span>
-        ))}
+        {TOP_TABS.map((tab) => {
+          const active = tab.to && pathname === tab.to;
+          const cls = `whitespace-nowrap border-b-2 py-2.5 ${
+            active ? "border-emerald-500 text-slate-100" : "border-transparent text-slate-500"
+          } ${tab.to ? "hover:text-slate-300" : "cursor-default"}`;
+          return tab.to ? (
+            <Link key={tab.label} to={tab.to} className={cls}>
+              {tab.label}
+            </Link>
+          ) : (
+            <span key={tab.label} className={cls}>
+              {tab.label}
+            </span>
+          );
+        })}
       </nav>
 
       <div className="flex">

@@ -31,6 +31,7 @@ import { Route as DocsMatchesRouteImport } from './routes/docs.matches'
 import { Route as DocsQuickstartRouteImport } from './routes/docs.quickstart'
 import { Route as DocsWebhooksRouteImport } from './routes/docs.webhooks'
 import { Route as HqIndexRouteImport } from './routes/hq.index'
+import { Route as HqUsersRouteImport } from './routes/hq.users'
 import { Route as ProductsAuditLedgerRouteImport } from './routes/products.audit-ledger'
 import { Route as ProductsComplianceEngineRouteImport } from './routes/products.compliance-engine'
 import { Route as ProductsTradeDeskRouteImport } from './routes/products.trade-desk'
@@ -148,6 +149,11 @@ const HqIndexRoute = HqIndexRouteImport.update({
   path: '/hq/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HqUsersRoute = HqUsersRouteImport.update({
+  id: '/hq/users',
+  path: '/hq/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductsAuditLedgerRoute = ProductsAuditLedgerRouteImport.update({
   id: '/products/audit-ledger',
   path: '/products/audit-ledger',
@@ -201,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/docs/matches': typeof DocsMatchesRoute
   '/docs/quickstart': typeof DocsQuickstartRoute
   '/docs/webhooks': typeof DocsWebhooksRoute
+  '/hq/users': typeof HqUsersRoute
   '/products/audit-ledger': typeof ProductsAuditLedgerRoute
   '/products/compliance-engine': typeof ProductsComplianceEngineRoute
   '/products/trade-desk': typeof ProductsTradeDeskRoute
@@ -231,6 +238,7 @@ export interface FileRoutesByTo {
   '/docs/matches': typeof DocsMatchesRoute
   '/docs/quickstart': typeof DocsQuickstartRoute
   '/docs/webhooks': typeof DocsWebhooksRoute
+  '/hq/users': typeof HqUsersRoute
   '/products/audit-ledger': typeof ProductsAuditLedgerRoute
   '/products/compliance-engine': typeof ProductsComplianceEngineRoute
   '/products/trade-desk': typeof ProductsTradeDeskRoute
@@ -262,6 +270,7 @@ export interface FileRoutesById {
   '/docs/matches': typeof DocsMatchesRoute
   '/docs/quickstart': typeof DocsQuickstartRoute
   '/docs/webhooks': typeof DocsWebhooksRoute
+  '/hq/users': typeof HqUsersRoute
   '/products/audit-ledger': typeof ProductsAuditLedgerRoute
   '/products/compliance-engine': typeof ProductsComplianceEngineRoute
   '/products/trade-desk': typeof ProductsTradeDeskRoute
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
     | '/docs/matches'
     | '/docs/quickstart'
     | '/docs/webhooks'
+    | '/hq/users'
     | '/products/audit-ledger'
     | '/products/compliance-engine'
     | '/products/trade-desk'
@@ -324,6 +334,7 @@ export interface FileRouteTypes {
     | '/docs/matches'
     | '/docs/quickstart'
     | '/docs/webhooks'
+    | '/hq/users'
     | '/products/audit-ledger'
     | '/products/compliance-engine'
     | '/products/trade-desk'
@@ -354,6 +365,7 @@ export interface FileRouteTypes {
     | '/docs/matches'
     | '/docs/quickstart'
     | '/docs/webhooks'
+    | '/hq/users'
     | '/products/audit-ledger'
     | '/products/compliance-engine'
     | '/products/trade-desk'
@@ -385,6 +397,7 @@ export interface RootRouteChildren {
   DocsMatchesRoute: typeof DocsMatchesRoute
   DocsQuickstartRoute: typeof DocsQuickstartRoute
   DocsWebhooksRoute: typeof DocsWebhooksRoute
+  HqUsersRoute: typeof HqUsersRoute
   ProductsAuditLedgerRoute: typeof ProductsAuditLedgerRoute
   ProductsComplianceEngineRoute: typeof ProductsComplianceEngineRoute
   ProductsTradeDeskRoute: typeof ProductsTradeDeskRoute
@@ -551,6 +564,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HqIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hq/users': {
+      id: '/hq/users'
+      path: '/hq/users'
+      fullPath: '/hq/users'
+      preLoaderRoute: typeof HqUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/products/audit-ledger': {
       id: '/products/audit-ledger'
       path: '/products/audit-ledger'
@@ -617,6 +637,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocsMatchesRoute: DocsMatchesRoute,
   DocsQuickstartRoute: DocsQuickstartRoute,
   DocsWebhooksRoute: DocsWebhooksRoute,
+  HqUsersRoute: HqUsersRoute,
   ProductsAuditLedgerRoute: ProductsAuditLedgerRoute,
   ProductsComplianceEngineRoute: ProductsComplianceEngineRoute,
   ProductsTradeDeskRoute: ProductsTradeDeskRoute,
