@@ -13,3 +13,9 @@ export const getHqSummary = () => fns.adminGetHqSummary();
 export const listUsers = () => fns.adminListUsers();
 export const setUserRole = (userId: string, role: "admin" | "moderator" | "user", grant: boolean) =>
   fns.adminSetUserRole({ data: { userId, role, grant } });
+
+export const listOrganisations = () => fns.adminListOrganisations();
+export const updateOrganisation = (
+  organisationId: string,
+  patch: { status?: "active" | "suspended"; sandboxEnabled?: boolean },
+) => fns.adminUpdateOrganisation({ data: { organisationId, ...patch } });

@@ -13,7 +13,7 @@ const NAV: NavGroup[] = [
       { label: "HQ Overview", to: "/hq" },
       { label: "Platform Spine" },
       { label: "Users", to: "/hq/users" },
-      { label: "Organisations" },
+      { label: "Organisations", to: "/hq/organisations" },
       { label: "Engagements" },
       { label: "Facilitation" },
     ],
@@ -57,7 +57,7 @@ const NAV: NavGroup[] = [
 const TOP_TABS: NavItem[] = [
   { label: "Canonical Spine", to: "/hq" },
   { label: "User Management", to: "/hq/users" },
-  { label: "Organisation Management" },
+  { label: "Organisation Management", to: "/hq/organisations" },
   { label: "Enterprise Identity" },
   { label: "Engagements" },
   { label: "Facilitation Queue" },

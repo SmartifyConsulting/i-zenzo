@@ -157,6 +157,86 @@ export const adminSetUserRole = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/* ------------------------------------------------------------------ */
+/* Organisation Management                                              */
+/* ------------------------------------------------------------------ */
+
+export const adminListOrganisations = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+
+    const { data: orgs, error } = await db
+      .from("organisations")
+      .select("id, name, sandbox_enabled, clip_on_plan, status, created_at")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    if (error) throw new Error(error.message);
+
+    const orgIds = (orgs ?? []).map((o: any) => o.id);
+    const { data: members } = orgIds.length
+      ? await db.from("organisation_members").select("organisation_id, workspace_id").in("organisation_id", orgIds)
+      : { data: [] };
+
+    const workspaceIds = Array.from(new Set((members ?? []).map((m: any) => m.workspace_id)));
+    const { data: apiKeys } = workspaceIds.length
+      ? await db.from("spine_api_keys").select("id, workspace_id").in("workspace_id", workspaceIds)
+      : { data: [] };
+
+    const membersByOrg = new Map<string, string[]>();
+    for (const m of members ?? []) {
+      const list = membersByOrg.get(m.organisation_id) ?? [];
+      list.push(m.workspace_id);
+      membersByOrg.set(m.organisation_id, list);
+    }
+    const apiKeyCountByWorkspace = new Map<string, number>();
+    for (const k of apiKeys ?? []) {
+      apiKeyCountByWorkspace.set(k.workspace_id, (apiKeyCountByWorkspace.get(k.workspace_id) ?? 0) + 1);
+    }
+
+    const organisations = (orgs ?? []).map((o: any) => {
+      const workspaceIdsForOrg = membersByOrg.get(o.id) ?? [];
+      const apiKeyCount = workspaceIdsForOrg.reduce(
+        (sum, wsId) => sum + (apiKeyCountByWorkspace.get(wsId) ?? 0),
+        0,
+      );
+      return {
+        id: o.id,
+        name: o.name,
+        users: workspaceIdsForOrg.length,
+        api_keys: apiKeyCount,
+        sandbox_enabled: o.sandbox_enabled,
+        clip_on_plan: o.clip_on_plan,
+        status: o.status,
+        created_at: o.created_at,
+      };
+    });
+
+    return { organisations };
+  });
+
+export const adminUpdateOrganisation = createServerFn({ method: "POST" })
+  .inputValidator(
+    (d: unknown) =>
+      d as { organisationId: string; status?: "active" | "suspended"; sandboxEnabled?: boolean },
+  )
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+
+    const patch: Record<string, unknown> = {};
+    if (data.status !== undefined) patch["status"] = data.status;
+    if (data.sandboxEnabled !== undefined) patch["sandbox_enabled"] = data.sandboxEnabled;
+
+    const { error } = await db.from("organisations").update(patch).eq("id", data.organisationId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const adminGetHqSummary = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
