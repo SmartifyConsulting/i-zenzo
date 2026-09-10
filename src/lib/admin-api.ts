@@ -72,6 +72,8 @@ export const listRegistryApiUsage = () => fns.adminListRegistryApiUsage();
 export const listEnterpriseIdentity = () => fns.adminListEnterpriseIdentity();
 
 export const listAiTradeRequests = () => fns.adminListAiTradeRequests();
+export const sourceCounterparties = (transactionId: string) =>
+  fns.adminSourceCounterparties({ data: { transactionId } });
 export const listAiSuggestions = () => fns.adminListAiSuggestions();
 export const decideAiSuggestion = (suggestionId: string, status: "approved" | "rejected" | "archived") =>
   fns.adminDecideAiSuggestion({ data: { suggestionId, status } });
@@ -94,6 +96,44 @@ export const getSystemHealth = () => fns.adminGetSystemHealth();
 export const getPlatformSettings = () => fns.adminGetPlatformSettings();
 export const updatePlatformSettings = (workspaceName: string, systemStatusMessage: string) =>
   fns.adminUpdatePlatformSettings({ data: { workspaceName, systemStatusMessage } });
+
+export const listLegalEntities = () => fns.adminListLegalEntities();
+export const screenLegalEntity = (entityId: string) => fns.adminScreenLegalEntity({ data: { entityId } });
+export const verifyLegalEntity = (entityId: string) => fns.adminVerifyLegalEntity({ data: { entityId } });
+export const bindLegalEntity = (entityId: string) => fns.adminBindLegalEntity({ data: { entityId } });
+
+export const listGoLiveVerifications = () => fns.adminListGoLiveVerifications();
+export const decideGoLiveVerification = (verificationId: string, approve: boolean) =>
+  fns.adminDecideGoLiveVerification({ data: { verificationId, approve } });
+
+export const listKycDocuments = () => fns.adminListKycDocuments();
+export const reviewKycDocument = (documentId: string, approve: boolean) =>
+  fns.adminReviewKycDocument({ data: { documentId, approve } });
+
+export const listOrgApiClients = () => fns.adminListOrgApiClients();
+export const createOrgApiClient = (legalEntityId: string, country?: string) =>
+  fns.adminCreateOrgApiClient({ data: { legalEntityId, country } });
+export const setOrgApiClientAccess = (clientId: string, field: "sandbox_enabled" | "production_enabled", value: boolean) =>
+  fns.adminSetOrgApiClientAccess({ data: { clientId, field, value } });
+
+export const listApiPlans = () => fns.adminListApiPlans();
+export const createApiPlan = (plan: {
+  planName: string;
+  currency: string;
+  monthlyFee: number;
+  includedAllowance: number;
+  overagePrice: number;
+  manualReviewFee: number;
+  overageAllowed: boolean;
+}) => fns.adminCreateApiPlan({ data: plan });
+
+export const listSandboxScenarios = () => fns.adminListSandboxScenarios();
+
+export const listApiSupportTickets = () => fns.adminListApiSupportTickets();
+export const updateSupportTicketStatus = (ticketId: string, status: string) =>
+  fns.adminUpdateSupportTicketStatus({ data: { ticketId, status } });
+
+export const getOrgApiOperations = () => fns.adminGetOrgApiOperations();
 
 export const listFacilitationCases = () => fns.adminListFacilitationCases();
 export const assignFacilitationCase = (caseId: string, status?: string) =>

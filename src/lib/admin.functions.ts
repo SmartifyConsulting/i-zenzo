@@ -1028,6 +1028,58 @@ export const adminListAiTradeRequests = createServerFn({ method: "GET" })
     return { requests: data ?? [] };
   });
 
+export const adminSourceCounterparties = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { transactionId: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+
+    const { data: run, error: runErr } = await db
+      .from("search_runs")
+      .select("candidates")
+      .eq("transaction_id", data.transactionId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (runErr) throw new Error(runErr.message);
+    const candidates = (run?.candidates ?? []) as any[];
+    if (candidates.length === 0) throw new Error("No search candidates found for this trade request yet");
+
+    const bidOffer = (
+      await db
+        .from("bid_offers")
+        .select("subject_description")
+        .eq("transaction_id", data.transactionId)
+        .limit(1)
+        .maybeSingle()
+    ).data;
+
+    const { rankCandidatesWithClaude } = await import("@/lib/ai/anthropic.server");
+    const rankings = await rankCandidatesWithClaude({
+      subject: bidOffer?.subject_description ?? null,
+      candidates,
+    });
+
+    const rows = rankings.map((r) => ({
+      transaction_id: data.transactionId,
+      counterparty_name: r.name,
+      confidence: r.confidence >= 0.75 ? "high" : r.confidence >= 0.5 ? "medium" : "low",
+      fit: "good",
+      risk: "low",
+      status: "new",
+      // stash the model's own words for the admin to read verbatim
+    }));
+    if (rows.length === 0) throw new Error("Claude returned no candidates");
+
+    const { error: insertErr } = await db.from("ai_suggested_matches").insert(
+      rows.map((r, i) => ({ ...r, counterparty_name: `${r.counterparty_name} — ${rankings[i]?.rationale ?? ""}` })),
+    );
+    if (insertErr) throw new Error(insertErr.message);
+    return { ok: true, count: rows.length };
+  });
+
 export const adminListAiSuggestions = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -1282,6 +1334,292 @@ export const adminUpdatePlatformSettings = createServerFn({ method: "POST" })
       .eq("id", true);
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Organisation Management sub-tabs                                     */
+/* ------------------------------------------------------------------ */
+
+export const adminListLegalEntities = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("legal_entities").select("*").order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { entities: data ?? [] };
+  });
+
+export const adminScreenLegalEntity = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { entityId: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db.from("legal_entities").update({ screening_status: "clear" }).eq("id", data.entityId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminVerifyLegalEntity = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { entityId: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("legal_entities")
+      .update({ ubo_verified: true, status: "verified" })
+      .eq("id", data.entityId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminBindLegalEntity = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { entityId: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db.from("legal_entities").update({ authority_to_bind: true }).eq("id", data.entityId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListGoLiveVerifications = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("go_live_verifications")
+      .select("*, legal_entities(legal_name)")
+      .order("submitted_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return {
+      verifications: (data ?? []).map((v: any) => ({ ...v, legal_name: v.legal_entities?.legal_name ?? "—" })),
+    };
+  });
+
+export const adminDecideGoLiveVerification = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { verificationId: string; approve: boolean })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("go_live_verifications")
+      .update({
+        status: data.approve ? "approved" : "rejected",
+        decided_at: new Date().toISOString(),
+        decided_by: ctx.userId,
+      })
+      .eq("id", data.verificationId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListKycDocuments = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("kyc_documents")
+      .select("*, legal_entities(legal_name)")
+      .order("uploaded_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { documents: (data ?? []).map((d: any) => ({ ...d, legal_name: d.legal_entities?.legal_name ?? "—" })) };
+  });
+
+export const adminReviewKycDocument = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { documentId: string; approve: boolean })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("kyc_documents")
+      .update({
+        status: data.approve ? "approved" : "rejected",
+        reviewed_at: new Date().toISOString(),
+        reviewed_by: ctx.userId,
+      })
+      .eq("id", data.documentId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListOrgApiClients = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("org_api_clients")
+      .select("*, legal_entities(legal_name)")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return {
+      clients: (data ?? []).map((c: any) => ({ ...c, legal_name: c.legal_entities?.legal_name ?? "—" })),
+    };
+  });
+
+export const adminCreateOrgApiClient = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { legalEntityId: string; country?: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("org_api_clients")
+      .insert({ legal_entity_id: data.legalEntityId, country: data.country ?? null });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminSetOrgApiClientAccess = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { clientId: string; field: "sandbox_enabled" | "production_enabled"; value: boolean })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const patch: Record<string, unknown> = { [data.field]: data.value };
+    if (data.field === "production_enabled" && data.value) patch["status"] = "active";
+    const { error } = await db.from("org_api_clients").update(patch).eq("id", data.clientId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListApiPlans = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("api_plans").select("*").order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { plans: data ?? [] };
+  });
+
+export const adminCreateApiPlan = createServerFn({ method: "POST" })
+  .inputValidator(
+    (d: unknown) =>
+      d as {
+        planName: string;
+        currency: string;
+        monthlyFee: number;
+        includedAllowance: number;
+        overagePrice: number;
+        manualReviewFee: number;
+        overageAllowed: boolean;
+      },
+  )
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db.from("api_plans").insert({
+      plan_name: data.planName,
+      currency: data.currency,
+      monthly_fee: data.monthlyFee,
+      included_allowance: data.includedAllowance,
+      overage_price: data.overagePrice,
+      manual_review_fee: data.manualReviewFee,
+      overage_allowed: data.overageAllowed,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListSandboxScenarios = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("api_sandbox_scenarios").select("*").order("scenario", { ascending: true });
+    if (error) throw new Error(error.message);
+    return { scenarios: data ?? [] };
+  });
+
+export const adminListApiSupportTickets = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("api_support_tickets")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { tickets: data ?? [] };
+  });
+
+export const adminUpdateSupportTicketStatus = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { ticketId: string; status: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("api_support_tickets")
+      .update({ status: data.status, owner_id: ctx.userId })
+      .eq("id", data.ticketId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+// API Usage / Monitoring / Security — derived views over the org's API
+// clients + the platform-wide usage events already recorded by Registry.
+export const adminGetOrgApiOperations = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const [{ data: clients }, { data: events }] = await Promise.all([
+      db.from("org_api_clients").select("*, legal_entities(legal_name)"),
+      db.from("registry_api_usage_events").select("*").order("occurred_at", { ascending: false }).limit(200),
+    ]);
+
+    const usage = (events ?? []).map((e: any) => ({
+      client_id: e.client_id,
+      endpoint: e.endpoint,
+      status_code: e.status_code,
+      blocked: e.blocked,
+      rate_limited: e.rate_limited,
+      occurred_at: e.occurred_at,
+    }));
+
+    const failedAuth = usage.filter((e: any) => e.status_code === 401).length;
+    const rateLimited = usage.filter((e: any) => e.rate_limited).length;
+    const blocked = usage.filter((e: any) => e.blocked).length;
+
+    return {
+      clients: (clients ?? []).map((c: any) => ({ ...c, legal_name: c.legal_entities?.legal_name ?? "—" })),
+      usage,
+      security: {
+        clients_with_signals: new Set(usage.filter((e: any) => e.blocked || e.rate_limited).map((e: any) => e.client_id)).size,
+        failed_auth_attempts: failedAuth,
+        rate_limit_events: rateLimited,
+        blocked_events: blocked,
+      },
+    };
   });
 
 export const adminGetHqSummary = createServerFn({ method: "GET" })

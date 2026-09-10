@@ -11,7 +11,7 @@ const NAV: NavGroup[] = [
     heading: "Command Centre",
     items: [
       { label: "HQ Overview", to: "/hq" },
-      { label: "Platform Spine" },
+      { label: "Platform Spine", to: "/hq" },
       { label: "Users", to: "/hq/users" },
       { label: "Organisations", to: "/hq/organisations" },
       { label: "Engagements", to: "/hq/engagements" },

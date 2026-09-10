@@ -326,11 +326,31 @@ export const generateChoiceSet = createServerFn({ method: "POST" })
     const session = res.data;
     const analysis = (await db.from("ai_analyses").select("*").eq("id", session.ai_analysis_id).single()).data;
     const ranked = (analysis?.output?.ranked_candidates ?? []) as any[];
+
+    let aiRankings: { name: string; confidence: number; rationale: string }[] | null = null;
+    try {
+      const { rankCandidatesWithClaude } = await import("@/lib/ai/anthropic.server");
+      const txn = (await db.from("spine_transactions").select("*").eq("id", session.transaction_id).maybeSingle()).data;
+      const bidOffer = (
+        await db.from("bid_offers").select("subject_description").eq("transaction_id", session.transaction_id).limit(1)
+      ).data?.[0];
+      aiRankings = await rankCandidatesWithClaude({
+        subject: bidOffer?.subject_description ?? txn?.trading_stage ?? null,
+        candidates: ranked,
+      });
+    } catch (e) {
+      console.error("[AI_PLUS] Claude ranking failed, falling back to deterministic rationale:", e);
+    }
+
     const choiceSet = {
-      options: ranked.map((r) => ({
-        entity: r,
-        rationale: `Source-supported candidate, confidence ${r.confidence}`,
-      })),
+      options: ranked.map((r, i) => {
+        const ai = aiRankings?.find((a) => a.name === (r as any).name) ?? aiRankings?.[i];
+        return {
+          entity: ai ? { ...r, confidence: ai.confidence } : r,
+          rationale: ai ? ai.rationale : `Source-supported candidate, confidence ${r.confidence}`,
+        };
+      }),
+      generated_by: aiRankings ? "claude-sonnet-5" : "deterministic_fallback_v1",
       generated_at: new Date().toISOString(),
     };
     await db
