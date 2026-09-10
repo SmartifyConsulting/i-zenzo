@@ -23,3 +23,14 @@ export const updateOrganisation = (
 export const listEngagements = () => fns.adminListEngagements();
 export const addEngagementNote = (poiId: string, note: string) =>
   fns.adminAddEngagementNote({ data: { poiId, note } });
+
+export const listFacilitationCases = () => fns.adminListFacilitationCases();
+export const assignFacilitationCase = (caseId: string, status?: string) =>
+  fns.adminAssignFacilitationCase({ data: { caseId, status } });
+export const listEmailTemplates = () => fns.adminListEmailTemplates();
+export const approveEmailTemplate = (templateId: string, approve: boolean) =>
+  fns.adminApproveEmailTemplate({ data: { templateId, approve } });
+export const listDncRules = () => fns.adminListDncRules();
+export const addDncRule = (ruleType: string, value: string, reason?: string) =>
+  fns.adminAddDncRule({ data: { ruleType, value, reason } });
+export const deleteDncRule = (ruleId: string) => fns.adminDeleteDncRule({ data: { ruleId } });

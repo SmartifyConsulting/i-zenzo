@@ -15,7 +15,7 @@ const NAV: NavGroup[] = [
       { label: "Users", to: "/hq/users" },
       { label: "Organisations", to: "/hq/organisations" },
       { label: "Engagements", to: "/hq/engagements" },
-      { label: "Facilitation" },
+      { label: "Facilitation", to: "/hq/facilitation" },
     ],
   },
   {
@@ -60,7 +60,7 @@ const TOP_TABS: NavItem[] = [
   { label: "Organisation Management", to: "/hq/organisations" },
   { label: "Enterprise Identity" },
   { label: "Engagements", to: "/hq/engagements" },
-  { label: "Facilitation Queue" },
+  { label: "Facilitation Queue", to: "/hq/facilitation" },
   { label: "AI Suggestions" },
   { label: "Dispute Resolution" },
   { label: "Revenue & Sales" },

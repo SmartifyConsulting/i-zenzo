@@ -325,6 +325,125 @@ export const adminAddEngagementNote = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/* ------------------------------------------------------------------ */
+/* Facilitation — Phase 1 case queue + Phase 2 outreach                 */
+/* ------------------------------------------------------------------ */
+
+export const adminListFacilitationCases = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data: cases, error } = await db
+      .from("facilitation_cases")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+
+    const now = Date.now();
+    const openCases = (cases ?? []).filter((c: any) => !c.closed_at);
+    const overdue = openCases.filter((c: any) => c.due_date && new Date(c.due_date).getTime() < now);
+    const weekAgo = now - 7 * 86400000;
+    const monthAgo = now - 30 * 86400000;
+
+    return {
+      cases: cases ?? [],
+      summary: {
+        open_cases: openCases.length,
+        new_this_week: (cases ?? []).filter((c: any) => new Date(c.created_at).getTime() >= weekAgo).length,
+        new_this_month: (cases ?? []).filter((c: any) => new Date(c.created_at).getTime() >= monthAgo).length,
+        overdue: overdue.length,
+      },
+    };
+  });
+
+export const adminAssignFacilitationCase = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { caseId: string; status?: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const patch: Record<string, unknown> = { owner_id: ctx.userId };
+    if (data.status) patch["status"] = data.status;
+    const { error } = await db.from("facilitation_cases").update(patch).eq("id", data.caseId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListEmailTemplates = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("facilitation_email_templates")
+      .select("*")
+      .order("name", { ascending: true });
+    if (error) throw new Error(error.message);
+    return { templates: data ?? [] };
+  });
+
+export const adminApproveEmailTemplate = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { templateId: string; approve: boolean })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const patch = data.approve
+      ? { status: "approved", approved_at: new Date().toISOString() }
+      : { status: "draft", approved_at: null };
+    const { error } = await db.from("facilitation_email_templates").update(patch).eq("id", data.templateId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminListDncRules = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("facilitation_dnc_rules")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { rules: data ?? [] };
+  });
+
+export const adminAddDncRule = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { ruleType: string; value: string; reason?: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db.from("facilitation_dnc_rules").insert({
+      rule_type: data.ruleType,
+      value: data.value,
+      reason: data.reason ?? null,
+      created_by: ctx.userId,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminDeleteDncRule = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { ruleId: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db.from("facilitation_dnc_rules").delete().eq("id", data.ruleId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const adminGetHqSummary = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
