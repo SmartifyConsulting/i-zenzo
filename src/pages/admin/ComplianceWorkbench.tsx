@@ -84,6 +84,9 @@ function Workbench() {
                 <div className="mt-1 flex gap-2">
                   <StatusPill status={c.status} />
                   <span className="text-slate-600 capitalize">{c.category}</span>
+                  {c.transaction_id && (
+                    <span className="font-mono text-slate-600">match {c.transaction_id.slice(0, 8)}…</span>
+                  )}
                 </div>
               </div>
               <div className="flex gap-1.5">

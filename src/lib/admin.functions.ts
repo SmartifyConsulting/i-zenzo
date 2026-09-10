@@ -829,7 +829,7 @@ export const adminGetRegistrySummary = createServerFn({ method: "GET" })
     await requireAdmin(ctx);
     const db = ctx.supabase as any;
     const [companies, claims, bankQueue, apiClients] = await Promise.all([
-      db.from("registry_companies").select("id", { count: "exact", head: true }),
+      db.from("organisations").select("id", { count: "exact", head: true }),
       db.from("registry_claims").select("id", { count: "exact", head: true }).eq("status", "pending"),
       db.from("bank_verifications").select("id", { count: "exact", head: true }).eq("status", "manual_review_required"),
       db.from("registry_api_clients").select("id", { count: "exact", head: true }),
@@ -848,9 +848,23 @@ export const adminListRegistryCompanies = createServerFn({ method: "GET" })
     const ctx = context as unknown as Ctx;
     await requireAdmin(ctx);
     const db = ctx.supabase as any;
-    const { data, error } = await db.from("registry_companies").select("*").order("company_name", { ascending: true });
+    const { data, error } = await db
+      .from("organisations")
+      .select("id, name, country, reg_no, readiness, has_claim, is_public, created_at")
+      .order("name", { ascending: true });
     if (error) throw new Error(error.message);
-    return { companies: data ?? [] };
+    return {
+      companies: (data ?? []).map((o: any) => ({
+        id: o.id,
+        company_name: o.name,
+        country: o.country ?? "—",
+        reg_no: o.reg_no ?? "—",
+        readiness: o.readiness,
+        has_claim: o.has_claim,
+        is_public: o.is_public,
+        created_at: o.created_at,
+      })),
+    };
   });
 
 export const adminListRegistryClaims = createServerFn({ method: "GET" })
@@ -861,12 +875,12 @@ export const adminListRegistryClaims = createServerFn({ method: "GET" })
     const db = ctx.supabase as any;
     const { data: claims, error } = await db.from("registry_claims").select("*").order("submitted_at", { ascending: false });
     if (error) throw new Error(error.message);
-    const companyIds = Array.from(new Set((claims ?? []).map((c: any) => c.company_id)));
-    const { data: companies } = companyIds.length
-      ? await db.from("registry_companies").select("id, company_name").in("id", companyIds)
+    const orgIds = Array.from(new Set((claims ?? []).map((c: any) => c.organisation_id)));
+    const { data: orgs } = orgIds.length
+      ? await db.from("organisations").select("id, name").in("id", orgIds)
       : { data: [] };
-    const nameById = new Map((companies ?? []).map((c: any) => [c.id, c.company_name]));
-    return { claims: (claims ?? []).map((c: any) => ({ ...c, company_name: nameById.get(c.company_id) ?? "—" })) };
+    const nameById = new Map((orgs ?? []).map((o: any) => [o.id, o.name]));
+    return { claims: (claims ?? []).map((c: any) => ({ ...c, company_name: nameById.get(c.organisation_id) ?? "—" })) };
   });
 
 export const adminDecideRegistryClaim = createServerFn({ method: "POST" })
@@ -876,6 +890,13 @@ export const adminDecideRegistryClaim = createServerFn({ method: "POST" })
     const ctx = context as unknown as Ctx;
     await requireAdmin(ctx);
     const db = ctx.supabase as any;
+    const { data: claim, error: fetchErr } = await db
+      .from("registry_claims")
+      .select("organisation_id")
+      .eq("id", data.claimId)
+      .single();
+    if (fetchErr) throw new Error(fetchErr.message);
+
     const { error } = await db
       .from("registry_claims")
       .update({
@@ -885,6 +906,10 @@ export const adminDecideRegistryClaim = createServerFn({ method: "POST" })
       })
       .eq("id", data.claimId);
     if (error) throw new Error(error.message);
+
+    if (data.approve) {
+      await db.from("organisations").update({ has_claim: true }).eq("id", claim.organisation_id);
+    }
     return { ok: true };
   });
 
@@ -896,12 +921,12 @@ export const adminListBankVerifications = createServerFn({ method: "GET" })
     const db = ctx.supabase as any;
     const { data: rows, error } = await db.from("bank_verifications").select("*").order("requested_at", { ascending: false });
     if (error) throw new Error(error.message);
-    const companyIds = Array.from(new Set((rows ?? []).map((r: any) => r.company_id).filter(Boolean)));
-    const { data: companies } = companyIds.length
-      ? await db.from("registry_companies").select("id, company_name").in("id", companyIds)
+    const orgIds = Array.from(new Set((rows ?? []).map((r: any) => r.organisation_id).filter(Boolean)));
+    const { data: orgs } = orgIds.length
+      ? await db.from("organisations").select("id, name").in("id", orgIds)
       : { data: [] };
-    const nameById = new Map((companies ?? []).map((c: any) => [c.id, c.company_name]));
-    return { verifications: (rows ?? []).map((r: any) => ({ ...r, company_name: nameById.get(r.company_id) ?? "—" })) };
+    const nameById = new Map((orgs ?? []).map((o: any) => [o.id, o.name]));
+    return { verifications: (rows ?? []).map((r: any) => ({ ...r, company_name: nameById.get(r.organisation_id) ?? "—" })) };
   });
 
 export const adminDecideBankVerification = createServerFn({ method: "POST" })

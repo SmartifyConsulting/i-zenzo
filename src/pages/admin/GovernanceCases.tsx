@@ -56,6 +56,9 @@ function GovernanceList() {
                 <div className="mt-1 flex gap-2 text-[10px]">
                   <span className="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 capitalize text-slate-400">{c.status.replace(/_/g, " ")}</span>
                   <span className="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 capitalize text-slate-500">{c.category.replace(/_/g, " ")}</span>
+                  {c.transaction_id && (
+                    <span className="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-slate-600">match {c.transaction_id.slice(0, 8)}…</span>
+                  )}
                 </div>
               </div>
               {!c.assigned_to && (

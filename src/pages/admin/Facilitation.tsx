@@ -93,6 +93,7 @@ function CaseQueue() {
               <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
                 <th className="px-4 py-2 font-medium">Case</th>
                 <th className="px-4 py-2 font-medium">Status</th>
+                <th className="px-4 py-2 font-medium">Match</th>
                 <th className="px-4 py-2 font-medium">Requester org</th>
                 <th className="px-4 py-2 font-medium">Counterparty</th>
                 <th className="px-4 py-2 font-medium">Value</th>
@@ -103,7 +104,7 @@ function CaseQueue() {
             <tbody>
               {!loading && (data?.cases.length ?? 0) === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-slate-500">
+                  <td colSpan={8} className="px-4 py-8 text-center text-slate-500">
                     No cases yet.
                   </td>
                 </tr>
@@ -115,6 +116,9 @@ function CaseQueue() {
                     <td className="px-4 py-2.5 font-mono text-[11px] text-slate-200">{c.case_number}</td>
                     <td className="px-4 py-2.5">
                       <StatusPill status={c.status} overdue={overdue} />
+                    </td>
+                    <td className="px-4 py-2.5 font-mono text-[11px] text-slate-500">
+                      {c.transaction_id ? `${c.transaction_id.slice(0, 8)}…` : "—"}
                     </td>
                     <td className="px-4 py-2.5">{c.requester_org}</td>
                     <td className="px-4 py-2.5">{c.counterparty ?? "—"}</td>
