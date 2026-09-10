@@ -31,13 +31,13 @@ const NAV: NavGroup[] = [
   {
     heading: "Funder Workspace",
     items: [
-      { label: "Overview" },
-      { label: "Onboarding" },
-      { label: "Funder Orgs" },
-      { label: "Deal Releases" },
-      { label: "Audit & Usage" },
-      { label: "Funder Workflow" },
-      { label: "Execution Cases" },
+      { label: "Overview", to: "/hq/funder" },
+      { label: "Onboarding", to: "/hq/funder/onboarding" },
+      { label: "Funder Orgs", to: "/hq/funder/organisations" },
+      { label: "Deal Releases", to: "/hq/funder/releases" },
+      { label: "Audit & Usage", to: "/hq/funder/audit" },
+      { label: "Funder Workflow", to: "/hq/funder-workflow" },
+      { label: "Execution Cases", to: "/hq/execution-cases" },
     ],
   },
   {

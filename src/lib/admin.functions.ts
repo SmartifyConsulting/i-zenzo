@@ -616,6 +616,208 @@ export const adminReleaseLegalHold = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/* ------------------------------------------------------------------ */
+/* Funder Workspace                                                      */
+/* ------------------------------------------------------------------ */
+
+async function logFunderAudit(db: any, actorId: string, event: string, detail?: string) {
+  await db.from("funder_audit_log").insert({ actor_id: actorId, event, detail: detail ?? null });
+}
+
+export const adminGetFunderOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const [orgs, pending, releases, revoked] = await Promise.all([
+      db.from("funder_organisations").select("id", { count: "exact", head: true }),
+      db.from("funder_onboarding_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      db.from("deal_releases").select("id", { count: "exact", head: true }).eq("status", "active"),
+      db.from("deal_releases").select("id", { count: "exact", head: true }).eq("status", "revoked"),
+    ]);
+    return {
+      approved_organisations: orgs.count ?? 0,
+      pending_onboarding: pending.count ?? 0,
+      active_releases: releases.count ?? 0,
+      revoked_releases: revoked.count ?? 0,
+    };
+  });
+
+export const adminListOnboardingRequests = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("funder_onboarding_requests")
+      .select("*")
+      .order("requested_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { requests: data ?? [] };
+  });
+
+export const adminDecideOnboardingRequest = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { requestId: string; approve: boolean })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data: reqRow, error: fetchErr } = await db
+      .from("funder_onboarding_requests")
+      .select("*")
+      .eq("id", data.requestId)
+      .single();
+    if (fetchErr) throw new Error(fetchErr.message);
+
+    const { error } = await db
+      .from("funder_onboarding_requests")
+      .update({
+        status: data.approve ? "approved" : "rejected",
+        decided_at: new Date().toISOString(),
+        decided_by: ctx.userId,
+      })
+      .eq("id", data.requestId);
+    if (error) throw new Error(error.message);
+
+    if (data.approve) {
+      await db
+        .from("funder_organisations")
+        .insert({ name: reqRow.org_name, contact_email: reqRow.contact_email });
+    }
+    await logFunderAudit(db, ctx.userId, data.approve ? "onboarding_approved" : "onboarding_rejected", reqRow.org_name);
+    return { ok: true };
+  });
+
+export const adminListFunderOrganisations = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("funder_organisations").select("*").order("approved_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { organisations: data ?? [] };
+  });
+
+export const adminListDealReleases = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data: releases, error } = await db
+      .from("deal_releases")
+      .select("*")
+      .order("released_at", { ascending: false });
+    if (error) throw new Error(error.message);
+
+    const orgIds = Array.from(new Set((releases ?? []).map((r: any) => r.funder_org_id)));
+    const { data: orgs } = orgIds.length
+      ? await db.from("funder_organisations").select("id, name").in("id", orgIds)
+      : { data: [] };
+    const orgById = new Map((orgs ?? []).map((o: any) => [o.id, o.name]));
+
+    return {
+      releases: (releases ?? []).map((r: any) => ({ ...r, funder_org_name: orgById.get(r.funder_org_id) ?? "—" })),
+    };
+  });
+
+export const adminCreateDealRelease = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { funderOrgId: string; packLabel: string; expiresInDays?: number })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const expiresAt = data.expiresInDays
+      ? new Date(Date.now() + data.expiresInDays * 86400000).toISOString()
+      : null;
+    const { error } = await db.from("deal_releases").insert({
+      funder_org_id: data.funderOrgId,
+      pack_label: data.packLabel,
+      expires_at: expiresAt,
+    });
+    if (error) throw new Error(error.message);
+    await logFunderAudit(db, ctx.userId, "deal_release_created", data.packLabel);
+    return { ok: true };
+  });
+
+export const adminRevokeDealRelease = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => d as { releaseId: string })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { error } = await db
+      .from("deal_releases")
+      .update({ status: "revoked", revoked_at: new Date().toISOString() })
+      .eq("id", data.releaseId);
+    if (error) throw new Error(error.message);
+    await logFunderAudit(db, ctx.userId, "deal_release_revoked", data.releaseId);
+    return { ok: true };
+  });
+
+export const adminListFunderAuditLog = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("funder_audit_log")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw new Error(error.message);
+    return { events: data ?? [] };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Execution Cases — reuses the existing spine executions/milestones    */
+/* ------------------------------------------------------------------ */
+
+export const adminListExecutionCases = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data: executions, error } = await db
+      .from("executions")
+      .select("id, transaction_id, status, created_at, completed_at")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw new Error(error.message);
+
+    const txnIds = (executions ?? []).map((e: any) => e.transaction_id);
+    const [{ data: txns }, { data: milestones }] = await Promise.all([
+      txnIds.length ? db.from("spine_transactions").select("id, trading_stage").in("id", txnIds) : { data: [] },
+      (executions ?? []).length
+        ? db.from("milestones").select("execution_id, status").in("execution_id", (executions ?? []).map((e: any) => e.id))
+        : { data: [] },
+    ]);
+    const txnById = new Map((txns ?? []).map((t: any) => [t.id, t]));
+    const milestoneCounts = new Map<string, { total: number; accepted: number }>();
+    for (const m of milestones ?? []) {
+      const c = milestoneCounts.get(m.execution_id) ?? { total: 0, accepted: 0 };
+      c.total += 1;
+      if (m.status === "ACCEPTED") c.accepted += 1;
+      milestoneCounts.set(m.execution_id, c);
+    }
+
+    return {
+      cases: (executions ?? []).map((e: any) => ({
+        ...e,
+        trading_stage: (txnById.get(e.transaction_id) as any)?.trading_stage ?? null,
+        milestones: milestoneCounts.get(e.id) ?? { total: 0, accepted: 0 },
+      })),
+    };
+  });
+
 export const adminGetHqSummary = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

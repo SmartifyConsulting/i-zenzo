@@ -34,7 +34,9 @@ import { Route as HqIndexRouteImport } from './routes/hq.index'
 import { Route as HqComplianceRouteImport } from './routes/hq.compliance'
 import { Route as HqDisputesRouteImport } from './routes/hq.disputes'
 import { Route as HqEngagementsRouteImport } from './routes/hq.engagements'
+import { Route as HqExecutionCasesRouteImport } from './routes/hq.execution-cases'
 import { Route as HqFacilitationRouteImport } from './routes/hq.facilitation'
+import { Route as HqFunderWorkflowRouteImport } from './routes/hq.funder-workflow'
 import { Route as HqGovernanceRouteImport } from './routes/hq.governance'
 import { Route as HqIdvRouteImport } from './routes/hq.idv'
 import { Route as HqLegalHoldsRouteImport } from './routes/hq.legal-holds'
@@ -46,6 +48,11 @@ import { Route as ProductsTradeDeskRouteImport } from './routes/products.trade-d
 import { Route as SolutionsFinanceRouteImport } from './routes/solutions.finance'
 import { Route as SolutionsSovereignsRouteImport } from './routes/solutions.sovereigns'
 import { Route as SolutionsTradersRouteImport } from './routes/solutions.traders'
+import { Route as HqFunderIndexRouteImport } from './routes/hq.funder.index'
+import { Route as HqFunderAuditRouteImport } from './routes/hq.funder.audit'
+import { Route as HqFunderOnboardingRouteImport } from './routes/hq.funder.onboarding'
+import { Route as HqFunderOrganisationsRouteImport } from './routes/hq.funder.organisations'
+import { Route as HqFunderReleasesRouteImport } from './routes/hq.funder.releases'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -172,9 +179,19 @@ const HqEngagementsRoute = HqEngagementsRouteImport.update({
   path: '/hq/engagements',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HqExecutionCasesRoute = HqExecutionCasesRouteImport.update({
+  id: '/hq/execution-cases',
+  path: '/hq/execution-cases',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HqFacilitationRoute = HqFacilitationRouteImport.update({
   id: '/hq/facilitation',
   path: '/hq/facilitation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HqFunderWorkflowRoute = HqFunderWorkflowRouteImport.update({
+  id: '/hq/funder-workflow',
+  path: '/hq/funder-workflow',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HqGovernanceRoute = HqGovernanceRouteImport.update({
@@ -233,6 +250,31 @@ const SolutionsTradersRoute = SolutionsTradersRouteImport.update({
   path: '/solutions/traders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HqFunderIndexRoute = HqFunderIndexRouteImport.update({
+  id: '/hq/funder/',
+  path: '/hq/funder/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HqFunderAuditRoute = HqFunderAuditRouteImport.update({
+  id: '/hq/funder/audit',
+  path: '/hq/funder/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HqFunderOnboardingRoute = HqFunderOnboardingRouteImport.update({
+  id: '/hq/funder/onboarding',
+  path: '/hq/funder/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HqFunderOrganisationsRoute = HqFunderOrganisationsRouteImport.update({
+  id: '/hq/funder/organisations',
+  path: '/hq/funder/organisations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HqFunderReleasesRoute = HqFunderReleasesRouteImport.update({
+  id: '/hq/funder/releases',
+  path: '/hq/funder/releases',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -258,7 +300,9 @@ export interface FileRoutesByFullPath {
   '/hq/compliance': typeof HqComplianceRoute
   '/hq/disputes': typeof HqDisputesRoute
   '/hq/engagements': typeof HqEngagementsRoute
+  '/hq/execution-cases': typeof HqExecutionCasesRoute
   '/hq/facilitation': typeof HqFacilitationRoute
+  '/hq/funder-workflow': typeof HqFunderWorkflowRoute
   '/hq/governance': typeof HqGovernanceRoute
   '/hq/idv': typeof HqIdvRoute
   '/hq/legal-holds': typeof HqLegalHoldsRoute
@@ -272,6 +316,11 @@ export interface FileRoutesByFullPath {
   '/solutions/traders': typeof SolutionsTradersRoute
   '/docs/': typeof DocsIndexRoute
   '/hq/': typeof HqIndexRoute
+  '/hq/funder/audit': typeof HqFunderAuditRoute
+  '/hq/funder/onboarding': typeof HqFunderOnboardingRoute
+  '/hq/funder/organisations': typeof HqFunderOrganisationsRoute
+  '/hq/funder/releases': typeof HqFunderReleasesRoute
+  '/hq/funder/': typeof HqFunderIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -297,7 +346,9 @@ export interface FileRoutesByTo {
   '/hq/compliance': typeof HqComplianceRoute
   '/hq/disputes': typeof HqDisputesRoute
   '/hq/engagements': typeof HqEngagementsRoute
+  '/hq/execution-cases': typeof HqExecutionCasesRoute
   '/hq/facilitation': typeof HqFacilitationRoute
+  '/hq/funder-workflow': typeof HqFunderWorkflowRoute
   '/hq/governance': typeof HqGovernanceRoute
   '/hq/idv': typeof HqIdvRoute
   '/hq/legal-holds': typeof HqLegalHoldsRoute
@@ -311,6 +362,11 @@ export interface FileRoutesByTo {
   '/solutions/traders': typeof SolutionsTradersRoute
   '/docs': typeof DocsIndexRoute
   '/hq': typeof HqIndexRoute
+  '/hq/funder/audit': typeof HqFunderAuditRoute
+  '/hq/funder/onboarding': typeof HqFunderOnboardingRoute
+  '/hq/funder/organisations': typeof HqFunderOrganisationsRoute
+  '/hq/funder/releases': typeof HqFunderReleasesRoute
+  '/hq/funder': typeof HqFunderIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -337,7 +393,9 @@ export interface FileRoutesById {
   '/hq/compliance': typeof HqComplianceRoute
   '/hq/disputes': typeof HqDisputesRoute
   '/hq/engagements': typeof HqEngagementsRoute
+  '/hq/execution-cases': typeof HqExecutionCasesRoute
   '/hq/facilitation': typeof HqFacilitationRoute
+  '/hq/funder-workflow': typeof HqFunderWorkflowRoute
   '/hq/governance': typeof HqGovernanceRoute
   '/hq/idv': typeof HqIdvRoute
   '/hq/legal-holds': typeof HqLegalHoldsRoute
@@ -351,6 +409,11 @@ export interface FileRoutesById {
   '/solutions/traders': typeof SolutionsTradersRoute
   '/docs/': typeof DocsIndexRoute
   '/hq/': typeof HqIndexRoute
+  '/hq/funder/audit': typeof HqFunderAuditRoute
+  '/hq/funder/onboarding': typeof HqFunderOnboardingRoute
+  '/hq/funder/organisations': typeof HqFunderOrganisationsRoute
+  '/hq/funder/releases': typeof HqFunderReleasesRoute
+  '/hq/funder/': typeof HqFunderIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -378,7 +441,9 @@ export interface FileRouteTypes {
     | '/hq/compliance'
     | '/hq/disputes'
     | '/hq/engagements'
+    | '/hq/execution-cases'
     | '/hq/facilitation'
+    | '/hq/funder-workflow'
     | '/hq/governance'
     | '/hq/idv'
     | '/hq/legal-holds'
@@ -392,6 +457,11 @@ export interface FileRouteTypes {
     | '/solutions/traders'
     | '/docs/'
     | '/hq/'
+    | '/hq/funder/audit'
+    | '/hq/funder/onboarding'
+    | '/hq/funder/organisations'
+    | '/hq/funder/releases'
+    | '/hq/funder/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -417,7 +487,9 @@ export interface FileRouteTypes {
     | '/hq/compliance'
     | '/hq/disputes'
     | '/hq/engagements'
+    | '/hq/execution-cases'
     | '/hq/facilitation'
+    | '/hq/funder-workflow'
     | '/hq/governance'
     | '/hq/idv'
     | '/hq/legal-holds'
@@ -431,6 +503,11 @@ export interface FileRouteTypes {
     | '/solutions/traders'
     | '/docs'
     | '/hq'
+    | '/hq/funder/audit'
+    | '/hq/funder/onboarding'
+    | '/hq/funder/organisations'
+    | '/hq/funder/releases'
+    | '/hq/funder'
   id:
     | '__root__'
     | '/'
@@ -456,7 +533,9 @@ export interface FileRouteTypes {
     | '/hq/compliance'
     | '/hq/disputes'
     | '/hq/engagements'
+    | '/hq/execution-cases'
     | '/hq/facilitation'
+    | '/hq/funder-workflow'
     | '/hq/governance'
     | '/hq/idv'
     | '/hq/legal-holds'
@@ -470,6 +549,11 @@ export interface FileRouteTypes {
     | '/solutions/traders'
     | '/docs/'
     | '/hq/'
+    | '/hq/funder/audit'
+    | '/hq/funder/onboarding'
+    | '/hq/funder/organisations'
+    | '/hq/funder/releases'
+    | '/hq/funder/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -496,7 +580,9 @@ export interface RootRouteChildren {
   HqComplianceRoute: typeof HqComplianceRoute
   HqDisputesRoute: typeof HqDisputesRoute
   HqEngagementsRoute: typeof HqEngagementsRoute
+  HqExecutionCasesRoute: typeof HqExecutionCasesRoute
   HqFacilitationRoute: typeof HqFacilitationRoute
+  HqFunderWorkflowRoute: typeof HqFunderWorkflowRoute
   HqGovernanceRoute: typeof HqGovernanceRoute
   HqIdvRoute: typeof HqIdvRoute
   HqLegalHoldsRoute: typeof HqLegalHoldsRoute
@@ -510,6 +596,11 @@ export interface RootRouteChildren {
   SolutionsTradersRoute: typeof SolutionsTradersRoute
   DocsIndexRoute: typeof DocsIndexRoute
   HqIndexRoute: typeof HqIndexRoute
+  HqFunderAuditRoute: typeof HqFunderAuditRoute
+  HqFunderOnboardingRoute: typeof HqFunderOnboardingRoute
+  HqFunderOrganisationsRoute: typeof HqFunderOrganisationsRoute
+  HqFunderReleasesRoute: typeof HqFunderReleasesRoute
+  HqFunderIndexRoute: typeof HqFunderIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -689,11 +780,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HqEngagementsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hq/execution-cases': {
+      id: '/hq/execution-cases'
+      path: '/hq/execution-cases'
+      fullPath: '/hq/execution-cases'
+      preLoaderRoute: typeof HqExecutionCasesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hq/facilitation': {
       id: '/hq/facilitation'
       path: '/hq/facilitation'
       fullPath: '/hq/facilitation'
       preLoaderRoute: typeof HqFacilitationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hq/funder-workflow': {
+      id: '/hq/funder-workflow'
+      path: '/hq/funder-workflow'
+      fullPath: '/hq/funder-workflow'
+      preLoaderRoute: typeof HqFunderWorkflowRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hq/governance': {
@@ -773,6 +878,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SolutionsTradersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hq/funder/': {
+      id: '/hq/funder/'
+      path: '/hq/funder'
+      fullPath: '/hq/funder/'
+      preLoaderRoute: typeof HqFunderIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hq/funder/audit': {
+      id: '/hq/funder/audit'
+      path: '/hq/funder/audit'
+      fullPath: '/hq/funder/audit'
+      preLoaderRoute: typeof HqFunderAuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hq/funder/onboarding': {
+      id: '/hq/funder/onboarding'
+      path: '/hq/funder/onboarding'
+      fullPath: '/hq/funder/onboarding'
+      preLoaderRoute: typeof HqFunderOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hq/funder/organisations': {
+      id: '/hq/funder/organisations'
+      path: '/hq/funder/organisations'
+      fullPath: '/hq/funder/organisations'
+      preLoaderRoute: typeof HqFunderOrganisationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hq/funder/releases': {
+      id: '/hq/funder/releases'
+      path: '/hq/funder/releases'
+      fullPath: '/hq/funder/releases'
+      preLoaderRoute: typeof HqFunderReleasesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -800,7 +940,9 @@ const rootRouteChildren: RootRouteChildren = {
   HqComplianceRoute: HqComplianceRoute,
   HqDisputesRoute: HqDisputesRoute,
   HqEngagementsRoute: HqEngagementsRoute,
+  HqExecutionCasesRoute: HqExecutionCasesRoute,
   HqFacilitationRoute: HqFacilitationRoute,
+  HqFunderWorkflowRoute: HqFunderWorkflowRoute,
   HqGovernanceRoute: HqGovernanceRoute,
   HqIdvRoute: HqIdvRoute,
   HqLegalHoldsRoute: HqLegalHoldsRoute,
@@ -814,6 +956,11 @@ const rootRouteChildren: RootRouteChildren = {
   SolutionsTradersRoute: SolutionsTradersRoute,
   DocsIndexRoute: DocsIndexRoute,
   HqIndexRoute: HqIndexRoute,
+  HqFunderAuditRoute: HqFunderAuditRoute,
+  HqFunderOnboardingRoute: HqFunderOnboardingRoute,
+  HqFunderOrganisationsRoute: HqFunderOrganisationsRoute,
+  HqFunderReleasesRoute: HqFunderReleasesRoute,
+  HqFunderIndexRoute: HqFunderIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -44,6 +44,18 @@ export const applyLegalHold = (scopeType: string, scopeId: string, reason: strin
   fns.adminApplyLegalHold({ data: { scopeType, scopeId, reason } });
 export const releaseLegalHold = (holdId: string) => fns.adminReleaseLegalHold({ data: { holdId } });
 
+export const getFunderOverview = () => fns.adminGetFunderOverview();
+export const listOnboardingRequests = () => fns.adminListOnboardingRequests();
+export const decideOnboardingRequest = (requestId: string, approve: boolean) =>
+  fns.adminDecideOnboardingRequest({ data: { requestId, approve } });
+export const listFunderOrganisations = () => fns.adminListFunderOrganisations();
+export const listDealReleases = () => fns.adminListDealReleases();
+export const createDealRelease = (funderOrgId: string, packLabel: string, expiresInDays?: number) =>
+  fns.adminCreateDealRelease({ data: { funderOrgId, packLabel, expiresInDays } });
+export const revokeDealRelease = (releaseId: string) => fns.adminRevokeDealRelease({ data: { releaseId } });
+export const listFunderAuditLog = () => fns.adminListFunderAuditLog();
+export const listExecutionCases = () => fns.adminListExecutionCases();
+
 export const listFacilitationCases = () => fns.adminListFacilitationCases();
 export const assignFacilitationCase = (caseId: string, status?: string) =>
   fns.adminAssignFacilitationCase({ data: { caseId, status } });
