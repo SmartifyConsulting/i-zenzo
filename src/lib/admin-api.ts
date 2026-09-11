@@ -135,6 +135,16 @@ export const updateSupportTicketStatus = (ticketId: string, status: string) =>
 
 export const getOrgApiOperations = () => fns.adminGetOrgApiOperations();
 
+export const listRatingAppeals = () => fns.adminListRatingAppeals();
+export const listNotificationPreferences = () => fns.adminListNotificationPreferences();
+export const listOutreachBlocks = () => fns.adminListOutreachBlocks();
+export const listUploadAudit = () => fns.adminListUploadAudit();
+export const getRevenueNotifications = () => fns.adminGetRevenueNotifications();
+export const runTenantBoundaryProbe = () => fns.adminRunTenantBoundaryProbe();
+export const listTenantBoundaryRuns = () => fns.adminListTenantBoundaryRuns();
+export const listEventStore = () => fns.adminListEventStore();
+export const getSystemAnalytics = () => fns.adminGetSystemAnalytics();
+
 export const listFacilitationCases = () => fns.adminListFacilitationCases();
 export const assignFacilitationCase = (caseId: string, status?: string) =>
   fns.adminAssignFacilitationCase({ data: { caseId, status } });

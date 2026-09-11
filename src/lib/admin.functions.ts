@@ -1622,6 +1622,169 @@ export const adminGetOrgApiOperations = createServerFn({ method: "GET" })
     };
   });
 
+/* ------------------------------------------------------------------ */
+/* Audit & Health sub-tabs                                              */
+/* ------------------------------------------------------------------ */
+
+export const adminListRatingAppeals = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.from("rating_appeals").select("*").order("submitted_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { appeals: data ?? [] };
+  });
+
+export const adminListNotificationPreferences = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data: prefs, error } = await db
+      .from("notification_preferences")
+      .select("*, workspaces(name, email)")
+      .order("updated_at", { ascending: false })
+      .limit(200);
+    if (error) throw new Error(error.message);
+    return {
+      preferences: (prefs ?? []).map((p: any) => ({
+        ...p,
+        workspace_name: p.workspaces?.name ?? "—",
+        workspace_email: p.workspaces?.email ?? "—",
+      })),
+    };
+  });
+
+export const adminListOutreachBlocks = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("audit_logs")
+      .select("*")
+      .ilike("event", "%outreach%block%")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw new Error(error.message);
+    return { blocks: data ?? [] };
+  });
+
+export const adminListUploadAudit = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("audit_logs")
+      .select("*")
+      .ilike("event", "%document.upload%")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw new Error(error.message);
+    return { attempts: data ?? [] };
+  });
+
+export const adminGetRevenueNotifications = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("token_entries")
+      .select("id, tokens, usd, created_at")
+      .gt("usd", 0)
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw new Error(error.message);
+    return {
+      notifications: (data ?? []).map((e: any) => ({
+        id: e.id,
+        event_type: "credit_purchase",
+        status: "sent",
+        amount_usd: e.usd,
+        created_at: e.created_at,
+      })),
+    };
+  });
+
+export const adminRunTenantBoundaryProbe = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db.rpc("admin_tenant_boundary_probe");
+    if (error) throw new Error(error.message);
+    const result = data?.[0] ?? { tables_checked: 0, tables_pass: 0, tables_fail: 0 };
+    const { error: insertErr } = await db.from("tenant_boundary_runs").insert({
+      tables_checked: result.tables_checked,
+      tables_pass: result.tables_pass,
+      tables_fail: result.tables_fail,
+      run_by: ctx.userId,
+    });
+    if (insertErr) throw new Error(insertErr.message);
+    return { ok: true, ...result };
+  });
+
+export const adminListTenantBoundaryRuns = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("tenant_boundary_runs")
+      .select("*")
+      .order("run_at", { ascending: false })
+      .limit(20);
+    if (error) throw new Error(error.message);
+    return { runs: data ?? [] };
+  });
+
+export const adminListEventStore = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const { data, error } = await db
+      .from("memory_events")
+      .select("id, event_type, transaction_id, event_hash, occurred_at")
+      .order("occurred_at", { ascending: false })
+      .limit(200);
+    if (error) throw new Error(error.message);
+    return { events: data ?? [] };
+  });
+
+export const adminGetSystemAnalytics = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const ctx = context as unknown as Ctx;
+    await requireAdmin(ctx);
+    const db = ctx.supabase as any;
+    const [workspaces, organisations, apiKeys, transactions, webhooks] = await Promise.all([
+      db.from("workspaces").select("id", { count: "exact", head: true }),
+      db.from("organisations").select("id", { count: "exact", head: true }),
+      db.from("spine_api_keys").select("id", { count: "exact", head: true }).is("revoked_at", null),
+      db.from("spine_transactions").select("id", { count: "exact", head: true }),
+      db.from("webhook_events").select("id", { count: "exact", head: true }),
+    ]);
+    return {
+      users: workspaces.count ?? 0,
+      organisations: organisations.count ?? 0,
+      api_keys: apiKeys.count ?? 0,
+      matches: transactions.count ?? 0,
+      webhooks: webhooks.count ?? 0,
+    };
+  });
+
 export const adminGetHqSummary = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
