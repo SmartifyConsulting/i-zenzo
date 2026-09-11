@@ -22,13 +22,13 @@ function Health() {
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · System Health</div>
-      <h1 className="text-2xl font-semibold text-slate-100">System Health</h1>
-      <p className="mt-1 text-sm text-slate-400">Live database reachability and platform counters.</p>
+      <h1 className="text-2xl font-semibold text-slate-900">System Health</h1>
+      <p className="mt-1 text-sm text-slate-500">Live database reachability and platform counters.</p>
 
-      <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.02] p-4">
+      <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
         <div className="flex items-center gap-2">
           <span className={`h-2.5 w-2.5 rounded-full ${health?.database_reachable ? "bg-emerald-400" : "bg-red-400"}`} />
-          <span className="text-sm font-medium text-slate-100">
+          <span className="text-sm font-medium text-slate-900">
             {loading ? "Checking…" : health?.database_reachable ? "Database reachable" : "Database unreachable"}
           </span>
           {health && <span className="text-xs text-slate-500">({health.latency_ms}ms)</span>}
@@ -41,14 +41,14 @@ function Health() {
           { label: "Total transactions", value: health?.total_transactions },
           { label: "Executions in progress", value: health?.executions_in_progress },
         ].map((t) => (
-          <div key={t.label} className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
+          <div key={t.label} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
             <div className="text-[10px] uppercase tracking-wide text-slate-500">{t.label}</div>
-            <div className="mt-1 text-xl font-semibold text-slate-100">{t.value ?? "—"}</div>
+            <div className="mt-1 text-xl font-semibold text-slate-900">{t.value ?? "—"}</div>
           </div>
         ))}
       </div>
 
-      <button onClick={load} disabled={loading} className="mt-4 rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+      <button onClick={load} disabled={loading} className="mt-4 rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
         {loading ? "Refreshing…" : "Refresh"}
       </button>
     </>

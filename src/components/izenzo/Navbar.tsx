@@ -3,6 +3,7 @@ import { Link } from '@/lib/router-compat'
 import { ChevronDown } from 'lucide-react'
 import { Logo } from './Logo'
 import * as api from '@/lib/api'
+import * as adminApi from '@/lib/admin-api'
 
 type Item = { label: string; href: string; desc: string }
 
@@ -61,10 +62,13 @@ function Dropdown({ label, items }: { label: string; items: Item[] }) {
 
 export function Navbar() {
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   useEffect(() => {
     let cancelled = false
     api.isLoggedIn().then((v) => {
-      if (!cancelled) setLoggedIn(v)
+      if (cancelled) return
+      setLoggedIn(v)
+      if (v) adminApi.checkAdminAccess().then((r) => !cancelled && setIsAdmin(r.isAdmin))
     })
     return () => {
       cancelled = true
@@ -85,12 +89,22 @@ export function Navbar() {
         </div>
         <div className="flex items-center gap-3 min-h-10">
           {loggedIn === null ? null : loggedIn ? (
-            <Link
-              to="/dashboard"
-              className="inline-flex items-center h-10 px-5 rounded-md bg-emerald-950 text-white text-sm font-semibold hover:-translate-y-0.5 transition-transform"
-            >
-              Dashboard
-            </Link>
+            <>
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center h-10 px-5 rounded-md bg-emerald-950 text-white text-sm font-semibold hover:-translate-y-0.5 transition-transform"
+              >
+                Dashboard
+              </Link>
+              {isAdmin && (
+                <Link
+                  to="/hq"
+                  className="inline-flex items-center h-10 px-5 rounded-md bg-emerald-950 text-white text-sm font-semibold hover:-translate-y-0.5 transition-transform"
+                >
+                  Go to HQ →
+                </Link>
+              )}
+            </>
           ) : (
             <>
               <Link to="/auth" className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 h-10 flex items-center">

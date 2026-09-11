@@ -32,20 +32,20 @@ function Records() {
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · Registry Records</div>
-      <h1 className="text-2xl font-semibold text-slate-100">Registry company records</h1>
-      <p className="mt-1 text-sm text-slate-400">Imported company records and their readiness/claim/public status.</p>
+      <h1 className="text-2xl font-semibold text-slate-900">Registry company records</h1>
+      <p className="mt-1 text-sm text-slate-500">Imported company records and their readiness/claim/public status.</p>
 
-      <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.02]">
-        <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name or reg. no…" className="w-64 rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
-          <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+      <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50">
+        <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name or reg. no…" className="w-64 rounded border border-slate-200 bg-slate-100 px-2 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+          <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
             {loading ? "Refreshing…" : "Refresh"}
           </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
                 <th className="px-4 py-2 font-medium">Company</th>
                 <th className="px-4 py-2 font-medium">Country</th>
                 <th className="px-4 py-2 font-medium">Reg. no.</th>
@@ -61,7 +61,7 @@ function Records() {
                 </tr>
               )}
               {filtered.map((c) => (
-                <tr key={c.id} className="border-b border-white/5 text-slate-300">
+                <tr key={c.id} className="border-b border-slate-100 text-slate-700">
                   <td className="px-4 py-2.5">{c.company_name}</td>
                   <td className="px-4 py-2.5">{c.country}</td>
                   <td className="px-4 py-2.5 font-mono text-[11px]">{c.reg_no}</td>
@@ -73,7 +73,7 @@ function Records() {
             </tbody>
           </table>
         </div>
-        <div className="border-t border-white/10 px-4 py-2 text-[10px] text-slate-600">
+        <div className="border-t border-slate-200 px-4 py-2 text-[10px] text-slate-400">
           Showing {filtered.length} of {companies.length} companies
         </div>
       </div>

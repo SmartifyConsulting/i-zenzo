@@ -22,8 +22,8 @@ function Revenue() {
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · Revenue &amp; Sales</div>
-      <h1 className="text-2xl font-semibold text-slate-100">Revenue &amp; sales</h1>
-      <p className="mt-1 text-sm text-slate-400">Credit purchases, top buyers, per-org timeline.</p>
+      <h1 className="text-2xl font-semibold text-slate-900">Revenue &amp; sales</h1>
+      <p className="mt-1 text-sm text-slate-500">Credit purchases, top buyers, per-org timeline.</p>
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
@@ -32,24 +32,24 @@ function Revenue() {
           { label: "Purchases", value: data?.total_purchases },
           { label: "Unique buyers", value: data?.unique_buyers },
         ].map((t) => (
-          <div key={t.label} className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
+          <div key={t.label} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
             <div className="text-[10px] uppercase tracking-wide text-slate-500">{t.label}</div>
-            <div className="mt-1 text-xl font-semibold text-slate-100">{t.value ?? "—"}</div>
+            <div className="mt-1 text-xl font-semibold text-slate-900">{t.value ?? "—"}</div>
           </div>
         ))}
       </div>
 
-      <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.02]">
-        <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-          <div className="text-sm font-medium text-slate-100">Top buyers</div>
-          <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+      <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50">
+        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+          <div className="text-sm font-medium text-slate-900">Top buyers</div>
+          <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
             {loading ? "Refreshing…" : "Refresh"}
           </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
                 <th className="px-4 py-2 font-medium">#</th>
                 <th className="px-4 py-2 font-medium">Organisation</th>
                 <th className="px-4 py-2 font-medium">Revenue</th>
@@ -64,7 +64,7 @@ function Revenue() {
                 </tr>
               )}
               {data?.top_buyers.map((b, i) => (
-                <tr key={b.organisation} className="border-b border-white/5 text-slate-300">
+                <tr key={b.organisation} className="border-b border-slate-100 text-slate-700">
                   <td className="px-4 py-2.5">{i + 1}</td>
                   <td className="px-4 py-2.5">{b.organisation}</td>
                   <td className="px-4 py-2.5">${b.revenue.toFixed(2)}</td>
@@ -77,12 +77,12 @@ function Revenue() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.02]">
-        <div className="border-b border-white/10 px-4 py-3 text-sm font-medium text-slate-100">Per-org purchase timeline</div>
+      <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50">
+        <div className="border-b border-slate-200 px-4 py-3 text-sm font-medium text-slate-900">Per-org purchase timeline</div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
                 <th className="px-4 py-2 font-medium">When</th>
                 <th className="px-4 py-2 font-medium">Organisation</th>
                 <th className="px-4 py-2 font-medium">Credits</th>
@@ -96,7 +96,7 @@ function Revenue() {
                 </tr>
               )}
               {data?.timeline.map((t: { id: string; created_at: string; tokens: number; usd: number; organisation: string }) => (
-                <tr key={t.id} className="border-b border-white/5 text-slate-300">
+                <tr key={t.id} className="border-b border-slate-100 text-slate-700">
                   <td className="px-4 py-2.5 text-slate-500">{new Date(t.created_at).toLocaleString()}</td>
                   <td className="px-4 py-2.5">{t.organisation}</td>
                   <td className="px-4 py-2.5">{t.tokens}</td>

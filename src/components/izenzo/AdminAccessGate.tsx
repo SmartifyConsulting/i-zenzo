@@ -7,7 +7,7 @@ export function AdminAccessGate({ children }: { children: (email: string) => Rea
 
   if (status === "checking") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0b0f19] text-sm text-slate-400">
+      <div className="flex min-h-screen items-center justify-center bg-white text-sm text-slate-500">
         Checking access…
       </div>
     );
@@ -15,10 +15,10 @@ export function AdminAccessGate({ children }: { children: (email: string) => Rea
 
   if (status === "denied") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0b0f19] px-4 text-center">
+      <div className="flex min-h-screen items-center justify-center bg-white px-4 text-center">
         <div>
-          <h1 className="text-lg font-semibold text-slate-100">Access restricted</h1>
-          <p className="mt-2 max-w-sm text-sm text-slate-400">
+          <h1 className="text-lg font-semibold text-slate-900">Access restricted</h1>
+          <p className="mt-2 max-w-sm text-sm text-slate-500">
             {email} is signed in but doesn't have admin access to Platform HQ. Contact an existing admin to
             request access.
           </p>

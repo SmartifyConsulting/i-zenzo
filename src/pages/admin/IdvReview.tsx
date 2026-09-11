@@ -36,20 +36,20 @@ function ReviewQueue() {
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · IDV Review</div>
-      <h1 className="text-2xl font-semibold text-slate-100">IDV Manual Review</h1>
-      <p className="mt-1 text-sm text-slate-400">Category: idv_person. Person-only decisions.</p>
+      <h1 className="text-2xl font-semibold text-slate-900">IDV Manual Review</h1>
+      <p className="mt-1 text-sm text-slate-500">Category: idv_person. Person-only decisions.</p>
 
-      <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.02]">
-        <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-          <div className="text-sm font-medium text-slate-100">Cases requiring review</div>
-          <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+      <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50">
+        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+          <div className="text-sm font-medium text-slate-900">Cases requiring review</div>
+          <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
             {loading ? "Refreshing…" : "Refresh"}
           </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
                 <th className="px-4 py-2 font-medium">Person</th>
                 <th className="px-4 py-2 font-medium">Status</th>
                 <th className="px-4 py-2 font-medium">Updated</th>
@@ -63,22 +63,22 @@ function ReviewQueue() {
                 </tr>
               )}
               {reviews.map((r) => (
-                <tr key={r.id} className="border-b border-white/5 text-slate-300">
+                <tr key={r.id} className="border-b border-slate-100 text-slate-700">
                   <td className="px-4 py-2.5">{r.subject_label}</td>
                   <td className="px-4 py-2.5 capitalize">{r.status.replace(/_/g, " ")}</td>
                   <td className="px-4 py-2.5 text-slate-500">{new Date(r.updated_at).toLocaleString()}</td>
                   <td className="px-4 py-2.5">
                     {r.status === "manual_review_required" ? (
                       <div className="flex gap-1.5">
-                        <button onClick={() => decide(r, true)} disabled={busyId === r.id} className="rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-[11px] text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50">
+                        <button onClick={() => decide(r, true)} disabled={busyId === r.id} className="rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-[11px] text-emerald-700 hover:bg-emerald-500/20 disabled:opacity-50">
                           Approve
                         </button>
-                        <button onClick={() => decide(r, false)} disabled={busyId === r.id} className="rounded border border-red-500/30 bg-red-500/10 px-2 py-1 text-[11px] text-red-400 hover:bg-red-500/20 disabled:opacity-50">
+                        <button onClick={() => decide(r, false)} disabled={busyId === r.id} className="rounded border border-red-500/30 bg-red-500/10 px-2 py-1 text-[11px] text-red-700 hover:bg-red-500/20 disabled:opacity-50">
                           Reject
                         </button>
                       </div>
                     ) : (
-                      <span className="text-slate-600">—</span>
+                      <span className="text-slate-400">—</span>
                     )}
                   </td>
                 </tr>

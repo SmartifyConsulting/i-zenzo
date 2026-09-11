@@ -12,16 +12,16 @@ function Workflow() {
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · Funder Workflow</div>
-      <h1 className="text-2xl font-semibold text-slate-100">Funder Workflow</h1>
-      <p className="mt-1 text-sm text-slate-400">
+      <h1 className="text-2xl font-semibold text-slate-900">Funder Workflow</h1>
+      <p className="mt-1 text-sm text-slate-500">
         Funder access is manual and granted only by platform admin. Funder roles do not inherit any internal
         admin, operator or compliance permissions.
       </p>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         {SECTIONS.map((s) => (
-          <Link key={s.to} to={s.to} className="block rounded-lg border border-white/10 bg-white/[0.02] p-4 hover:bg-white/5">
-            <div className="text-sm font-medium text-slate-100">{s.label}</div>
+          <Link key={s.to} to={s.to} className="block rounded-lg border border-slate-200 bg-slate-50 p-4 hover:bg-slate-50">
+            <div className="text-sm font-medium text-slate-900">{s.label}</div>
             <div className="mt-1 text-xs text-slate-500">{s.desc}</div>
           </Link>
         ))}

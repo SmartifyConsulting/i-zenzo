@@ -82,42 +82,42 @@ export function AdminShell({ userEmail, children }: { userEmail: string; childre
   }
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] text-slate-100">
-      <header className="flex items-center justify-between border-b border-white/10 bg-[#0d1220] px-4 py-2">
+    <div className="min-h-screen bg-white text-slate-900">
+      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-2">
         <div className="flex items-center gap-3">
           <div className="flex h-7 w-7 items-center justify-center rounded bg-emerald-500 text-xs font-bold text-white">
             IZ
           </div>
           <div className="leading-tight">
-            <div className="text-xs font-semibold tracking-wide text-slate-100">IZENZO · ADMIN</div>
+            <div className="text-xs font-semibold tracking-wide text-slate-900">IZENZO · ADMIN</div>
             <div className="text-[10px] text-slate-500">PLATFORM ADMINISTRATION</div>
           </div>
-          <div className="ml-4 rounded border border-white/10 bg-white/5 px-2 py-1 text-[10px] text-slate-400">
+          <div className="ml-4 rounded border border-slate-200 bg-slate-100 px-2 py-1 text-[10px] text-slate-500">
             WORKSPACE
-            <div className="text-xs font-medium text-slate-200">Platform HQ</div>
+            <div className="text-xs font-medium text-slate-800">Platform HQ</div>
           </div>
-          <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-medium text-emerald-400">
+          <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-medium text-emerald-700">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
             SYSTEM STATUS: OPERATIONAL
           </div>
         </div>
         <div className="flex items-center gap-4 text-xs">
-          <Link to="/" className="text-slate-400 hover:text-slate-200">
+          <Link to="/" className="text-slate-500 hover:text-slate-800">
             View Public Site
           </Link>
-          <span className="text-slate-400">{userEmail}</span>
-          <button onClick={handleSignOut} className="text-slate-400 hover:text-slate-200">
+          <span className="text-slate-500">{userEmail}</span>
+          <button onClick={handleSignOut} className="text-slate-500 hover:text-slate-800">
             Sign out
           </button>
         </div>
       </header>
 
-      <nav className="flex items-center gap-5 overflow-x-auto border-b border-white/10 bg-[#0d1220] px-4 text-xs">
+      <nav className="flex items-center gap-5 overflow-x-auto border-b border-slate-200 bg-white px-4 text-xs">
         {TOP_TABS.map((tab) => {
           const active = tab.to && pathname === tab.to;
           const cls = `whitespace-nowrap border-b-2 py-2.5 ${
-            active ? "border-emerald-500 text-slate-100" : "border-transparent text-slate-500"
-          } ${tab.to ? "hover:text-slate-300" : "cursor-default"}`;
+            active ? "border-emerald-500 text-slate-900" : "border-transparent text-slate-500"
+          } ${tab.to ? "hover:text-slate-700" : "cursor-default"}`;
           return tab.to ? (
             <Link key={tab.label} to={tab.to} className={cls}>
               {tab.label}
@@ -131,7 +131,7 @@ export function AdminShell({ userEmail, children }: { userEmail: string; childre
       </nav>
 
       <div className="flex">
-        <aside className="w-52 shrink-0 border-r border-white/10 bg-[#0d1220] px-3 py-4 text-xs">
+        <aside className="w-52 shrink-0 border-r border-slate-200 bg-white px-3 py-4 text-xs">
           {NAV.map((group) => (
             <div key={group.heading} className="mb-5">
               <div className="mb-1.5 px-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
@@ -143,14 +143,14 @@ export function AdminShell({ userEmail, children }: { userEmail: string; childre
                   <div
                     className={`flex items-center justify-between rounded px-2 py-1.5 ${
                       active
-                        ? "bg-emerald-500/10 text-emerald-400"
+                        ? "bg-emerald-500/10 text-emerald-700"
                         : item.to
-                          ? "text-slate-300 hover:bg-white/5"
-                          : "cursor-default text-slate-600"
+                          ? "text-slate-700 hover:bg-slate-50"
+                          : "cursor-default text-slate-400"
                     }`}
                   >
                     <span>{item.label}</span>
-                    {!item.to && <span className="text-[9px] text-slate-700">Soon</span>}
+                    {!item.to && <span className="text-[9px] text-slate-400">Soon</span>}
                   </div>
                 );
                 return item.to ? (
@@ -163,8 +163,8 @@ export function AdminShell({ userEmail, children }: { userEmail: string; childre
               })}
             </div>
           ))}
-          <div className="mt-6 border-t border-white/10 pt-3">
-            <Link to="/dashboard" className="px-2 text-slate-500 hover:text-slate-300">
+          <div className="mt-6 border-t border-slate-200 pt-3">
+            <Link to="/dashboard" className="px-2 text-slate-500 hover:text-slate-700">
               ← Return to Desk
             </Link>
           </div>

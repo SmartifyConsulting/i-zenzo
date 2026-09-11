@@ -19,10 +19,10 @@ type Tab = (typeof TABS)[number];
 
 function Pill({ tone, children }: { tone: "green" | "amber" | "red" | "slate"; children: React.ReactNode }) {
   const cls = {
-    green: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
-    amber: "border-amber-500/30 bg-amber-500/10 text-amber-400",
-    red: "border-red-500/30 bg-red-500/10 text-red-400",
-    slate: "border-white/10 bg-white/5 text-slate-400",
+    green: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700",
+    amber: "border-amber-500/30 bg-amber-500/10 text-amber-700",
+    red: "border-red-500/30 bg-red-500/10 text-red-700",
+    slate: "border-slate-200 bg-slate-100 text-slate-500",
   }[tone];
   return <span className={`rounded border px-1.5 py-0.5 text-[10px] font-medium capitalize ${cls}`}>{children}</span>;
 }
@@ -78,10 +78,10 @@ function OrganisationsTable() {
   }
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
         <div>
-          <div className="text-sm font-medium text-slate-100">Organisations</div>
+          <div className="text-sm font-medium text-slate-900">Organisations</div>
           <div className="text-xs text-slate-500">View and manage organisations and their verification status</div>
         </div>
         <div className="flex gap-2">
@@ -89,9 +89,9 @@ function OrganisationsTable() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by name…"
-            className="w-56 rounded border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="w-56 rounded border border-slate-200 bg-slate-100 px-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
           />
-          <button onClick={load} disabled={loading} className="shrink-0 rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+          <button onClick={load} disabled={loading} className="shrink-0 rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
             {loading ? "Refreshing…" : "Refresh"}
           </button>
         </div>
@@ -99,7 +99,7 @@ function OrganisationsTable() {
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
               <th className="px-4 py-2 font-medium">Name</th>
               <th className="px-4 py-2 font-medium">Users</th>
               <th className="px-4 py-2 font-medium">API Keys</th>
@@ -117,7 +117,7 @@ function OrganisationsTable() {
               </tr>
             )}
             {filtered.map((o) => (
-              <tr key={o.id} className="border-b border-white/5 text-slate-300">
+              <tr key={o.id} className="border-b border-slate-100 text-slate-700">
                 <td className="px-4 py-2.5">{o.name}</td>
                 <td className="px-4 py-2.5">{o.users}</td>
                 <td className="px-4 py-2.5">{o.api_keys}</td>
@@ -129,10 +129,10 @@ function OrganisationsTable() {
                 <td className="px-4 py-2.5 text-slate-500">{new Date(o.created_at).toLocaleDateString()}</td>
                 <td className="px-4 py-2.5">
                   <div className="flex gap-1.5">
-                    <button onClick={() => toggleSandbox(o)} disabled={busyId === o.id} className="rounded border border-white/10 px-2 py-1 text-[11px] text-slate-300 hover:bg-white/5 disabled:opacity-50">
+                    <button onClick={() => toggleSandbox(o)} disabled={busyId === o.id} className="rounded border border-slate-200 px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-50 disabled:opacity-50">
                       {o.sandbox_enabled ? "Disable sandbox" : "Enable sandbox"}
                     </button>
-                    <button onClick={() => toggleStatus(o)} disabled={busyId === o.id} className="rounded border border-white/10 px-2 py-1 text-[11px] text-slate-300 hover:bg-white/5 disabled:opacity-50">
+                    <button onClick={() => toggleStatus(o)} disabled={busyId === o.id} className="rounded border border-slate-200 px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-50 disabled:opacity-50">
                       {o.status === "active" ? "Suspend" : "Reactivate"}
                     </button>
                   </div>
@@ -142,7 +142,7 @@ function OrganisationsTable() {
           </tbody>
         </table>
       </div>
-      <div className="border-t border-white/10 px-4 py-2 text-[10px] text-slate-600">
+      <div className="border-t border-slate-200 px-4 py-2 text-[10px] text-slate-400">
         Showing {filtered.length} of {orgs.length} organisations
       </div>
     </div>
@@ -181,20 +181,20 @@ function LegalEntities() {
   }
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
         <div>
-          <div className="text-sm font-medium text-slate-100">Entity Management</div>
+          <div className="text-sm font-medium text-slate-900">Entity Management</div>
           <div className="text-xs text-slate-500">Legal entities across all organisations, with screening capabilities</div>
         </div>
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
               <th className="px-4 py-2 font-medium">Legal name</th>
               <th className="px-4 py-2 font-medium">Type</th>
               <th className="px-4 py-2 font-medium">Jurisdiction</th>
@@ -209,7 +209,7 @@ function LegalEntities() {
               <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500">No legal entities.</td></tr>
             )}
             {entities.map((e) => (
-              <tr key={e.id} className="border-b border-white/5 text-slate-300">
+              <tr key={e.id} className="border-b border-slate-100 text-slate-700">
                 <td className="px-4 py-2.5">{e.legal_name}</td>
                 <td className="px-4 py-2.5 uppercase text-slate-500">{e.entity_type}</td>
                 <td className="px-4 py-2.5">{e.jurisdiction ?? "—"}</td>
@@ -218,10 +218,10 @@ function LegalEntities() {
                 <td className="px-4 py-2.5"><Pill tone={e.screening_status === "clear" ? "green" : "slate"}>{e.screening_status.replace(/_/g, " ")}</Pill></td>
                 <td className="px-4 py-2.5">
                   <div className="flex gap-1.5">
-                    <button onClick={() => act(e.id, adminApi.screenLegalEntity)} disabled={busyId === e.id} className="rounded border border-white/10 px-2 py-1 text-[11px] text-slate-300 hover:bg-white/5 disabled:opacity-50">Screen</button>
-                    <button onClick={() => act(e.id, adminApi.verifyLegalEntity)} disabled={busyId === e.id} className="rounded border border-white/10 px-2 py-1 text-[11px] text-slate-300 hover:bg-white/5 disabled:opacity-50">Verify</button>
+                    <button onClick={() => act(e.id, adminApi.screenLegalEntity)} disabled={busyId === e.id} className="rounded border border-slate-200 px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-50 disabled:opacity-50">Screen</button>
+                    <button onClick={() => act(e.id, adminApi.verifyLegalEntity)} disabled={busyId === e.id} className="rounded border border-slate-200 px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-50 disabled:opacity-50">Verify</button>
                     {e.entity_type === "company" && (
-                      <button onClick={() => act(e.id, adminApi.bindLegalEntity)} disabled={busyId === e.id} className="rounded border border-white/10 px-2 py-1 text-[11px] text-slate-300 hover:bg-white/5 disabled:opacity-50">Bind</button>
+                      <button onClick={() => act(e.id, adminApi.bindLegalEntity)} disabled={busyId === e.id} className="rounded border border-slate-200 px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-50 disabled:opacity-50">Bind</button>
                     )}
                   </div>
                 </td>
@@ -266,25 +266,25 @@ function GoLiveVerification() {
   const pending = rows.filter((r: any) => r.status === "pending");
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">Pending: {pending.length}</div>
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">Pending: {pending.length}</div>
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
-      <div className="divide-y divide-white/5">
+      <div className="divide-y divide-slate-100">
         {!loading && rows.length === 0 && <p className="px-4 py-8 text-center text-xs text-slate-500">No verification packages are waiting for review.</p>}
         {rows.map((r: any) => (
-          <div key={r.id} className="flex items-center justify-between px-4 py-3 text-xs text-slate-300">
+          <div key={r.id} className="flex items-center justify-between px-4 py-3 text-xs text-slate-700">
             <div>
-              <div className="text-slate-100">{r.legal_name}</div>
+              <div className="text-slate-900">{r.legal_name}</div>
               <Pill tone={r.status === "approved" ? "green" : r.status === "rejected" ? "red" : "amber"}>{r.status}</Pill>
             </div>
             {r.status === "pending" && (
               <div className="flex gap-1.5">
-                <button onClick={() => decide(r.id, true)} disabled={busyId === r.id} className="rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-[11px] text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50">Approve</button>
-                <button onClick={() => decide(r.id, false)} disabled={busyId === r.id} className="rounded border border-red-500/30 bg-red-500/10 px-2 py-1 text-[11px] text-red-400 hover:bg-red-500/20 disabled:opacity-50">Reject</button>
+                <button onClick={() => decide(r.id, true)} disabled={busyId === r.id} className="rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-[11px] text-emerald-700 hover:bg-emerald-500/20 disabled:opacity-50">Approve</button>
+                <button onClick={() => decide(r.id, false)} disabled={busyId === r.id} className="rounded border border-red-500/30 bg-red-500/10 px-2 py-1 text-[11px] text-red-700 hover:bg-red-500/20 disabled:opacity-50">Reject</button>
               </div>
             )}
           </div>
@@ -324,28 +324,28 @@ function KybDocuments() {
   }
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">KYC Documents</div>
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">KYC Documents</div>
         <div className="text-xs text-slate-500">Identity and verification documents uploaded for compliance purposes.</div>
       </div>
-      <div className="flex items-center justify-end border-b border-white/10 px-4 py-2">
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+      <div className="flex items-center justify-end border-b border-slate-200 px-4 py-2">
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
-      <div className="divide-y divide-white/5">
+      <div className="divide-y divide-slate-100">
         {!loading && docs.length === 0 && <p className="px-4 py-8 text-center text-xs text-slate-500">No KYC documents found.</p>}
         {docs.map((d: any) => (
-          <div key={d.id} className="flex items-center justify-between px-4 py-3 text-xs text-slate-300">
+          <div key={d.id} className="flex items-center justify-between px-4 py-3 text-xs text-slate-700">
             <div>
-              <div className="text-slate-100">{d.legal_name} · {d.doc_type.replace(/_/g, " ")}</div>
+              <div className="text-slate-900">{d.legal_name} · {d.doc_type.replace(/_/g, " ")}</div>
               <Pill tone={d.status === "approved" ? "green" : d.status === "rejected" ? "red" : "amber"}>{d.status.replace(/_/g, " ")}</Pill>
             </div>
             {d.status === "pending_review" && (
               <div className="flex gap-1.5">
-                <button onClick={() => decide(d.id, true)} disabled={busyId === d.id} className="rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-[11px] text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50">Approve</button>
-                <button onClick={() => decide(d.id, false)} disabled={busyId === d.id} className="rounded border border-red-500/30 bg-red-500/10 px-2 py-1 text-[11px] text-red-400 hover:bg-red-500/20 disabled:opacity-50">Reject</button>
+                <button onClick={() => decide(d.id, true)} disabled={busyId === d.id} className="rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-[11px] text-emerald-700 hover:bg-emerald-500/20 disabled:opacity-50">Approve</button>
+                <button onClick={() => decide(d.id, false)} disabled={busyId === d.id} className="rounded border border-red-500/30 bg-red-500/10 px-2 py-1 text-[11px] text-red-700 hover:bg-red-500/20 disabled:opacity-50">Reject</button>
               </div>
             )}
           </div>
@@ -396,24 +396,24 @@ function ApiClientsOnboarding() {
   }
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">API Clients · institutional onboarding</div>
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">API Clients · institutional onboarding</div>
         <div className="text-xs text-slate-500">Onboarding records only. Key issuance, public endpoints, and billing are not part of this surface.</div>
       </div>
-      <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
-        <select value={selectedEntity} onChange={(e) => setSelectedEntity(e.target.value)} className="rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+      <div className="flex items-center gap-2 border-b border-slate-200 px-4 py-3">
+        <select value={selectedEntity} onChange={(e) => setSelectedEntity(e.target.value)} className="rounded border border-slate-200 bg-slate-100 px-2 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500">
           <option value="">Select legal entity…</option>
           {entities.map((e) => (
             <option key={e.id} value={e.id}>{e.legal_name}</option>
           ))}
         </select>
-        <button onClick={create} disabled={!selectedEntity} className="rounded bg-emerald-500/20 px-3 py-1.5 text-xs text-emerald-400 hover:bg-emerald-500/30 disabled:opacity-50">New API client</button>
+        <button onClick={create} disabled={!selectedEntity} className="rounded bg-emerald-500/20 px-3 py-1.5 text-xs text-emerald-700 hover:bg-emerald-500/30 disabled:opacity-50">New API client</button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
               <th className="px-4 py-2 font-medium">Legal entity</th>
               <th className="px-4 py-2 font-medium">Country</th>
               <th className="px-4 py-2 font-medium">Status</th>
@@ -428,7 +428,7 @@ function ApiClientsOnboarding() {
               <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500">No API client onboarding records.</td></tr>
             )}
             {clients.map((c: any) => (
-              <tr key={c.id} className="border-b border-white/5 text-slate-300">
+              <tr key={c.id} className="border-b border-slate-100 text-slate-700">
                 <td className="px-4 py-2.5">{c.legal_name}</td>
                 <td className="px-4 py-2.5">{c.country ?? "—"}</td>
                 <td className="px-4 py-2.5"><Pill tone={c.status === "active" ? "green" : "amber"}>{c.status.replace(/_/g, " ")}</Pill></td>
@@ -437,8 +437,8 @@ function ApiClientsOnboarding() {
                 <td className="px-4 py-2.5 text-slate-500">{new Date(c.created_at).toLocaleDateString()}</td>
                 <td className="px-4 py-2.5">
                   <div className="flex gap-1.5">
-                    {!c.sandbox_enabled && <button onClick={() => setAccess(c.id, "sandbox_enabled", true)} disabled={busyId === c.id} className="rounded border border-white/10 px-2 py-1 text-[11px] text-slate-300 hover:bg-white/5 disabled:opacity-50">Enable sandbox</button>}
-                    {!c.production_enabled && <button onClick={() => setAccess(c.id, "production_enabled", true)} disabled={busyId === c.id} className="rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-[11px] text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50">Enable production</button>}
+                    {!c.sandbox_enabled && <button onClick={() => setAccess(c.id, "sandbox_enabled", true)} disabled={busyId === c.id} className="rounded border border-slate-200 px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-50 disabled:opacity-50">Enable sandbox</button>}
+                    {!c.production_enabled && <button onClick={() => setAccess(c.id, "production_enabled", true)} disabled={busyId === c.id} className="rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-[11px] text-emerald-700 hover:bg-emerald-500/20 disabled:opacity-50">Enable production</button>}
                   </div>
                 </td>
               </tr>
@@ -491,33 +491,33 @@ function ApiPlans() {
   }
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">Public API V1. Commercial plan catalogue</div>
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">Public API V1. Commercial plan catalogue</div>
         <div className="text-xs text-slate-500">Plans drive monthly allowance and billing-visibility estimates. No payment collection, no invoices.</div>
       </div>
-      <div className="divide-y divide-white/5">
+      <div className="divide-y divide-slate-100">
         {!loading && plans.length === 0 && <p className="px-4 py-6 text-center text-xs text-slate-500">No plans configured yet.</p>}
         {plans.map((p: any) => (
-          <div key={p.id} className="px-4 py-2.5 text-xs text-slate-300">
-            <span className="text-slate-100">{p.plan_name}</span> — {p.currency} {Number(p.monthly_fee).toLocaleString()}/mo · {p.included_allowance} included lookups · overage {p.currency} {Number(p.overage_price).toLocaleString()}
+          <div key={p.id} className="px-4 py-2.5 text-xs text-slate-700">
+            <span className="text-slate-900">{p.plan_name}</span> — {p.currency} {Number(p.monthly_fee).toLocaleString()}/mo · {p.included_allowance} included lookups · overage {p.currency} {Number(p.overage_price).toLocaleString()}
           </div>
         ))}
       </div>
-      <div className="border-t border-white/10 px-4 py-3">
-        <div className="mb-2 text-xs font-medium text-slate-100">New plan</div>
+      <div className="border-t border-slate-200 px-4 py-3">
+        <div className="mb-2 text-xs font-medium text-slate-900">New plan</div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <input value={form.planName} onChange={(e) => setForm({ ...form, planName: e.target.value })} placeholder="Plan name" className="rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
-          <input value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })} placeholder="Currency (ISO 3)" className="rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
-          <input value={form.monthlyFee} onChange={(e) => setForm({ ...form, monthlyFee: e.target.value })} placeholder="Monthly fee" type="number" className="rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
-          <input value={form.includedAllowance} onChange={(e) => setForm({ ...form, includedAllowance: e.target.value })} placeholder="Included allowance" type="number" className="rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
-          <input value={form.overagePrice} onChange={(e) => setForm({ ...form, overagePrice: e.target.value })} placeholder="Overage price / lookup" type="number" className="rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
-          <input value={form.manualReviewFee} onChange={(e) => setForm({ ...form, manualReviewFee: e.target.value })} placeholder="Manual review fee" type="number" className="rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
-          <label className="flex items-center gap-1.5 text-xs text-slate-400">
+          <input value={form.planName} onChange={(e) => setForm({ ...form, planName: e.target.value })} placeholder="Plan name" className="rounded border border-slate-200 bg-slate-100 px-2 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+          <input value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })} placeholder="Currency (ISO 3)" className="rounded border border-slate-200 bg-slate-100 px-2 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+          <input value={form.monthlyFee} onChange={(e) => setForm({ ...form, monthlyFee: e.target.value })} placeholder="Monthly fee" type="number" className="rounded border border-slate-200 bg-slate-100 px-2 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+          <input value={form.includedAllowance} onChange={(e) => setForm({ ...form, includedAllowance: e.target.value })} placeholder="Included allowance" type="number" className="rounded border border-slate-200 bg-slate-100 px-2 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+          <input value={form.overagePrice} onChange={(e) => setForm({ ...form, overagePrice: e.target.value })} placeholder="Overage price / lookup" type="number" className="rounded border border-slate-200 bg-slate-100 px-2 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+          <input value={form.manualReviewFee} onChange={(e) => setForm({ ...form, manualReviewFee: e.target.value })} placeholder="Manual review fee" type="number" className="rounded border border-slate-200 bg-slate-100 px-2 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+          <label className="flex items-center gap-1.5 text-xs text-slate-500">
             <input type="checkbox" checked={form.overageAllowed} onChange={(e) => setForm({ ...form, overageAllowed: e.target.checked })} />
             Overage allowed (120% circuit breaker)
           </label>
-          <button onClick={create} disabled={saving || !form.planName.trim()} className="rounded bg-emerald-500/20 px-3 py-1.5 text-xs text-emerald-400 hover:bg-emerald-500/30 disabled:opacity-50">
+          <button onClick={create} disabled={saving || !form.planName.trim()} className="rounded bg-emerald-500/20 px-3 py-1.5 text-xs text-emerald-700 hover:bg-emerald-500/30 disabled:opacity-50">
             {saving ? "Creating…" : "Create plan"}
           </button>
         </div>
@@ -548,17 +548,17 @@ function useOrgApiOperations() {
 function ApiUsage() {
   const { data, loading, load } = useOrgApiOperations();
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">API Usage ({data?.usage.length ?? 0} events)</div>
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">API Usage ({data?.usage.length ?? 0} events)</div>
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
               <th className="px-4 py-2 font-medium">Endpoint</th>
               <th className="px-4 py-2 font-medium">Status</th>
               <th className="px-4 py-2 font-medium">Flags</th>
@@ -570,7 +570,7 @@ function ApiUsage() {
               <tr><td colSpan={4} className="px-4 py-8 text-center text-slate-500">No rows for the selected filters.</td></tr>
             )}
             {data?.usage.map((e: any, i: number) => (
-              <tr key={i} className="border-b border-white/5 text-slate-300">
+              <tr key={i} className="border-b border-slate-100 text-slate-700">
                 <td className="px-4 py-2.5 font-mono text-[11px]">{e.endpoint}</td>
                 <td className="px-4 py-2.5">{e.status_code}</td>
                 <td className="px-4 py-2.5">
@@ -589,20 +589,20 @@ function ApiUsage() {
 function ApiMonitoring() {
   const { data, loading, load } = useOrgApiOperations();
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">Internal Public API V1 monitoring</div>
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">Internal Public API V1 monitoring</div>
         <div className="text-xs text-slate-500">Operational status per onboarded API client. Estimates are visibility only, not invoices.</div>
       </div>
-      <div className="flex items-center justify-end border-b border-white/10 px-4 py-2">
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+      <div className="flex items-center justify-end border-b border-slate-200 px-4 py-2">
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
               <th className="px-4 py-2 font-medium">Client</th>
               <th className="px-4 py-2 font-medium">Status</th>
               <th className="px-4 py-2 font-medium">Sandbox</th>
@@ -615,7 +615,7 @@ function ApiMonitoring() {
               <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-500">No rows for the selected filters.</td></tr>
             )}
             {data?.clients.map((c: any) => (
-              <tr key={c.id} className="border-b border-white/5 text-slate-300">
+              <tr key={c.id} className="border-b border-slate-100 text-slate-700">
                 <td className="px-4 py-2.5">{c.legal_name}</td>
                 <td className="px-4 py-2.5"><Pill tone={c.status === "active" ? "green" : "slate"}>{c.status.replace(/_/g, " ")}</Pill></td>
                 <td className="px-4 py-2.5">{c.sandbox_enabled ? "yes" : "no"}</td>
@@ -633,26 +633,26 @@ function ApiMonitoring() {
 function ApiSecurity() {
   const { data, loading, load } = useOrgApiOperations();
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">Public API V1 security signals (current UTC month)</div>
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">Public API V1 security signals (current UTC month)</div>
         <div className="text-xs text-slate-500">Failed authentication, rate-limit and monthly-limit blocks, active IP exceptions.</div>
       </div>
-      <div className="grid grid-cols-2 gap-3 border-b border-white/10 p-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 border-b border-slate-200 p-4 sm:grid-cols-4">
         {[
           { label: "Clients with signals", value: data?.security.clients_with_signals },
           { label: "Failed auth attempts", value: data?.security.failed_auth_attempts },
           { label: "Rate-limit events", value: data?.security.rate_limit_events },
           { label: "Blocked events", value: data?.security.blocked_events },
         ].map((t) => (
-          <div key={t.label} className="rounded border border-white/10 bg-white/[0.03] p-3">
+          <div key={t.label} className="rounded border border-slate-200 bg-slate-50 p-3">
             <div className="text-[10px] uppercase tracking-wide text-slate-500">{t.label}</div>
-            <div className="mt-1 text-lg font-semibold text-slate-100">{t.value ?? 0}</div>
+            <div className="mt-1 text-lg font-semibold text-slate-900">{t.value ?? 0}</div>
           </div>
         ))}
       </div>
       <div className="flex items-center justify-end px-4 py-2">
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
@@ -678,20 +678,20 @@ function SandboxScenarios() {
   }, []);
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">Sandbox scenario catalogue · read-only</div>
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">Sandbox scenario catalogue · read-only</div>
         <div className="text-xs text-slate-500">Deterministic test records. Never real counterparties, never returned in production.</div>
       </div>
-      <div className="flex items-center justify-end border-b border-white/10 px-4 py-2">
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+      <div className="flex items-center justify-end border-b border-slate-200 px-4 py-2">
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
               <th className="px-4 py-2 font-medium">Scenario</th>
               <th className="px-4 py-2 font-medium">Legal name</th>
               <th className="px-4 py-2 font-medium">Country</th>
@@ -701,7 +701,7 @@ function SandboxScenarios() {
           </thead>
           <tbody>
             {scenarios.map((s: any) => (
-              <tr key={s.id} className="border-b border-white/5 text-slate-300">
+              <tr key={s.id} className="border-b border-slate-100 text-slate-700">
                 <td className="px-4 py-2.5 font-mono text-[11px]">{s.scenario}</td>
                 <td className="px-4 py-2.5">{s.legal_name ?? "—"}</td>
                 <td className="px-4 py-2.5">{s.country ?? "—"}</td>
@@ -748,29 +748,29 @@ function ApiSupport() {
   const open = tickets.filter((t: any) => t.status === "open");
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">
           {tickets.length} ticket(s) · {open.length} open
         </div>
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
-      <div className="divide-y divide-white/5">
+      <div className="divide-y divide-slate-100">
         {!loading && tickets.length === 0 && <p className="px-4 py-8 text-center text-xs text-slate-500">No tickets.</p>}
         {tickets.map((t: any) => (
-          <div key={t.id} className="flex items-center justify-between px-4 py-3 text-xs text-slate-300">
+          <div key={t.id} className="flex items-center justify-between px-4 py-3 text-xs text-slate-700">
             <div>
-              <div className="text-slate-100">{t.subject}</div>
+              <div className="text-slate-900">{t.subject}</div>
               <div className="mt-1 flex gap-2 text-[10px]">
                 <Pill tone={t.status === "open" ? "amber" : "slate"}>{t.status}</Pill>
                 <Pill tone={t.severity === "urgent" ? "red" : "slate"}>{t.severity}</Pill>
-                <span className="text-slate-600">{t.environment}</span>
+                <span className="text-slate-400">{t.environment}</span>
               </div>
             </div>
             {t.status === "open" && (
-              <button onClick={() => close(t.id)} disabled={busyId === t.id} className="rounded border border-white/10 px-2 py-1 text-[11px] text-slate-300 hover:bg-white/5 disabled:opacity-50">Close</button>
+              <button onClick={() => close(t.id)} disabled={busyId === t.id} className="rounded border border-slate-200 px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-50 disabled:opacity-50">Close</button>
             )}
           </div>
         ))}
@@ -787,16 +787,16 @@ function OrganisationManagementContent() {
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · Organisation Management</div>
-      <h1 className="text-2xl font-semibold text-slate-100">Organisation Management</h1>
-      <p className="mt-1 text-sm text-slate-400">KYB lifecycle, legal entities, KYC document verification.</p>
+      <h1 className="text-2xl font-semibold text-slate-900">Organisation Management</h1>
+      <p className="mt-1 text-sm text-slate-500">KYB lifecycle, legal entities, KYC document verification.</p>
 
-      <div className="mt-4 flex gap-4 overflow-x-auto border-b border-white/10 text-xs">
+      <div className="mt-4 flex gap-4 overflow-x-auto border-b border-slate-200 text-xs">
         {TABS.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`whitespace-nowrap border-b-2 py-2 ${
-              tab === t ? "border-emerald-500 text-slate-100" : "border-transparent text-slate-500 hover:text-slate-300"
+              tab === t ? "border-emerald-500 text-slate-900" : "border-transparent text-slate-500 hover:text-slate-700"
             }`}
           >
             {t}

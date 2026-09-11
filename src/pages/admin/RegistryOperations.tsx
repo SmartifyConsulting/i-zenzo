@@ -18,17 +18,17 @@ function Operations() {
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · Registry Operations</div>
-      <h1 className="text-2xl font-semibold text-slate-100">Registry operations centre</h1>
-      <p className="mt-1 text-sm text-slate-400">
+      <h1 className="text-2xl font-semibold text-slate-900">Registry operations centre</h1>
+      <p className="mt-1 text-sm text-slate-500">
         One controlled cockpit for imports, claims, bank details and API — pulling live counts from the same
         Registry data as the other sections.
       </p>
 
-      <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.02] divide-y divide-white/5">
+      <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 divide-y divide-slate-100">
         {queue.map((q) => (
-          <Link key={q.to} to={q.to} className="flex items-center justify-between px-4 py-3 text-sm hover:bg-white/5">
-            <span className="text-slate-200">{q.label}</span>
-            <span className="rounded border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-400">
+          <Link key={q.to} to={q.to} className="flex items-center justify-between px-4 py-3 text-sm hover:bg-slate-50">
+            <span className="text-slate-800">{q.label}</span>
+            <span className="rounded border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-700">
               {q.count ?? "—"} pending
             </span>
           </Link>

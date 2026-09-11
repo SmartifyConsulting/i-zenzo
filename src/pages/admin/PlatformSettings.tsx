@@ -38,16 +38,16 @@ function Settings() {
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · Platform Settings</div>
-      <h1 className="text-2xl font-semibold text-slate-100">Platform Settings</h1>
-      <p className="mt-1 text-sm text-slate-400">Workspace label and system status banner shown across the admin console.</p>
+      <h1 className="text-2xl font-semibold text-slate-900">Platform Settings</h1>
+      <p className="mt-1 text-sm text-slate-500">Workspace label and system status banner shown across the admin console.</p>
 
-      <div className="mt-6 max-w-md rounded-lg border border-white/10 bg-white/[0.02] p-4">
+      <div className="mt-6 max-w-md rounded-lg border border-slate-200 bg-slate-50 p-4">
         <label className="block text-[10px] uppercase tracking-wide text-slate-500">Workspace name</label>
         <input
           value={workspaceName}
           onChange={(e) => setWorkspaceName(e.target.value)}
           disabled={loading}
-          className="mt-1 w-full rounded border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          className="mt-1 w-full rounded border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
         />
 
         <label className="mt-4 block text-[10px] uppercase tracking-wide text-slate-500">System status message</label>
@@ -55,17 +55,17 @@ function Settings() {
           value={statusMessage}
           onChange={(e) => setStatusMessage(e.target.value)}
           disabled={loading}
-          className="mt-1 w-full rounded border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          className="mt-1 w-full rounded border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
         />
 
         <button
           onClick={save}
           disabled={saving || loading}
-          className="mt-4 rounded bg-emerald-500/20 px-4 py-2 text-sm text-emerald-400 hover:bg-emerald-500/30 disabled:opacity-50"
+          className="mt-4 rounded bg-emerald-500/20 px-4 py-2 text-sm text-emerald-700 hover:bg-emerald-500/30 disabled:opacity-50"
         >
           {saving ? "Saving…" : "Save settings"}
         </button>
-        {saved && <span className="ml-3 text-xs text-emerald-400">Saved.</span>}
+        {saved && <span className="ml-3 text-xs text-emerald-700">Saved.</span>}
       </div>
     </>
   );

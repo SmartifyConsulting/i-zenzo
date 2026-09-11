@@ -18,13 +18,13 @@ function timeAgo(iso: string) {
 }
 
 function StagePill({ value }: { value: string | null }) {
-  if (!value) return <span className="text-slate-600">-</span>;
+  if (!value) return <span className="text-slate-400">-</span>;
   const tone =
     value === "COMPLETE" || value === "COMPLETED" || value === "APPROVED" || value === "SEALED"
-      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+      ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/30"
       : value === "REJECTED" || value === "EXPIRED" || value === "FAILED"
-        ? "bg-red-500/10 text-red-400 border-red-500/30"
-        : "bg-amber-500/10 text-amber-400 border-amber-500/30";
+        ? "bg-red-500/10 text-red-700 border-red-500/30"
+        : "bg-amber-500/10 text-amber-700 border-amber-500/30";
   return (
     <span className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${tone}`}>
       {value.toLowerCase()}
@@ -64,8 +64,8 @@ function CanonicalSpine() {
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · HQ Overview</div>
-      <h1 className="text-2xl font-semibold text-slate-100">Canonical Spine</h1>
-      <p className="mt-1 text-sm text-slate-400">
+      <h1 className="text-2xl font-semibold text-slate-900">Canonical Spine</h1>
+      <p className="mt-1 text-sm text-slate-500">
         Unified live view of every match across Search → Match → POI → WaD → Execution.
       </p>
 
@@ -76,17 +76,17 @@ function CanonicalSpine() {
           { label: "WaDs pending", value: summary?.wads_pending },
           { label: "Executions open", value: summary?.executions_open },
         ].map((tile) => (
-          <div key={tile.label} className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
+          <div key={tile.label} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
             <div className="text-[10px] uppercase tracking-wide text-slate-500">{tile.label}</div>
-            <div className="mt-1 text-xl font-semibold text-slate-100">{tile.value ?? "—"}</div>
+            <div className="mt-1 text-xl font-semibold text-slate-900">{tile.value ?? "—"}</div>
           </div>
         ))}
       </div>
 
-      <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.02]">
-        <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+      <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50">
+        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
           <div>
-            <div className="text-sm font-medium text-slate-100">Canonical Spine</div>
+            <div className="text-sm font-medium text-slate-900">Canonical Spine</div>
             <div className="text-xs text-slate-500">
               One row per match · live status across Search → Match → POI → WaD → Execution
             </div>
@@ -94,18 +94,18 @@ function CanonicalSpine() {
           <button
             onClick={load}
             disabled={loading}
-            className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50"
+            className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50"
           >
             {loading ? "Refreshing…" : "Refresh"}
           </button>
         </div>
 
-        {error && <p className="px-4 py-3 text-sm text-red-400">{error}</p>}
+        {error && <p className="px-4 py-3 text-sm text-red-700">{error}</p>}
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
                 <th className="px-4 py-2 font-medium">Match</th>
                 <th className="px-4 py-2 font-medium">Requester org</th>
                 <th className="px-4 py-2 font-medium">Stage</th>
@@ -124,9 +124,9 @@ function CanonicalSpine() {
                 </tr>
               )}
               {rows.map((row) => (
-                <tr key={row.transaction_id} className="border-b border-white/5 text-slate-300">
+                <tr key={row.transaction_id} className="border-b border-slate-100 text-slate-700">
                   <td className="px-4 py-2.5">
-                    <div className="font-mono text-[11px] text-slate-200">
+                    <div className="font-mono text-[11px] text-slate-800">
                       {row.transaction_id.slice(0, 8)}…
                     </div>
                     <div className="max-w-[220px] truncate text-slate-500">{row.subject ?? "—"}</div>
@@ -150,7 +150,7 @@ function CanonicalSpine() {
             </tbody>
           </table>
         </div>
-        <div className="border-t border-white/10 px-4 py-2 text-[10px] text-slate-600">
+        <div className="border-t border-slate-200 px-4 py-2 text-[10px] text-slate-400">
           Showing {rows.length} most-recent matches
         </div>
       </div>

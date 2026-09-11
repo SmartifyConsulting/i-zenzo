@@ -7,8 +7,8 @@ type EngagementRow = Awaited<ReturnType<typeof adminApi.listEngagements>>["engag
 function StatusPill({ value }: { value: string }) {
   const tone =
     value === "SEALED"
-      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-      : "bg-amber-500/10 text-amber-400 border-amber-500/30";
+      ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/30"
+      : "bg-amber-500/10 text-amber-700 border-amber-500/30";
   return <span className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${tone}`}>{value.toLowerCase()}</span>;
 }
 
@@ -34,14 +34,14 @@ function NoteRow({ engagement, onAdded }: { engagement: EngagementRow; onAdded: 
     <>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="rounded border border-white/10 px-2 py-1 text-[11px] text-slate-300 hover:bg-white/5"
+        className="rounded border border-slate-200 px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-50"
       >
         {engagement.notes.length > 0 ? `Notes (${engagement.notes.length})` : "Log note"}
       </button>
       {open && (
-        <div className="mt-2 rounded border border-white/10 bg-black/20 p-2">
+        <div className="mt-2 rounded border border-slate-200 bg-slate-50 p-2">
           {engagement.notes.map((n: { id: string; created_at: string; note: string }) => (
-            <div key={n.id} className="mb-1.5 border-b border-white/5 pb-1.5 text-[11px] text-slate-400 last:mb-0 last:border-0">
+            <div key={n.id} className="mb-1.5 border-b border-slate-100 pb-1.5 text-[11px] text-slate-500 last:mb-0 last:border-0">
               <span className="text-slate-500">{new Date(n.created_at).toLocaleString()}</span> — {n.note}
             </div>
           ))}
@@ -50,12 +50,12 @@ function NoteRow({ engagement, onAdded }: { engagement: EngagementRow; onAdded: 
             onChange={(e) => setNote(e.target.value)}
             placeholder="Log a manual outreach / contact attempt…"
             rows={2}
-            className="mt-1 w-full resize-none rounded border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="mt-1 w-full resize-none rounded border border-slate-200 bg-slate-100 px-2 py-1 text-[11px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
           />
           <button
             onClick={submit}
             disabled={saving || !note.trim()}
-            className="mt-1 rounded bg-emerald-500/20 px-2 py-1 text-[11px] text-emerald-400 hover:bg-emerald-500/30 disabled:opacity-50"
+            className="mt-1 rounded bg-emerald-500/20 px-2 py-1 text-[11px] text-emerald-700 hover:bg-emerald-500/30 disabled:opacity-50"
           >
             {saving ? "Saving…" : "Save note"}
           </button>
@@ -90,32 +90,32 @@ function EngagementsQueue() {
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · Engagements</div>
-      <h1 className="text-2xl font-semibold text-slate-100">Engagements</h1>
-      <p className="mt-1 text-sm text-slate-400">
+      <h1 className="text-2xl font-semibold text-slate-900">Engagements</h1>
+      <p className="mt-1 text-sm text-slate-500">
         POI hold-point queue · counterparty outreach and activation, across every workspace.
       </p>
 
-      <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.02]">
-        <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+      <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50">
+        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
           <div>
-            <div className="text-sm font-medium text-slate-100">POI hold-point queue</div>
+            <div className="text-sm font-medium text-slate-900">POI hold-point queue</div>
             <div className="text-xs text-slate-500">Every match currently at (or past) its POI hold-point</div>
           </div>
           <button
             onClick={load}
             disabled={loading}
-            className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50"
+            className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50"
           >
             {loading ? "Refreshing…" : "Refresh"}
           </button>
         </div>
 
-        {error && <p className="px-4 py-3 text-sm text-red-400">{error}</p>}
+        {error && <p className="px-4 py-3 text-sm text-red-700">{error}</p>}
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
                 <th className="px-4 py-2 font-medium">Match</th>
                 <th className="px-4 py-2 font-medium">Requester org</th>
                 <th className="px-4 py-2 font-medium">POI status</th>
@@ -132,9 +132,9 @@ function EngagementsQueue() {
                 </tr>
               )}
               {rows.map((row) => (
-                <tr key={row.poi_id} className="border-b border-white/5 align-top text-slate-300">
+                <tr key={row.poi_id} className="border-b border-slate-100 align-top text-slate-700">
                   <td className="px-4 py-2.5">
-                    <div className="font-mono text-[11px] text-slate-200">{row.transaction_id.slice(0, 8)}…</div>
+                    <div className="font-mono text-[11px] text-slate-800">{row.transaction_id.slice(0, 8)}…</div>
                     <div className="max-w-[220px] truncate text-slate-500">{row.subject ?? "—"}</div>
                   </td>
                   <td className="px-4 py-2.5">{row.requester_org}</td>
@@ -150,7 +150,7 @@ function EngagementsQueue() {
             </tbody>
           </table>
         </div>
-        <div className="border-t border-white/10 px-4 py-2 text-[10px] text-slate-600">
+        <div className="border-t border-slate-200 px-4 py-2 text-[10px] text-slate-400">
           Showing {rows.length} most-recent POI hold-points
         </div>
       </div>

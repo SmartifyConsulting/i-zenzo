@@ -24,18 +24,18 @@ function NewReleaseForm({ orgs, onCreated }: { orgs: OrgRow[]; onCreated: () => 
   }
 
   return (
-    <div className="border-b border-white/10 px-4 py-3">
-      <div className="text-sm font-medium text-slate-100">New deal release</div>
+    <div className="border-b border-slate-200 px-4 py-3">
+      <div className="text-sm font-medium text-slate-900">New deal release</div>
       <div className="mt-2 flex flex-wrap items-end gap-2">
-        <select value={funderOrgId} onChange={(e) => setFunderOrgId(e.target.value)} className="rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+        <select value={funderOrgId} onChange={(e) => setFunderOrgId(e.target.value)} className="rounded border border-slate-200 bg-slate-100 px-2 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500">
           <option value="">Select funder org…</option>
           {orgs.map((o) => (
             <option key={o.id} value={o.id}>{o.name}</option>
           ))}
         </select>
-        <input value={packLabel} onChange={(e) => setPackLabel(e.target.value)} placeholder="Evidence pack label…" className="w-56 rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
-        <input value={days} onChange={(e) => setDays(e.target.value)} type="number" placeholder="Expires in days" className="w-28 rounded border border-white/10 bg-white/5 px-2 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
-        <button onClick={submit} disabled={saving || !funderOrgId || !packLabel.trim()} className="rounded bg-emerald-500/20 px-3 py-1.5 text-xs text-emerald-400 hover:bg-emerald-500/30 disabled:opacity-50">
+        <input value={packLabel} onChange={(e) => setPackLabel(e.target.value)} placeholder="Evidence pack label…" className="w-56 rounded border border-slate-200 bg-slate-100 px-2 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+        <input value={days} onChange={(e) => setDays(e.target.value)} type="number" placeholder="Expires in days" className="w-28 rounded border border-slate-200 bg-slate-100 px-2 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+        <button onClick={submit} disabled={saving || !funderOrgId || !packLabel.trim()} className="rounded bg-emerald-500/20 px-3 py-1.5 text-xs text-emerald-700 hover:bg-emerald-500/30 disabled:opacity-50">
           {saving ? "Releasing…" : "Release"}
         </button>
       </div>
@@ -80,33 +80,33 @@ function Releases() {
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · Deal Releases</div>
-      <h1 className="text-2xl font-semibold text-slate-100">Deal releases</h1>
-      <p className="mt-1 text-sm text-slate-400">Evidence packs released to funders, expiry and revocation.</p>
+      <h1 className="text-2xl font-semibold text-slate-900">Deal releases</h1>
+      <p className="mt-1 text-sm text-slate-500">Evidence packs released to funders, expiry and revocation.</p>
 
-      <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.02]">
+      <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50">
         <NewReleaseForm orgs={orgs} onCreated={load} />
-        <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-          <div className="text-sm font-medium text-slate-100">Releases ({releases.length})</div>
-          <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+          <div className="text-sm font-medium text-slate-900">Releases ({releases.length})</div>
+          <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
             {loading ? "Refreshing…" : "Refresh"}
           </button>
         </div>
-        <div className="divide-y divide-white/5">
+        <div className="divide-y divide-slate-100">
           {!loading && releases.length === 0 && <p className="px-4 py-8 text-center text-xs text-slate-500">No deal releases.</p>}
           {releases.map((r) => (
-            <div key={r.id} className="flex items-center justify-between px-4 py-3 text-xs text-slate-300">
+            <div key={r.id} className="flex items-center justify-between px-4 py-3 text-xs text-slate-700">
               <div>
-                <div className="text-slate-100">{r.pack_label}</div>
+                <div className="text-slate-900">{r.pack_label}</div>
                 <div className="mt-0.5 text-slate-500">{r.funder_org_name}</div>
                 <div className="mt-1 flex items-center gap-2">
-                  <span className={`rounded border px-1.5 py-0.5 text-[10px] font-medium capitalize ${r.status === "active" ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400" : "border-red-500/30 bg-red-500/10 text-red-400"}`}>
+                  <span className={`rounded border px-1.5 py-0.5 text-[10px] font-medium capitalize ${r.status === "active" ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700" : "border-red-500/30 bg-red-500/10 text-red-700"}`}>
                     {r.status}
                   </span>
-                  {r.expires_at && <span className="text-slate-600">expires {new Date(r.expires_at).toLocaleDateString()}</span>}
+                  {r.expires_at && <span className="text-slate-400">expires {new Date(r.expires_at).toLocaleDateString()}</span>}
                 </div>
               </div>
               {r.status === "active" && (
-                <button onClick={() => revoke(r)} disabled={busyId === r.id} className="rounded border border-white/10 px-2 py-1 text-[11px] text-slate-300 hover:bg-white/5 disabled:opacity-50">
+                <button onClick={() => revoke(r)} disabled={busyId === r.id} className="rounded border border-slate-200 px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-50 disabled:opacity-50">
                   {busyId === r.id ? "Working…" : "Revoke"}
                 </button>
               )}

@@ -19,9 +19,9 @@ type Tab = (typeof TABS)[number];
 
 function Tile({ label, value }: { label: string; value: number | string }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
+    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
       <div className="text-[10px] uppercase tracking-wide text-slate-500">{label}</div>
-      <div className="mt-1 text-xl font-semibold text-slate-100">{value}</div>
+      <div className="mt-1 text-xl font-semibold text-slate-900">{value}</div>
     </div>
   );
 }
@@ -30,8 +30,8 @@ function Tile({ label, value }: { label: string; value: number | string }) {
 
 function RiskAlarms() {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02] p-4">
-      <div className="mb-1 text-xs font-medium text-slate-100">Reconciliation alarms</div>
+    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+      <div className="mb-1 text-xs font-medium text-slate-900">Reconciliation alarms</div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Tile label="Total alarms" value={0} />
         <Tile label="Critical" value={0} />
@@ -63,17 +63,17 @@ function RatingAppeals() {
   const open = appeals.filter((a: any) => a.status === "open");
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">Open: {open.length}</div>
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">Open: {open.length}</div>
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
-      <div className="divide-y divide-white/5">
+      <div className="divide-y divide-slate-100">
         {!loading && appeals.length === 0 && <p className="px-4 py-8 text-center text-xs text-slate-500">No rating appeals currently open.</p>}
         {appeals.map((a: any) => (
-          <div key={a.id} className="px-4 py-2.5 text-xs text-slate-300">{a.reason} — {a.status}</div>
+          <div key={a.id} className="px-4 py-2.5 text-xs text-slate-700">{a.reason} — {a.status}</div>
         ))}
       </div>
     </div>
@@ -98,19 +98,19 @@ function AuditLogs() {
   }, []);
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">Audit logs ({logs.length})</div>
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">Audit logs ({logs.length})</div>
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
-      <div className="divide-y divide-white/5">
+      <div className="divide-y divide-slate-100">
         {!loading && logs.length === 0 && <p className="px-4 py-8 text-center text-xs text-slate-500">No audit log entries yet.</p>}
         {logs.map((l: any) => (
-          <div key={l.id} className="px-4 py-2.5 text-xs text-slate-300">
+          <div key={l.id} className="px-4 py-2.5 text-xs text-slate-700">
             <span className="text-slate-500">{new Date(l.created_at).toLocaleString()}</span>{" "}
-            <span className="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-slate-400">{l.event}</span>
+            <span className="rounded border border-slate-200 bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500">{l.event}</span>
           </div>
         ))}
       </div>
@@ -136,20 +136,20 @@ function NotificationPreferences() {
   }, []);
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">Notification preferences</div>
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">Notification preferences</div>
         <div className="text-xs text-slate-500">Server-authorised cross-user view · platform_admin scope.</div>
       </div>
-      <div className="flex items-center justify-end border-b border-white/10 px-4 py-2">
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+      <div className="flex items-center justify-end border-b border-slate-200 px-4 py-2">
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
               <th className="px-4 py-2 font-medium">User</th>
               <th className="px-4 py-2 font-medium">Status</th>
               <th className="px-4 py-2 font-medium">Updated</th>
@@ -160,7 +160,7 @@ function NotificationPreferences() {
               <tr><td colSpan={3} className="px-4 py-8 text-center text-slate-500">No preferences recorded.</td></tr>
             )}
             {prefs.map((p: any) => (
-              <tr key={p.id} className="border-b border-white/5 text-slate-300">
+              <tr key={p.id} className="border-b border-slate-100 text-slate-700">
                 <td className="px-4 py-2.5">{p.workspace_name} · {p.workspace_email}</td>
                 <td className="px-4 py-2.5 capitalize">{p.status}</td>
                 <td className="px-4 py-2.5 text-slate-500">{new Date(p.updated_at).toLocaleDateString()}</td>
@@ -191,20 +191,20 @@ function OutreachBlocks() {
   }, []);
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">Outreach blocks</div>
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">Outreach blocks</div>
         <div className="text-xs text-slate-500">Read-only triage view. Counterparty/dispute/commercial fields never displayed.</div>
       </div>
-      <div className="flex items-center justify-end border-b border-white/10 px-4 py-2">
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+      <div className="flex items-center justify-end border-b border-slate-200 px-4 py-2">
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
-      <div className="divide-y divide-white/5">
+      <div className="divide-y divide-slate-100">
         {!loading && blocks.length === 0 && <p className="px-4 py-8 text-center text-xs text-slate-500">No outreach-blocked events recorded.</p>}
         {blocks.map((b: any) => (
-          <div key={b.id} className="px-4 py-2.5 text-xs text-slate-300">
+          <div key={b.id} className="px-4 py-2.5 text-xs text-slate-700">
             <span className="text-slate-500">{new Date(b.created_at).toLocaleString()}</span> {b.event}
           </div>
         ))}
@@ -231,19 +231,19 @@ function UploadAudit() {
   }, []);
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">Match document upload attempts ({attempts.length})</div>
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">Match document upload attempts ({attempts.length})</div>
       </div>
-      <div className="flex items-center justify-end border-b border-white/10 px-4 py-2">
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+      <div className="flex items-center justify-end border-b border-slate-200 px-4 py-2">
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
-      <div className="divide-y divide-white/5">
+      <div className="divide-y divide-slate-100">
         {!loading && attempts.length === 0 && <p className="px-4 py-8 text-center text-xs text-slate-500">No upload attempts recorded.</p>}
         {attempts.map((a: any) => (
-          <div key={a.id} className="px-4 py-2.5 text-xs text-slate-300">
+          <div key={a.id} className="px-4 py-2.5 text-xs text-slate-700">
             <span className="text-slate-500">{new Date(a.created_at).toLocaleString()}</span> {a.event}
           </div>
         ))}
@@ -272,26 +272,26 @@ function RevenueNotifications() {
   const sent = rows.filter((r: any) => r.status === "sent").length;
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">Revenue notifications</div>
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">Revenue notifications</div>
         <div className="text-xs text-slate-500">Every email attempt fired to support@izenzo.co.za when revenue is recognised.</div>
       </div>
-      <div className="grid grid-cols-2 gap-3 border-b border-white/10 p-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 border-b border-slate-200 p-4 sm:grid-cols-4">
         <Tile label="Total in window" value={rows.length} />
         <Tile label="Sent" value={sent} />
         <Tile label="Failed" value={0} />
         <Tile label="Skipped" value={0} />
       </div>
       <div className="flex items-center justify-end px-4 py-2">
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
-      <div className="divide-y divide-white/5 border-t border-white/10">
+      <div className="divide-y divide-slate-100 border-t border-slate-200">
         {!loading && rows.length === 0 && <p className="px-4 py-8 text-center text-xs text-slate-500">No revenue notifications match these filters.</p>}
         {rows.map((r: any) => (
-          <div key={r.id} className="px-4 py-2.5 text-xs text-slate-300">
+          <div key={r.id} className="px-4 py-2.5 text-xs text-slate-700">
             <span className="text-slate-500">{new Date(r.created_at).toLocaleString()}</span> credit_purchase — ${Number(r.amount_usd).toFixed(2)} — {r.status}
           </div>
         ))}
@@ -330,20 +330,20 @@ function TenantBoundary() {
   }
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
         <div>
-          <div className="text-sm font-medium text-slate-100">Tenant-Boundary Evidence Pack</div>
+          <div className="text-sm font-medium text-slate-900">Tenant-Boundary Evidence Pack</div>
           <div className="text-xs text-slate-500">Live probe of RLS coverage across every public-schema table — real, not simulated.</div>
         </div>
-        <button onClick={run} disabled={running} className="rounded bg-emerald-500/20 px-3 py-1.5 text-xs text-emerald-400 hover:bg-emerald-500/30 disabled:opacity-50">
+        <button onClick={run} disabled={running} className="rounded bg-emerald-500/20 px-3 py-1.5 text-xs text-emerald-700 hover:bg-emerald-500/30 disabled:opacity-50">
           {running ? "Running…" : "Run probe"}
         </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
               <th className="px-4 py-2 font-medium">Run (UTC)</th>
               <th className="px-4 py-2 font-medium">Tables</th>
               <th className="px-4 py-2 font-medium">Pass</th>
@@ -355,11 +355,11 @@ function TenantBoundary() {
               <tr><td colSpan={4} className="px-4 py-8 text-center text-slate-500">No probe runs yet. Click "Run probe".</td></tr>
             )}
             {runs.map((r: any) => (
-              <tr key={r.id} className="border-b border-white/5 text-slate-300">
+              <tr key={r.id} className="border-b border-slate-100 text-slate-700">
                 <td className="px-4 py-2.5 text-slate-500">{new Date(r.run_at).toLocaleString()}</td>
                 <td className="px-4 py-2.5">{r.tables_checked}</td>
-                <td className="px-4 py-2.5 text-emerald-400">{r.tables_pass}</td>
-                <td className="px-4 py-2.5 text-red-400">{r.tables_fail}</td>
+                <td className="px-4 py-2.5 text-emerald-700">{r.tables_pass}</td>
+                <td className="px-4 py-2.5 text-red-700">{r.tables_fail}</td>
               </tr>
             ))}
           </tbody>
@@ -387,14 +387,14 @@ function SystemHealthTab() {
   }, []);
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02] p-4">
+    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className={`h-2.5 w-2.5 rounded-full ${health?.database_reachable ? "bg-emerald-400" : "bg-red-400"}`} />
-          <span className="text-sm font-medium text-slate-100">{loading ? "Checking…" : health?.database_reachable ? "Database reachable" : "Database unreachable"}</span>
+          <span className="text-sm font-medium text-slate-900">{loading ? "Checking…" : health?.database_reachable ? "Database reachable" : "Database unreachable"}</span>
           {health && <span className="text-xs text-slate-500">({health.latency_ms}ms)</span>}
         </div>
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
@@ -425,17 +425,17 @@ function EventStore() {
   }, []);
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02]">
-      <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-        <div className="text-sm font-medium text-slate-100">Append-only event store ({events.length})</div>
-        <button onClick={load} disabled={loading} className="rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+    <div className="rounded-lg border border-slate-200 bg-slate-50">
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+        <div className="text-sm font-medium text-slate-900">Append-only event store ({events.length})</div>
+        <button onClick={load} disabled={loading} className="rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
           {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wide text-slate-500">
               <th className="px-4 py-2 font-medium">Event type</th>
               <th className="px-4 py-2 font-medium">Match</th>
               <th className="px-4 py-2 font-medium">Hash</th>
@@ -447,7 +447,7 @@ function EventStore() {
               <tr><td colSpan={4} className="px-4 py-8 text-center text-slate-500">No events recorded.</td></tr>
             )}
             {events.map((e: any) => (
-              <tr key={e.id} className="border-b border-white/5 text-slate-300">
+              <tr key={e.id} className="border-b border-slate-100 text-slate-700">
                 <td className="px-4 py-2.5">{e.event_type}</td>
                 <td className="px-4 py-2.5 font-mono text-[11px]">{e.transaction_id?.slice(0, 8) ?? "—"}…</td>
                 <td className="px-4 py-2.5 font-mono text-[11px] text-slate-500">{e.event_hash?.slice(0, 12) ?? "—"}…</td>
@@ -488,7 +488,7 @@ function SystemAnalytics() {
         <Tile label="Webhook Endpoints" value={data?.webhooks ?? "—"} />
         <Tile label="Database Health" value="Operational" />
       </div>
-      <button onClick={load} disabled={loading} className="mt-3 rounded border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
+      <button onClick={load} disabled={loading} className="mt-3 rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50">
         {loading ? "Refreshing…" : "Refresh"}
       </button>
     </div>
@@ -503,16 +503,16 @@ function AuditHealthContent() {
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Admin · Audit &amp; Health</div>
-      <h1 className="text-2xl font-semibold text-slate-100">Audit &amp; Health</h1>
-      <p className="mt-1 text-sm text-slate-400">Tamper-evident audit trail, event store, system health monitoring, and platform analytics.</p>
+      <h1 className="text-2xl font-semibold text-slate-900">Audit &amp; Health</h1>
+      <p className="mt-1 text-sm text-slate-500">Tamper-evident audit trail, event store, system health monitoring, and platform analytics.</p>
 
-      <div className="mt-4 flex gap-4 overflow-x-auto border-b border-white/10 text-xs">
+      <div className="mt-4 flex gap-4 overflow-x-auto border-b border-slate-200 text-xs">
         {TABS.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`whitespace-nowrap border-b-2 py-2 ${
-              tab === t ? "border-emerald-500 text-slate-100" : "border-transparent text-slate-500 hover:text-slate-300"
+              tab === t ? "border-emerald-500 text-slate-900" : "border-transparent text-slate-500 hover:text-slate-700"
             }`}
           >
             {t}
