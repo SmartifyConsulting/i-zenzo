@@ -56,6 +56,200 @@ export type Database = {
           },
         ]
       }
+      ai_dnc_rules: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string
+          id: string
+          reason: string | null
+          rule_type: string
+          value: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string
+          id?: string
+          reason?: string | null
+          rule_type?: string
+          value: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string
+          id?: string
+          reason?: string | null
+          rule_type?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      ai_suggested_matches: {
+        Row: {
+          confidence: string
+          counterparty_name: string
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          fit: string
+          id: string
+          risk: string
+          role: string
+          status: string
+          transaction_id: string | null
+        }
+        Insert: {
+          confidence?: string
+          counterparty_name: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          fit?: string
+          id?: string
+          risk?: string
+          role?: string
+          status?: string
+          transaction_id?: string | null
+        }
+        Update: {
+          confidence?: string
+          counterparty_name?: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          fit?: string
+          id?: string
+          risk?: string
+          role?: string
+          status?: string
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_suggested_matches_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      api_plans: {
+        Row: {
+          created_at: string
+          currency: string
+          id: string
+          included_allowance: number
+          manual_review_fee: number
+          monthly_fee: number
+          overage_allowed: boolean
+          overage_price: number
+          plan_name: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          id?: string
+          included_allowance?: number
+          manual_review_fee?: number
+          monthly_fee?: number
+          overage_allowed?: boolean
+          overage_price?: number
+          plan_name: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          id?: string
+          included_allowance?: number
+          manual_review_fee?: number
+          monthly_fee?: number
+          overage_allowed?: boolean
+          overage_price?: number
+          plan_name?: string
+        }
+        Relationships: []
+      }
+      api_sandbox_scenarios: {
+        Row: {
+          active: boolean
+          confidence: string | null
+          country: string | null
+          freshness: string | null
+          id: string
+          legal_name: string | null
+          match_status: string | null
+          next_action: string | null
+          scenario: string
+          scope: string
+          verification: string | null
+        }
+        Insert: {
+          active?: boolean
+          confidence?: string | null
+          country?: string | null
+          freshness?: string | null
+          id?: string
+          legal_name?: string | null
+          match_status?: string | null
+          next_action?: string | null
+          scenario: string
+          scope?: string
+          verification?: string | null
+        }
+        Update: {
+          active?: boolean
+          confidence?: string | null
+          country?: string | null
+          freshness?: string | null
+          id?: string
+          legal_name?: string | null
+          match_status?: string | null
+          next_action?: string | null
+          scenario?: string
+          scope?: string
+          verification?: string | null
+        }
+        Relationships: []
+      }
+      api_support_tickets: {
+        Row: {
+          category: string
+          client_ref: string | null
+          created_at: string
+          environment: string
+          id: string
+          owner_id: string | null
+          severity: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          category?: string
+          client_ref?: string | null
+          created_at?: string
+          environment?: string
+          id?: string
+          owner_id?: string | null
+          severity?: string
+          status?: string
+          subject: string
+        }
+        Update: {
+          category?: string
+          client_ref?: string | null
+          created_at?: string
+          environment?: string
+          id?: string
+          owner_id?: string | null
+          severity?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           created_at: string
@@ -87,6 +281,50 @@ export type Database = {
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bank_verifications: {
+        Row: {
+          account_last4: string
+          country: string | null
+          decided_at: string | null
+          decided_by: string | null
+          id: string
+          mode: string
+          organisation_id: string | null
+          requested_at: string
+          status: string
+        }
+        Insert: {
+          account_last4: string
+          country?: string | null
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          mode?: string
+          organisation_id?: string | null
+          requested_at?: string
+          status?: string
+        }
+        Update: {
+          account_last4?: string
+          country?: string | null
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          mode?: string
+          organisation_id?: string | null
+          requested_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_verifications_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
             referencedColumns: ["id"]
           },
         ]
@@ -233,6 +471,50 @@ export type Database = {
           },
         ]
       }
+      compliance_cases: {
+        Row: {
+          assigned_to: string | null
+          case_number: string
+          category: string
+          created_at: string
+          id: string
+          resolved_at: string | null
+          status: string
+          subject: string
+          transaction_id: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          case_number: string
+          category?: string
+          created_at?: string
+          id?: string
+          resolved_at?: string | null
+          status?: string
+          subject: string
+          transaction_id?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          case_number?: string
+          category?: string
+          created_at?: string
+          id?: string
+          resolved_at?: string | null
+          status?: string
+          subject?: string
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_cases_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       counterparties: {
         Row: {
           approved_to_trade: boolean
@@ -332,6 +614,54 @@ export type Database = {
           },
         ]
       }
+      deal_releases: {
+        Row: {
+          expires_at: string | null
+          funder_org_id: string
+          id: string
+          pack_label: string
+          released_at: string
+          revoked_at: string | null
+          status: string
+          transaction_id: string | null
+        }
+        Insert: {
+          expires_at?: string | null
+          funder_org_id: string
+          id?: string
+          pack_label: string
+          released_at?: string
+          revoked_at?: string | null
+          status?: string
+          transaction_id?: string | null
+        }
+        Update: {
+          expires_at?: string | null
+          funder_org_id?: string
+          id?: string
+          pack_label?: string
+          released_at?: string
+          revoked_at?: string | null
+          status?: string
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_releases_funder_org_id_fkey"
+            columns: ["funder_org_id"]
+            isOneToOne: false
+            referencedRelation: "funder_organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_releases_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       decision_sessions: {
         Row: {
           ai_analysis_id: string
@@ -373,6 +703,76 @@ export type Database = {
             columns: ["transaction_id"]
             isOneToOne: false
             referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      disputes: {
+        Row: {
+          id: string
+          raised_at: string
+          reason: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          status: string
+          transaction_id: string | null
+        }
+        Insert: {
+          id?: string
+          raised_at?: string
+          reason: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          status?: string
+          transaction_id?: string | null
+        }
+        Update: {
+          id?: string
+          raised_at?: string
+          reason?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          status?: string
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disputes_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      engagement_notes: {
+        Row: {
+          author_id: string
+          created_at: string
+          id: string
+          note: string
+          poi_id: string
+        }
+        Insert: {
+          author_id?: string
+          created_at?: string
+          id?: string
+          note: string
+          poi_id: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          id?: string
+          note?: string
+          poi_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "engagement_notes_poi_id_fkey"
+            columns: ["poi_id"]
+            isOneToOne: false
+            referencedRelation: "pois"
             referencedColumns: ["id"]
           },
         ]
@@ -469,6 +869,134 @@ export type Database = {
           },
         ]
       }
+      facilitation_cases: {
+        Row: {
+          case_number: string
+          closed_at: string | null
+          counterparty: string | null
+          country: string | null
+          created_at: string
+          currency: string
+          due_date: string | null
+          final_outcome: string | null
+          id: string
+          owner_id: string | null
+          requester_org: string
+          requester_user: string | null
+          sector: string | null
+          status: string
+          transaction_id: string | null
+          value: number | null
+        }
+        Insert: {
+          case_number: string
+          closed_at?: string | null
+          counterparty?: string | null
+          country?: string | null
+          created_at?: string
+          currency?: string
+          due_date?: string | null
+          final_outcome?: string | null
+          id?: string
+          owner_id?: string | null
+          requester_org: string
+          requester_user?: string | null
+          sector?: string | null
+          status?: string
+          transaction_id?: string | null
+          value?: number | null
+        }
+        Update: {
+          case_number?: string
+          closed_at?: string | null
+          counterparty?: string | null
+          country?: string | null
+          created_at?: string
+          currency?: string
+          due_date?: string | null
+          final_outcome?: string | null
+          id?: string
+          owner_id?: string | null
+          requester_org?: string
+          requester_user?: string | null
+          sector?: string | null
+          status?: string
+          transaction_id?: string | null
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facilitation_cases_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facilitation_dnc_rules: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          reason: string | null
+          rule_type: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          reason?: string | null
+          rule_type?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          reason?: string | null
+          rule_type?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      facilitation_email_templates: {
+        Row: {
+          approved_at: string | null
+          body: string
+          created_at: string
+          id: string
+          key: string
+          name: string
+          status: string
+          subject: string
+          version: number
+        }
+        Insert: {
+          approved_at?: string | null
+          body: string
+          created_at?: string
+          id?: string
+          key: string
+          name: string
+          status?: string
+          subject: string
+          version?: number
+        }
+        Update: {
+          approved_at?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          key?: string
+          name?: string
+          status?: string
+          subject?: string
+          version?: number
+        }
+        Relationships: []
+      }
       finality_records: {
         Row: {
           canonical_hash: string | null
@@ -523,6 +1051,84 @@ export type Database = {
           },
         ]
       }
+      funder_audit_log: {
+        Row: {
+          actor_id: string
+          created_at: string
+          detail: string | null
+          event: string
+          id: string
+        }
+        Insert: {
+          actor_id?: string
+          created_at?: string
+          detail?: string | null
+          event: string
+          id?: string
+        }
+        Update: {
+          actor_id?: string
+          created_at?: string
+          detail?: string | null
+          event?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      funder_onboarding_requests: {
+        Row: {
+          contact_email: string
+          decided_at: string | null
+          decided_by: string | null
+          id: string
+          org_name: string
+          requested_at: string
+          status: string
+        }
+        Insert: {
+          contact_email: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          org_name: string
+          requested_at?: string
+          status?: string
+        }
+        Update: {
+          contact_email?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          org_name?: string
+          requested_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      funder_organisations: {
+        Row: {
+          approved_at: string
+          contact_email: string
+          id: string
+          name: string
+          status: string
+        }
+        Insert: {
+          approved_at?: string
+          contact_email: string
+          id?: string
+          name: string
+          status?: string
+        }
+        Update: {
+          approved_at?: string
+          contact_email?: string
+          id?: string
+          name?: string
+          status?: string
+        }
+        Relationships: []
+      }
       gate_events: {
         Row: {
           actor: string
@@ -566,6 +1172,109 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      go_live_verifications: {
+        Row: {
+          decided_at: string | null
+          decided_by: string | null
+          id: string
+          legal_entity_id: string | null
+          status: string
+          submitted_at: string
+        }
+        Insert: {
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          legal_entity_id?: string | null
+          status?: string
+          submitted_at?: string
+        }
+        Update: {
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          legal_entity_id?: string | null
+          status?: string
+          submitted_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "go_live_verifications_legal_entity_id_fkey"
+            columns: ["legal_entity_id"]
+            isOneToOne: false
+            referencedRelation: "legal_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      governance_cases: {
+        Row: {
+          assigned_to: string | null
+          case_number: string
+          category: string
+          created_at: string
+          id: string
+          status: string
+          summary: string
+          transaction_id: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          case_number: string
+          category?: string
+          created_at?: string
+          id?: string
+          status?: string
+          summary: string
+          transaction_id?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          case_number?: string
+          category?: string
+          created_at?: string
+          id?: string
+          status?: string
+          summary?: string
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "governance_cases_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      idv_reviews: {
+        Row: {
+          category: string
+          id: string
+          reviewed_by: string | null
+          status: string
+          subject_label: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          id?: string
+          reviewed_by?: string | null
+          status?: string
+          subject_label: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          id?: string
+          reviewed_by?: string | null
+          status?: string
+          subject_label?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       intents: {
         Row: {
@@ -611,6 +1320,168 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      kyc_documents: {
+        Row: {
+          doc_type: string
+          id: string
+          legal_entity_id: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          uploaded_at: string
+        }
+        Insert: {
+          doc_type?: string
+          id?: string
+          legal_entity_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          uploaded_at?: string
+        }
+        Update: {
+          doc_type?: string
+          id?: string
+          legal_entity_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          uploaded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kyc_documents_legal_entity_id_fkey"
+            columns: ["legal_entity_id"]
+            isOneToOne: false
+            referencedRelation: "legal_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legacy_repair_flags: {
+        Row: {
+          flagged_at: string
+          id: string
+          reason: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          transaction_id: string
+        }
+        Insert: {
+          flagged_at?: string
+          id?: string
+          reason: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          transaction_id: string
+        }
+        Update: {
+          flagged_at?: string
+          id?: string
+          reason?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_repair_flags_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "spine_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_entities: {
+        Row: {
+          authority_to_bind: boolean
+          created_at: string
+          entity_type: string
+          id: string
+          jurisdiction: string | null
+          legal_name: string
+          organisation_id: string | null
+          reg_no: string | null
+          screening_status: string
+          status: string
+          ubo_verified: boolean
+        }
+        Insert: {
+          authority_to_bind?: boolean
+          created_at?: string
+          entity_type?: string
+          id?: string
+          jurisdiction?: string | null
+          legal_name: string
+          organisation_id?: string | null
+          reg_no?: string | null
+          screening_status?: string
+          status?: string
+          ubo_verified?: boolean
+        }
+        Update: {
+          authority_to_bind?: boolean
+          created_at?: string
+          entity_type?: string
+          id?: string
+          jurisdiction?: string | null
+          legal_name?: string
+          organisation_id?: string | null
+          reg_no?: string | null
+          screening_status?: string
+          status?: string
+          ubo_verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_entities_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_holds: {
+        Row: {
+          applied_at: string
+          applied_by: string
+          id: string
+          reason: string
+          released_at: string | null
+          released_by: string | null
+          scope_id: string
+          scope_type: string
+          status: string
+        }
+        Insert: {
+          applied_at?: string
+          applied_by?: string
+          id?: string
+          reason: string
+          released_at?: string | null
+          released_by?: string | null
+          scope_id: string
+          scope_type?: string
+          status?: string
+        }
+        Update: {
+          applied_at?: string
+          applied_by?: string
+          id?: string
+          reason?: string
+          released_at?: string | null
+          released_by?: string | null
+          scope_id?: string
+          scope_type?: string
+          status?: string
+        }
+        Relationships: []
       }
       memory_events: {
         Row: {
@@ -696,6 +1567,154 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notification_preferences: {
+        Row: {
+          channels_disabled: boolean
+          id: string
+          status: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          channels_disabled?: boolean
+          id?: string
+          status?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          channels_disabled?: boolean
+          id?: string
+          status?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_api_clients: {
+        Row: {
+          country: string | null
+          created_at: string
+          id: string
+          legal_entity_id: string | null
+          production_enabled: boolean
+          sandbox_enabled: boolean
+          status: string
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          id?: string
+          legal_entity_id?: string | null
+          production_enabled?: boolean
+          sandbox_enabled?: boolean
+          status?: string
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          id?: string
+          legal_entity_id?: string | null
+          production_enabled?: boolean
+          sandbox_enabled?: boolean
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_api_clients_legal_entity_id_fkey"
+            columns: ["legal_entity_id"]
+            isOneToOne: false
+            referencedRelation: "legal_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organisation_members: {
+        Row: {
+          created_at: string
+          id: string
+          organisation_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organisation_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organisation_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organisation_members_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organisation_members_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organisations: {
+        Row: {
+          clip_on_plan: string
+          country: string | null
+          created_at: string
+          has_claim: boolean
+          id: string
+          is_public: boolean
+          name: string
+          readiness: string
+          reg_no: string | null
+          sandbox_enabled: boolean
+          status: string
+        }
+        Insert: {
+          clip_on_plan?: string
+          country?: string | null
+          created_at?: string
+          has_claim?: boolean
+          id?: string
+          is_public?: boolean
+          name: string
+          readiness?: string
+          reg_no?: string | null
+          sandbox_enabled?: boolean
+          status?: string
+        }
+        Update: {
+          clip_on_plan?: string
+          country?: string | null
+          created_at?: string
+          has_claim?: boolean
+          id?: string
+          is_public?: boolean
+          name?: string
+          readiness?: string
+          reg_no?: string | null
+          sandbox_enabled?: boolean
+          status?: string
+        }
+        Relationships: []
       }
       other_documents: {
         Row: {
@@ -784,6 +1803,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      platform_settings: {
+        Row: {
+          id: boolean
+          system_status_message: string
+          updated_at: string
+          updated_by: string | null
+          workspace_name: string
+        }
+        Insert: {
+          id?: boolean
+          system_status_message?: string
+          updated_at?: string
+          updated_by?: string | null
+          workspace_name?: string
+        }
+        Update: {
+          id?: boolean
+          system_status_message?: string
+          updated_at?: string
+          updated_by?: string | null
+          workspace_name?: string
+        }
+        Relationships: []
       }
       pois: {
         Row: {
@@ -878,6 +1921,147 @@ export type Database = {
           tagline?: string
         }
         Relationships: []
+      }
+      rating_appeals: {
+        Row: {
+          decided_at: string | null
+          decided_by: string | null
+          id: string
+          organisation_id: string | null
+          reason: string
+          status: string
+          submitted_at: string
+        }
+        Insert: {
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          organisation_id?: string | null
+          reason: string
+          status?: string
+          submitted_at?: string
+        }
+        Update: {
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          organisation_id?: string | null
+          reason?: string
+          status?: string
+          submitted_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rating_appeals_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      registry_api_clients: {
+        Row: {
+          client_name: string
+          country: string | null
+          created_at: string
+          id: string
+          lifecycle_status: string
+          mode: string
+        }
+        Insert: {
+          client_name: string
+          country?: string | null
+          created_at?: string
+          id?: string
+          lifecycle_status?: string
+          mode?: string
+        }
+        Update: {
+          client_name?: string
+          country?: string | null
+          created_at?: string
+          id?: string
+          lifecycle_status?: string
+          mode?: string
+        }
+        Relationships: []
+      }
+      registry_api_usage_events: {
+        Row: {
+          blocked: boolean
+          client_id: string | null
+          endpoint: string
+          id: string
+          occurred_at: string
+          rate_limited: boolean
+          status_code: number
+        }
+        Insert: {
+          blocked?: boolean
+          client_id?: string | null
+          endpoint: string
+          id?: string
+          occurred_at?: string
+          rate_limited?: boolean
+          status_code?: number
+        }
+        Update: {
+          blocked?: boolean
+          client_id?: string | null
+          endpoint?: string
+          id?: string
+          occurred_at?: string
+          rate_limited?: boolean
+          status_code?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registry_api_usage_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "registry_api_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      registry_claims: {
+        Row: {
+          claimant_email: string
+          decided_at: string | null
+          decided_by: string | null
+          id: string
+          organisation_id: string
+          status: string
+          submitted_at: string
+        }
+        Insert: {
+          claimant_email: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          organisation_id: string
+          status?: string
+          submitted_at?: string
+        }
+        Update: {
+          claimant_email?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          organisation_id?: string
+          status?: string
+          submitted_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registry_claims_organisation_id_fkey"
+            columns: ["organisation_id"]
+            isOneToOne: false
+            referencedRelation: "organisations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       search_runs: {
         Row: {
@@ -1099,6 +2283,39 @@ export type Database = {
           sort_order?: number
           status?: string
           uptime_90d?: number
+        }
+        Relationships: []
+      }
+      tenant_boundary_runs: {
+        Row: {
+          id: string
+          manifest_sha256: string | null
+          run_at: string
+          run_by: string | null
+          status: string
+          tables_checked: number
+          tables_fail: number
+          tables_pass: number
+        }
+        Insert: {
+          id?: string
+          manifest_sha256?: string | null
+          run_at?: string
+          run_by?: string | null
+          status?: string
+          tables_checked: number
+          tables_fail: number
+          tables_pass: number
+        }
+        Update: {
+          id?: string
+          manifest_sha256?: string | null
+          run_at?: string
+          run_by?: string | null
+          status?: string
+          tables_checked?: number
+          tables_fail?: number
+          tables_pass?: number
         }
         Relationships: []
       }
@@ -1377,6 +2594,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_tenant_boundary_probe: {
+        Args: never
+        Returns: {
+          tables_checked: number
+          tables_fail: number
+          tables_pass: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
