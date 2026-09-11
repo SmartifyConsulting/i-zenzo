@@ -4,6 +4,7 @@ import { Link } from "@/lib/router-compat";
 import { Layout } from "@/components/izenzo/Layout";
 import { Badge, Card } from "@/components/izenzo/ui";
 import * as api from "@/lib/api";
+import * as adminApi from "@/lib/admin-api";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function Dashboard() {
   const [wallet, setWallet] = useState<any>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -21,10 +23,15 @@ export default function Dashboard() {
         return;
       }
       try {
-        const [txns, w] = await Promise.all([api.listTransactions(), api.getWallet()]);
+        const [txns, w, admin] = await Promise.all([
+          api.listTransactions(),
+          api.getWallet(),
+          adminApi.checkAdminAccess(),
+        ]);
         if (cancelled) return;
         setTransactions(txns.transactions);
         setWallet(w);
+        setIsAdmin(admin.isAdmin);
       } catch (e: any) {
         if (!cancelled) setError(e?.message ?? "Failed to load dashboard");
       } finally {
@@ -49,9 +56,16 @@ export default function Dashboard() {
             <Badge>Workspace Dashboard</Badge>
             <h1 className="mt-4 text-3xl font-semibold text-foreground">Your transactions</h1>
           </div>
-          <button onClick={handleLogout} className="text-sm text-muted-foreground hover:text-foreground">
-            Log out
-          </button>
+          <div className="flex items-center gap-4">
+            {isAdmin && (
+              <Link to="/hq" className="text-sm font-medium text-emerald-brand hover:underline">
+                Platform HQ →
+              </Link>
+            )}
+            <button onClick={handleLogout} className="text-sm text-muted-foreground hover:text-foreground">
+              Log out
+            </button>
+          </div>
         </div>
 
         {error && <p className="text-sm text-destructive mb-4">{error}</p>}
